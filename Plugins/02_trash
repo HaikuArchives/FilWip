@@ -1,0 +1,10 @@
+;; Trash plugin
+
+[Trash]
+TYPE=linear
+CHECK INSTALL OF=
+
+[Trashed items]
+FOLDER=/boot/home/Desktop/Trash
+EXCLUDE FILE=
+RECURSE=yes

@@ -1,0 +1,15 @@
+;; Internet logs plugin
+
+[Internet Logs]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/var/log
+
+[Read log]
+FILE=/boot/var/log/ppp-read.log
+EXCLUDE FILE=
+RECURSE=
+
+[Write log]
+FILE=/boot/var/log/ppp-write.log
+EXCLUDE FILE=
+RECURSE=

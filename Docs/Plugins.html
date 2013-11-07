@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD><title>FilWip - Documentation</title></HEAD>
+
+<BODY BGCOLOR=white LINK=#1968BC>
+
+<FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>
+<CENTER><IMG SRC="images/logo.png">
+<BR>&copy; 2003 Ramshankar
+</CENTER>
+
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Plugins</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>What makes FilWip a versatile and flexible app is plugins. Plugins (as far as FilWip is concerned) is a way of specifying what files to monitor, delete. In otherwords, it is a simple text file, written in a particular format understandable by FilWip, that specifies the locations to clean.</P>
+
+<P>You get a set of standard plugins with FilWip. You can edit these plugins to suit your system, mostly you won't need to - except maybe the <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Mozilla</FONT></I> plugin (to change the directory name). Some of the standard plugins include: NetPositive files, Trashed items, Custom Query files, Temporary files, Bash history file etc.</P>
+
+<P>Before we proceed explaining the format specs for the plugin, here are 2 sample plugins. Just read them once, and read the explaination below. Its quite simple enough to understand.</P>
+
+<P>Here is a hierarchical plugin - meaning you can "expand" the plugin and it will have sub-items. Here is how <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>NetPositive</FONT></I> plugin looks: </P>
+
+<CENTER><TABLE BGCOLOR=#F5F5F5 BORDER="0" WIDTH=80% CELLSPACING="5"> 
+<TR> <TD WIDTH=45%><PRE>;; NetPositive plugin
+
+[NetPositive]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/home/config/settings/NetPositive
+
+[Cache]
+FOLDER=/boot/home/config/settings/NetPositive/NetCache
+EXCLUDE FILE=Cookies
+RECURSE=
+
+[Cookies]
+FILE=/boot/home/config/settings/NetPositive/NetCache/Cookies
+EXCLUDE FILE=
+RECURSE=
+
+[History]
+FOLDER=/boot/home/config/settings/History
+EXCLUDE FILE=
+RECURSE=
+</PRE></TR>
+</TABLE></CENTER>
+
+<P>Here is a linear plugin - meaning it does not have any sub-items and can clean only one location. Here is how the Custom Queries plugin looks: </P>
+
+<CENTER><TABLE BGCOLOR=#F5F5F5 BORDER="0" WIDTH=80% CELLSPACING="5"> 
+<TR> <TD WIDTH=45%><PRE>;; Custom queries plugin
+
+[Custom queries]
+TYPE=linear
+CHECK INSTALL OF=
+
+[Custom queries]
+FOLDER=/boot/home/queries
+INCLUDE MIME=application/x-vnd.Be-query
+RECURSE=
+</PRE></TR>
+</TABLE></CENTER>
+
+<P>&nbsp;</P>
+
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Key</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>Below is given a table the various elements in a FilWip plugin. Following it, each element is explained in detail.</P>
+
+<TABLE WIDTH=100%>
+<TR>
+<TD WIDTH><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>TYPE</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Required)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>The type of plugin, whether linear or hierarchial</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>CHECK INSTALL OF</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Optional)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>This path must exist, or else the plugin will not be loaded</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>FOLDER</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(N/A)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>The location to delete. Either FILE=&lt;file&gt; or FOLDER=&lt;dir&gt;</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>EXCLUDE FILE</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Optional)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>A file to exclude in the folder being targetted. EXCLUDE FILE=&lt;filename&gt;</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>INCLUDE MIME</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Optional)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>Files of this type only are touched, INCLUDE MIME=&lt;mime-type&gt;</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>RECURSE</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Optional)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>Whether FilWip must touch sub-folders and files.</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>;;</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(N/A)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>Comments - these are skipped</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>[Custom queries]</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Required)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>Plugin name used in Presets internally, not shown otherwise</TD>
+</TR>
+
+<TR>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>[Custom queries]</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>(Required)</TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>A description. Shown in the checkboxes/treeview.</TD>
+</TR>
+
+</TABLE>
+</P>
+
+<P>Lets go from top to bottom explaining each unique line in the plugin format.</P>
+
+<P><B><FONT SIZE=2>;; Comment!</FONT></B><BR>Lines beginning with a double semi-colon are considered comments and are skipped. You can use them only at the beginning of a plugin ie, until the name of the plugin is specified, I didn't find a need to use them inbetween a plugin. </P>
+
+<P><B><FONT SIZE=2>[Name]</FONT></B><BR>
+Lines enclosed within "[" and "]" are considered to contain names for each item. In case the TYPE of the plugin is hierarchical this name will be used before the expandable treeviews. This is what you will see in FilWip for hierarchical plugins. For linear items this name will be displayed. The next name section following it will not be used.</P>
+
+<P><B><FONT SIZE=2>TYPE=</FONT></B>linear<BR><B><FONT SIZE=2>TYPE=</FONT></B>hierarchical<BR>
+A very important clause. This clause specifies if the plugin has sub-items or not. TYPE must be either "linear" or "hierarchical". Careful you don't misspell it and you cannot leave it blank.</P>
+
+<A NAME="CheckInstall"></A>
+<P><B><FONT SIZE=2>CHECK INSTALL OF=</FONT></B>[&lt;path&gt;]<BR>
+This clause allows you to stop loading the plugin if a certain file or folder does not exist. For example, the <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>NetPositive</FONT></I> plugin checks for a path (in the settings folder) to confirm if NetPositive really exists. If the path it specifies does not exist, the plugin will not be loaded. You can override this behaviour of checking for existence <A HREF="Preferences.html#CheckInstall">here</A>. You can leave this blank meaning no checks are performed. For example, Trash has a blank field here since all systems with BeOS are assumed to have a Trash location.</P>
+
+<P><B><FONT SIZE=2>FOLDER=</FONT></B>&lt;path&gt;<BR><B><FONT SIZE=2>FILE=</FONT></B>&lt;path&gt;<BR>
+This clause specifies either a folder (directory) or file to clean. The path must be the full absolute path. Please don't give file and specify a folder or vice versa. If you do anything can go wrong. Pay attention while giving this clause. Also a safety check is performed so that no system critical folders/files are destroyed. This check as of now cannot be turned off. For example, you can't specify <I><FONT FACE=Helvetica SIZE=2>/boot/home</FONT></I> as it is critical to the system, and you can't delete anything inside <I><FONT FACE=Helvetica SIZE=2>/boot/beos<FONT></I> etc.</P>
+
+<P>Also you cannot specify both FOLDER and FILE clauses for the same plugin item. Either you must specify a FILE or a FOLDER. See the example plugins above.</P>
+
+<P><B><FONT SIZE=2>EXCLUDE FILE=</FONT></B>[&lt;filename&gt;]<BR><B><FONT SIZE=2>INCLUDE MIME=</FONT></B>[&lt;mime-type&gt;]<BR>
+The EXCLUDE FILE clause allows you to exclude a file (by name) from the list of files in a folder. This will apply only if a folder is specified. Blank field is allowed meaning no filenames are left-out.</P>
+
+<P>The INCLUDE MIME clause specifies that only files with the specified mime-type (like "application/x-vnd.Be-query") should be deleted. Files of any other type are not touched. For example, if you want to clean only .html from a folder but not touch other file-types like .gif etc, you can INCLUDE MIME=text/x-html. Blank field here is allowed meaning file-types aren't checked for the given scope of files.</P>
+
+<P>You cannot specify both EXCLUDE FILE and INCLUDE MIME in the same plugin item. Only one of this is needed.</P>
+
+<P><B><FONT SIZE=2>RECURSE=</FONT></B>[&lt;yes&gt;]<BR>
+<A NAME="Recurse"></A>
+The RECURSE clause allows folder entries to recursively target all sub-folders. Meaning if you specify a folder and you also want FilWip to delete sub-folders and files too you must specify RECURSE=yes. Leaving it blank specifies that no recursion will take placem, meaning sub-folders (and files within sub-folders) will not be touched (or <A HREF="Preferences.html#LiveMonitoring">monitored</A>) by FilWip. Obviously, this applies only to plugin-items that targets a folder.</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<A NAME="Overview"></A>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;More Info</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE></TD>
+</TR></TABLE>
+<P>
+Plugins as of now are 'delicate' structures in FilWip. The error detection in plugins is very crappy to be frank. So please make sure you write/modify your plugins very, very carefully. Make sure you don't leave extra line-breaks, you don't leave extra spaces. Make sure you don't misspell words. The best way to go about writing a plugin is to copy and paste an existing plugin to a file and edit and modify it carefully.
+</P>
+
+<P>Plugins are not case-sensitive, ie "FOLDER=" is same as "folder=". I wrote them in capitals as it looks much neater and error detection is easier. But remember the paths in BeOS ARE case-sensitive, eg: <I><FONT FACE=Helvetica SIZE=2>/boot/Programs<FONT></I> is not the same as <I><FONT FACE=Helvetica SIZE=2>/boot/programs</FONT></I>. If you don't already know this remember - BeOS path names are case-sensitive.</P>
+
+<P>I'm planning to re-write the plugin parser interface to be more tolerant to user errors. Till then please bear with me...</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0>
+		<TR><TD ALIGN="right"><B><FONT FACE="Humanst777 BT, Swis721 BT, Arial, sans-serif" COLOR=#1968CD SIZE=1>&nbsp;&nbsp;<A HREF="HowToUse.html">How To Use</A> | <A HREF="LegalInfo.html">License</A></FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P ALIGN="center">
+<IMG SRC="images/flower.gif"></P>
+
+</TD>
+</TABLE>
+
+</FONT>
+</BODY>
+</HTML>

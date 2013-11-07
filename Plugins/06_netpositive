@@ -1,0 +1,20 @@
+;; NetPositive plugin
+
+[NetPositive]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/home/config/settings/NetPositive
+
+[Cache]
+FOLDER=/boot/home/config/settings/NetPositive/NetCache
+EXCLUDE FILE=Cookies
+RECURSE=
+
+[Cookies]
+FILE=/boot/home/config/settings/NetPositive/NetCache/Cookies
+EXCLUDE FILE=
+RECURSE=
+
+[History]
+FOLDER=/boot/home/config/settings/History
+EXCLUDE FILE=
+RECURSE=

@@ -1,0 +1,25 @@
+BeOS Clean-Up Manager
+Why was it dropped?
+
+FilWip's predecessor was the BeOS Clean-Up Manager. The development for the BeOS Clean-Up Manager has stopped due to the following drawbacks/defects:
+
+* The threading used in the BeOS Clean-Up Manager caused problems such as variables getting corrupted and threads not properly synchronoised. As a result instead of improving the speed of things using threads, the threading, since defective, started introducing more problems, unpredictability and slowed down the execution. The program no longer quits correctly ALL the time. Sometimes (rarely), it would just not leave the Deskbar's Application List. Sometimes, again very rarely, the report variables like disk space freed, entries cleaned etc. will display infinitely (erroneous) large values etc. I think the "rareness" depends on the CPU load.
+
+* The second problem with the BeOS Clean-Up Manager was the GUI. The tree-view like items were all, sort of, hardcoded and could not be easily expanded to support more and more items. Because I had not implemented the GUI for easy expansion, I could not add more options that were requested like Mozilla's stuff, custom folders for cleaning logs from IRC/Chat/Share clients like Vision, Baxter, BeShare etc. Also if the dialog grew larger in height, it wouldn't fit on 800x600 or 640x480 screen resolutions. So what I needed was a complete GUI recode with scrollbars but with similar flexibility of the current one.
+
+* The third problem was caused by the PathFinder class. Because this class searches for predefined files/folder in the BeOS' folder hierarchy, people who had certain files/folders elsewhere could not use that option in Clean-Up Manager as it would cause an exception everytime.
+
+* The fourth problem was some users wanted an option to display the file sizes and items before actually cleaning-up. This was done using the preview - which caused millions of more threading problems. First, once the preview was done occasional crashes were encountered "Looper must be locked before proceeding" etc. Next, once I added more code protection the preview became too sluggish. The next problem came when the preview was closed half-way which would not always work. Though I could recode Preview fully, I was in a position to recode the rest as well.
+
+These four long-lasting and extremely fundamental problems convinced me to write a new program to do the dirty work especially after hearing lots of encouraging words from BeShare, Bebits talkback and through email that people -really- use Clean-Up Manager on a very regular basis and would like to see certain improvements.
+
+So FilWip was born. With a totally new core and new look. Its quite fast, pretty much stable, and, as you might have seen, is quite customizable and extensible and has improved user interface than Clean-Up Manager (v3.x). And yes like any program, it does have its downside: It creates many threads. So far I haven't seen a problem with synchronising the threads and the speed is quite good. I decided to do it this way (with many threads) as threads in BeOS as much more "light-weight" than the usual Unix thread with many resources being shared across them. Anyway, its worked wonderfully well so far and tests were done on quite a low-end machine: K6-2 450 Mhz, 64 & 128 MB RAM.
+
+FilWip also has (finally!) the statusbar while deleting files! Many people requested this, understandably so. But the problem was with Clean-Up, I didnt know the number of files to delete before the delete operation. But FilWip knows this and implements a statusbar to show the progress. Thus FilWip will be a touch slower than Clean-Up Manager because 1) it counts the files before deleting and 2) updating the statusbar while deleting will take up time. But in speedy systems (say > ~ 500 MHz) it shouldn't really make a difference.
+
+Hope you find FilWip useful, and don't hesitate to write to me regarding FilWip or any of my other programs...
+
+Best regards,
+
+Ram (Somebody)
+<ramshankar@themail.com>

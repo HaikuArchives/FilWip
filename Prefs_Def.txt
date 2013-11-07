@@ -1,0 +1,60 @@
+Planned preferences in FilWip
+
+Report
+Items
+Preview
+Looper
+Remember
+Plugins
+Appearance
+Miscellaneous
+
+Report options	
+	x Show disk space freed (DONE)
+	x Show number of files deleted (DONE)
+	x Show time taken (DONE)
+
+Item options (Auto-checking options)
+	x Check items at startup (DONE)
+	x Check items live (if node monitor is on) (DONE)
+	x Un-check items once cleaned (DONE)
+
+Preview options
+	x Show preview on startup
+	x Node monitor previewed items
+	x Light preview mode (No file sizes, etc. only file names is listed)
+	
+Looper options:
+	x Make all loopers sync to disk (DONE)
+	x SafeCheck  (Disabled - deprecate in next version)
+	x Node Monitor items  (DONE)
+	EraserLooper priority [ 5 to 40 ] (DONE)
+	Port capacity [100 default to n] (DONE) *
+					
+				* 100 sometimes drops messages when
+				duplicating many files thru tracker in node
+				monitoring, 1000 works wonders! so let the user
+				decide this, if he is keen on node monitoring let him
+				use a 1000 port capacity Looper or more, otherwise
+				100 or even 50.
+
+Remember
+	x Treeview state (DONE)
+	xWindow positions (DONE)
+	x Clean-up options (DONE)
+
+Plugin options
+	x Load plugins asynchronously (DONE)
+	x Debug mode (DONE)
+	x Check Install path existence (DONE)
+
+Appearance
+	Background colour [color_slider]
+	Highlight colour of overview stringviews [color_slider]
+	Tree parent foreground colour [color_slider]
+	Tree parent depressed colour [color_slider]
+
+Miscellaneous
+	x Confirm before clean-up (DONE)
+	x Register file types on startup (DONE)
+	x Quit app after clean-up (DONE)

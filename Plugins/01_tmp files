@@ -1,0 +1,10 @@
+;; Temporary files plugin
+
+[Temporary files]
+TYPE=linear
+CHECK INSTALL OF=
+
+[Temporary files]
+FOLDER=/boot/var/tmp
+EXCLUDE FILE=
+RECURSE=yes

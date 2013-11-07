@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD><title>FilWip - Documentation</title></HEAD>
+
+<BODY BGCOLOR=white LINK=#1968BC>
+
+<FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>
+<CENTER><IMG SRC="images/logo.png">
+<BR>&copy; 2003 Ramshankar
+</CENTER>
+
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;User Interface</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE></TD>
+</TR></TABLE>
+
+<P>The graphical user interface of FilWip is designed in such a way it can handle any number of plugins. It has a collapsable/expandable tree-view structures for hierarchical plugins. This makes organising plugins easier. Example, all items of NetPositive can be 'grouped' into one item called NetPositive and the like. FilWip also sports the toolbar found in its predecessor. Below is a screenshot of main window.</P>
+
+<CENTER><IMG SRC="images/mainwindow2.png"></CENTER>
+
+<P>The main window consists of the toolbar, the various options (checkboxes), the clean-up button and the presets menu. When you fire up FilWip you will get a similar window. Some plugins may not be shown to you. For example, if you don't have <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Opera</FONT></I> browser installed then the <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Opera</FONT></I> plugin will not load. This is due to the "<A HREF="Plugins.html#CheckInstall">Check Install</A>" behaviour of that <A HREF="Plugins.html">Plugin</A>. You can disable this behaviour (meaning all plugins will load regardless of what is installed in your system) <A HREF="Preferences.html#CheckInstall">here</A>.</P>
+
+<P>The various components of the main window, how they work are explained below...</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<A NAME="Toolbar"></A>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;The Toolbar</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE></TD>
+</TR></TABLE>
+
+<P>
+<TABLE WIDTH=100% BORDER=0 CELLPADDING=2 CELLSPACING=0>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/help_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Help - Opens this documentation in your browser</TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/about_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>About - Shows copyright, license and developer information</TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/save_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Save Preset - Save the current options to a <A HREF="Presets.html">Preset</A> file</TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/prefs_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Preferenecs - Edit FilWip's <A HREf="Preferences.html">preferences</A></TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/preview_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Preview - (Currently un-implemented)</TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/selectall_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Select All - Selects all the options</TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/deselectall_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Deselect All - Un-checks all the options</TD></TR>
+<TR><TD WIDTH=50 ALIGN=middle VALIGN=middle><IMG SRC="images/smartselect_toolbar.png"></TD><TD><FONT FACE="Verdana,Arial,Helvetica,sans-serif" SIZE=2>Select as needed - only those options that have files to clean will be selected</TD></TR>
+
+</TABLE>
+</P>
+
+<P>The toolbar is quite straightforward and doesn't need much explaination. Just click them and stay happy :)</P>
+
+<P>If you forget what toolbar button does what you can let the mouse hover over the button and you will get a small tip identifying the button. The tip also shows you any keyboard shortcut, if any, for example the <B><FONT FACE=Helvetica COLOR=#550088>Save Preset</FONT></B> button has the <U><B><FONT FACE=Helvetica>Cmd</FONT></B></U> + <U><B><FONT FACE=Helvetica>S</FONT></B></U> shortcut.</P>
+
+<P>The "Default" preset shown in the main window is actually FilWip's settings file displayed under that name. If you load other presets and you want to revert back to the old settings file (before you close FilWip) you can choose the Default preset. You can have other presets with the name Default, but the settings file preset will always be the first in the list so you can distinguish it from other presets named Default (if any).</P>
+
+<P>You can read more about Presets <A HREF="Presets.html">here</A>.</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<A NAME="Overview"></A>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Overview Information</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE></TD>
+</TR></TABLE>
+
+<P>The overview concept is a new feature in FilWip. As you would have seen in the main window each item shows information about what is there to be cleaned up. This is called overview, you simply get to see the number of files, total size of the files that you will recover when you delete them.</P>
+
+<TABLE CELLSPACING=10>
+<TR><TD VALIGN=top><IMG SRC="images/infoviewstring.png"></TD>
+<TD><FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>Each of these information labels are called <B><FONT FACE=Helvetica COLOR=#550088>Infostrings</FONT></B> or <B><FONT FACE=Helvetica COLOR=#550088>Overview info</FONT></B>. They can update "live" when changes occurs to files it monitors. Example, if Bash History file is removed FilWip will update itself (assuming you have not deleted the Bash History plugin). This is of course, if you have enabled <A HREF="Preferences.html#LiveMonitoring">Live monitoring</A> in <A HREF="Preferences.html">Preferences</A>.
+</TD>
+</TR>
+</TABLE>
+<P>Notice how the <B><FONT FACE=Helvetica COLOR=#550088>Infostrings</FONT></B>'s displays "items" and not "files" or "folders". This is because when monitoring <A HREF="Plugins.html#Recurse">recursive plugins</A> FilWip monitors both files and sub-folders. Thus it will not differentiate between files and folders and will simply tell them as items. The Report that you see after a clean-up will show the full details such as number of files, folders size etc. For non-recursive plugins, "n items" can be taken as "n files" as no sub-folders are monitored.</P>
+
+<P>An advantage of having this monitoring is that you can double-click them to open the folder (through <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Tracker</FONT></I>) they are monitoring and see a more detailed view of what files will be removed. If the item happens to be a single file, the parent folder will be opened.</P>
+
+<P>Also please note that the <B><FONT FACE=Helvetica COLOR=#550088>Select as needed</FONT></B> option (described above in the toolbar) works on the values of these <B><FONT FACE=Helvetica COLOR=#550088>Infostrings</FONT></B>. Thus if you have Live monitoring turned off, Smart checking will not be shown for use.</P>
+
+<P>You can read more about Plugins <A HREF="Plugins.html">here</A>.</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0>
+		<TR><TD ALIGN="right"><B><FONT FACE="Humanst777 BT, Swis721 BT, Arial, sans-serif" COLOR=#1968CD SIZE=1>&nbsp;&nbsp;<A HREF="Presets.html">Presets</A> | <A HREF="Preferences.html">Preferences</A> | <A HREF="HowToUse.html">How To Use</A></FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P ALIGN="center">
+<IMG SRC="images/flower.gif"></P>
+
+</TD>
+</TABLE>
+
+</FONT>
+</BODY>
+</HTML>

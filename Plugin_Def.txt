@@ -1,0 +1,59 @@
+FilWip Plugin Format Definition
+:: Sample ::
+
+;; Sample plugin
+[Trash]
+TYPE=linear
+CHECK INSTALL OF=
+
+[Trashed items]
+FOLDER=/boot/home/Desktop/Trash
+EXLCUDE FILE=
+
+
+:: Key ::
+
+TYPE			(Required)		The type of plugin, whether linear or hierarchial
+CHECK INS..	(Optional)		This path must exist, or else the plugin will not be loaded
+FOLDER		(N/A)		The location to delete. Either FILE=<a file> or FOLDER=<dir>
+EXCLUDE FIL..	(N/A)		File name to exclude. Or INCLUDE MIME=<mime to delete>
+;;			(N/A)		Plain old comments
+[Trash]		(Required)		Plugin name used in Prefs, not shown otherwise
+[Trashed items]	(Required)		A description. Shown in the checkboxes/treeview (if hierarchial).
+
+
+:: Info ::
+
+1. TYPE
+	This must be either linear or hierarchial. Linear items are those that don't have any
+	sub-items. Hierarchial is used to club several linear items into one category like NetPositive
+	is a hierarchial item and has linear items such as Cookies, Cache, History etc.
+
+2.  CHECK INSTALL OF
+	This optional clause allows you to specify that if a certain file/folder (path to be precise)
+	does not exist the plugin must not be used. For example if Opera isn't installed in the system,
+	you can check the Settings folder of Opera here, if it isn't there Opera plugin will not load.
+
+3. FOLDER | FILE
+	Either FOLDER or FILE clause allows you to specify which folder / file to erase. When
+	FOLDER is specified means all files within the folder and sub-folders will be in scope for
+	deletion. Files inside sub-folders will be removed but not sub-folders itself.
+
+4. EXCLUDE FILE | INCLUDE MIME
+	EXCLUDE FILE is useful when you have specified a FOLDER path and you want to exclude
+	a particular file inside that folder (as of now only exact name matching is done). For example,
+	if you don't want the file named "hello.txt" NOT to be deleted in the FOLDER specified you
+	can put hello.txt in the EXCLUDE FILE clause as EXCLUDE FILE=hello.txt. The file name you
+	specify here is case-sensitive.
+
+	INCLUDE MIME clause is similar to EXCLUDE FILE except you can check the mime-type of
+	files before deleting. Only mime-types that are specified will be deleted (not left out).
+	For example the Custom queries plugin will only include "application/x-vnd.Be-query" files
+	to delete. Other files in the directory will be left untouched... Not this is INCLUDE and not
+	EXCLUDE.
+
+5. SECTION NAMES "[" and "]"
+	The "[" (square bracket) indicates a section begin, or in other words either a linear or
+	hierarchial item begins. "]" marks the end of the name. Keep your section names small,
+	not too large as very large strings may not fit fully in the user interface of FilWip.
+

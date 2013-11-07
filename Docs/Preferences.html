@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD><title>FilWip - Documentation</title></HEAD>
+
+<BODY BGCOLOR=white LINK=#1968BC>
+
+<FONT FACE="Verdana, Arial, Helvetica, sans-serif" SIZE=2>
+<CENTER><IMG SRC="images/logo.png">
+<BR>&copy; 2003 Ramshankar
+</CENTER>
+
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Preferences</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>FilWip is a tweakable utility. It has several options that I hope will make it flexible enough to suit all users. If you have any other options you would like to add, e-mail me about it. FilWip splits the set of options into several categories so it is easier to find the option you are looking for. They are clubbed into categories like "Report", "Plugins" etc. Here is a screenshot of the Preferences window:</P>
+
+<CENTER><IMG SRC="images/prefs1.png"></CENTER>
+
+<P>Each option of each category is explained below in detail.</P>
+
+
+<A NAME="Report"></A>
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Report</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>This category has report related options, ie you can set what you want to see after a clean-up operation is complete. If you turn OFF all these options, the report won't be shown to you after cleaning up.</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Disk space freed</FONT></B><BR>
+Default: ON<BR>
+Toggle showing the storage space you recovered after a clean-up.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Number of files, folders deleted</FONT></B><BR>
+Default: ON<BR>
+Toggle showing the number of files and folders that were deleted in a clean-up.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Time taken to clean-up</FONT></B><BR>
+Default: ON<BR>
+Toggle showing the time taken to complete the clean-up operation.
+</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Items</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+<A NAME="Items"></A>
+
+<P>This category has options that pertain to each plugin-item.</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Check items at startup</FONT></B><BR>
+Default: OFF<BR>
+When FilWip starts if this option is set, if an item has something to clean it is selected, otherwise it is deselected. This will happen only once at startup.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Check items live (if monitoring)</FONT></B><BR>
+Default: OFF<BR>
+When this option is set, and if <A HREF="#LiveMonitoring">Live monitoring</A> option is also set, as and when some files are there to be cleaned the option will be selected/deselected accordingly.<BR><BR>Warning!!! This option can be dangerous if you want to delete only some selected items. Unless you always clean all the plugin-items, setting this option is not recommended.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Uncheck items after clean-up</FONT></B><BR>
+Default: OFF<BR>
+When this option is set, after a clean-up operation all the plugin-items are deselected (and if you close FilWip it will save all items as deselected).</P>
+
+<BR>
+<A NAME="Loopers"></A>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Loopers</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>Loopers are program elements (threads) that maintain a list of files for each plugin-item. Each plugin-item spawns a new looper. Loopers are responsible for monitoring files, folders, preparing the list of files of to delete. The "Eraser" looper is a special looper that does just the deletion. There is only one eraser looper. All other loopers are specific to each plugin-item. FilWip offers some options to fine-tune the loopers to suit your needs.</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Make loopers "sync" to disk</FONT></B><BR>
+Default: OFF<BR>
+When this option is set, after a clean-up operation the loopers will run a "sync" command to commit all changed blocks to disk. This is not required anymore as FilWip uses a high level delete which doesn't need sync to be executed. In case your BeOS volumes do not update their sizes (free space or used space) after a clean-up keep this option ON and it should be fixed.</P>
+
+<A NAME="SafeCheck"></A>
+<P><B><FONT FACE=Helvetica COLOR=#550088>SafeCheck</FONT></B><BR>
+Default: ON (disabled)<BR>
+This option ensures your plugins never delete files or folders critical to the system. This includes home folder, beos folder (and things inside beos folder) and the like. Warning: There are still some files critical to the system that plugins can delete like things inside settings folder in home etc. these aren't checked. Only the following paths are checked:</P>
+
+<P><PRE>	/
+	/boot
+	/boot/home
+	/boot/home/config
+	/boot/home/config/settings
+	/boot/home/Desktop
+	/boot/beos (full protection)</PRE>
+</P>
+
+<P>This option has not been made available to change. It will always stay ON.</P>
+
+<A NAME="LiveMonitoring"><P><B><FONT FACE=Helvetica COLOR=#550088>Live Monitoring</FONT></B><BR></A>
+Default: ON<BR>
+Keeping this option ON will mean all files/folders targetted by plugin-items will be monitored for any changes. For example, when you have FilWip open and some background app creates/deletes some temporary files they will show up from FilWip live - as and when they change. This will help you keep track of what is where.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Eraser priority</FONT></B><BR>
+Default: n/a<BR>
+Eraser priority is the priority you want to give the eraser looper. A higher priority will mean quicker clean-ups but not all the time. It can also mean interrupting more critical tasks like audio playing which "really" requires high priority. A priority of "Normal [10]" is ideal, but you can change it as needed. But remember, having a higher priority doesn't always guarantee faster clean ups.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Port capacity</FONT></B><BR>
+Default: n/a<BR>
+An important setting. This setting will determine how capable are loopers to handle massive file changes. A large port capacity will mean when many files change at once the notification queue for each looper won't get full easily. I don't want to get too technical but remember a higher port capacity ensures file changes are "caught" properly. A lower capacity might "drop" some changes. This can lead to outdated information displayed to you.</P>
+
+<P>If you have <B><FONT FACE=Helvetica COLOR=#550088>Live Monitoring</FONT></B> turned ON and you want to monitor files accurately, I suggest a port capacity of atleast 1000. Higher the better, but more memory will be used (but might not make much of a difference in high-end systems).</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Remember</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>These options will be remembered and restored when FilWip starts.</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Tree state</FONT></B><BR>
+Default: ON<BR>
+When this option is set, the tree-view structure is preserved (hierarchial plugins expanded or collapsed state) accross app restarts.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Window position and sizes</FONT></B><BR>
+Default: ON<BR>
+When this option is set, the position and (if appropriate) size of windows in FilWip are remembered and restored. This way you need not adjust the position/size of windows everytime you run FilWip.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Clean-up items (changeable by Item options)</FONT></B><BR>
+Default: ON<BR>
+When this option is set, the plugin-item values (selected or deselected) is saved on quitting FilWip and restored on startup. After starting-up with these option they can be changed by the options set in <A HREF="#Items">Items</A> category.
+</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Plugins</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>This category allows you to adjust various settings when plugins are loaded. Because plugins are loaded while starting up, any changes to these option will take effect ONLY after you close and open FilWip again i.e. after restart the app. Remember this point. So don't change some critical option here and think that it has been applied immediately.</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Load plugins asynchronously</FONT></B><BR>
+Default: OFF<BR>
+When this option is set, FilWip is first launched. After the window is responsive plugins load one by one. Thus on slow systems it will show the window quickly <U><FONT SIZE=2>then</FONT></U> do the loading which may take some time. When this option is not set, all plugins are fully loaded and only then is the window shown to you. On fast systems (~ > 500 Mhz) you can keep this setting off.
+</P>
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Debug mode</FONT></B><BR>
+Default: OFF<BR>
+When this option is set, FilWip gives you details of how each plugin loads, one by one. For each plugin being loaded you get a window with the details and the validity of each item. This maybe useful to find out any faulty plugin. Otherwise if a plugin is faulty, FilWip will simply give an error and quit. This way you can find out exactly which plugin(s) cause problems to FilWip.</P>
+
+<P>By default it is OFF meaning all plugins are correct. Before you add/edit plugins run FilWip and set this ON. Once you get it to work you can turn it back OFF again.</P>
+
+<P><A NAME="CheckInstall"><B><FONT FACE=Helvetica COLOR=#550088>Check install path existence</FONT></B><BR></A>
+Default: ON<BR>
+When this option is set, the CHECK INSTALL OF for plugins that specify one are verified before loading that plugin.</P>
+
+<P>For instance, the <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Opera</FONT></I> plugin has a CHECK INSTALL OF value as <I><FONT FACE=Helvetica SIZE=2>/boot/home/config/settings/Opera</FONT></I>. The existance of this path is verified before loading the plugin. Thus if you don't have <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Opera</FONT></I> installed you will not have the aforementioned path, thus the plugin will not be loaded.
+</P>
+
+<P><A NAME="Recurse"><B><FONT FACE=Helvetica COLOR=#550088>Allow recursion into sub-directories</FONT></B><BR></A>
+Default: ON<BR>
+When this option is set, plugins (that specify recursion) are allowed to recurse into sub-directories. For example, the Trash plugin wants recursion, so that everything inside Trash is deleted even sub-folders and its contents. But, you can control that setting universally across plugins from here.
+</P>
+
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=3 CELLSPACING=0>
+		<TR><TD ALIGN="left"><B><FONT FACE="Verdana, Arial, Helvetica, sans-serif" COLOR=#1968CD SIZE=3>&nbsp;&nbsp;Miscellaneous</FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P>Other miscellaneous options are available here.</P>
+
+<P><A NAME="Confirm"><B><FONT FACE=Helvetica COLOR=#550088>Confirm before clean-up</FONT></B><BR></A>
+Default: ON<BR>
+When this option is set, you are asked to confirmation after you choose to clean-up.</P>
+
+
+<P><B><FONT FACE=Helvetica COLOR=#550088>Register file-types are startup</FONT></B><BR>
+Default: OFF<BR>
+Sometimes when Preset files aren't recognized by your system you may need to run FilWip, turn this option ON and re-run FilWip to register the Preset file type. By default it is OFF. Once you have registered the Preset file-type you can keep this option OFF.
+</P>
+
+
+<P><A NAME="QuitApp"><B><FONT FACE=Helvetica COLOR=#550088>Quit after clean-up</FONT></B><BR></A>
+Default: OFF<BR>
+When this option is set, after a clean-up operation, FilWip will quit itself.</P>
+
+<BR>
+<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR=black WIDTH=100%>
+<TR><TD ALIGN="left">
+	<TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=1 BORDER=0>
+	<TR><TD BGCOLOR=#F0F8FF>
+		<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0>
+		<TR><TD ALIGN="right"><B><FONT FACE="Humanst777 BT, Swis721 BT, Arial, sans-serif" COLOR=#1968CD SIZE=1>&nbsp;&nbsp;<A HREF="Interface.html">Interface</A> | <A HREF="Plugins.html">Plugins</A> | <A HREF="Presets.html">Presets</A> | <A HREF="Terminal.html">The Terminal Side</A></FONT></B></TD>
+		<TD ALIGN="right"></TD></TR>
+		</TABLE>
+	</TD></TR>
+	</TABLE>
+</TD></TR>
+</TABLE>
+
+<P ALIGN="center">
+<IMG SRC="images/flower.gif"></P>
+
+</TD>
+</TABLE>
+
+</FONT>
+</BODY>
+</HTML>

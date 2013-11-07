@@ -1,0 +1,10 @@
+;; System log plugin
+
+[System log]
+TYPE=linear
+CHECK INSTALL OF=/boot/var/log
+
+[System log]
+FILE=/boot/var/log/syslog
+INCLUDE MIME=
+RECURSE=
