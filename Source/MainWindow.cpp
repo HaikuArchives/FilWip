@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #include <Roster.h>
@@ -48,7 +50,7 @@
 #include <Beep.h>
 
 #include <ctype.h>
-#include <iostream.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -57,15 +59,16 @@
 #include "ImageButton.h"
 #include "ItemsView.h"
 #include "Preferences.h"
-#include "BubbleHelper.h"
 #include "TreeView.h"
 #include "FileLooper.h"
 #include "PluginParser.h"
 #include "InfoStrView.h"
 #include "BevelView.h"
 #include "FilWip.h"
-#include "BubbleHelper.h"
+#include "BubbleHelp/BubbleHelper.h"
 #include "EraserLooper.h"
+
+using namespace std;
 
 class MainWindow *pWnd;
 

@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #ifndef _PREFS_WINDOW_H
@@ -45,7 +47,9 @@
 
 class BListView;
 class BButton;
+class BCheckBox;
 class BList;
+class BRect;
 class BStringView;
 class BPopUpMenu;
 class BMenuField;

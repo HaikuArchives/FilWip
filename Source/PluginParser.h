@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #ifndef _PLUGIN_PARSER_H
@@ -32,7 +34,7 @@
 #include <String.h>
 #include <List.h>
 
-#include <fstream.h>
+#include <fstream>
 #include <string.h>
 
 #define PLUGIN_NAME_DEF					"name"

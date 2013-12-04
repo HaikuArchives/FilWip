@@ -12,17 +12,24 @@
  * Minor extensions by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #ifndef _NODE_LIMIT_H
 #define _NODE_LIMIT_H
 
-#include <SupportDefs.h>
-#include <StorageDefs.h>
-#include <Messenger.h>
-#include <NodeMonitor.h>
+#include <BeBuild.h>
 #include <Entry.h>
 #include <Locker.h>
+#include <Messenger.h>
+#include <NodeMonitor.h>
+#include <SupportDefs.h>
+#include <StorageDefs.h>
+
+#ifndef _IMPEXP_ROOT
+#define _IMPEXP_ROOT
+#endif
 
 /* We need this internal call in order to break the node limit */
 #ifdef __cplusplus

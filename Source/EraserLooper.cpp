@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #include <Debug.h>
@@ -37,7 +39,7 @@
 #include <Application.h>
 
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "Constants.h"
 #include "EraserLooper.h"
@@ -186,8 +188,8 @@ void EraserLooper::EraseList (bool guiMode)
 	}
 	else
 	{
-		cout << reportStr.String() << endl;
-		cout.flush ();
+		std::cout << reportStr.String() << std::endl;
+		std::cout.flush ();
 	}
 	isRunning = false;
 	
