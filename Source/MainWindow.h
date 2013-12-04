@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #ifndef _MAIN_WINDOW_H
@@ -32,13 +34,18 @@
 #include <Bitmap.h>
 #include <Directory.h>
 
-class EraserLooper;
-class PluginContainerItem;
-class ImageButton;
-class BevelView;
-class ItemsView;
+class BBox;
+class BMenuField;
+class BPopUpMenu;
+class BStatusBar;
+class BTextView;
 
+class BevelView;
 class BubbleHelper;
+class EraserLooper;
+class ImageButton;
+class ItemsView;
+class PluginContainerItem;
 
 extern class MainWindow *pWnd;
 

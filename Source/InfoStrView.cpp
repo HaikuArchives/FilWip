@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #include <Window.h>
@@ -31,7 +33,7 @@
 #include <Messenger.h>
 #include <Path.h>
 
-#include <string.h>
+#include <string>
 
 #include "InfoStrView.h"
 

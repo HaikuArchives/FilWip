@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 /*
@@ -35,6 +37,8 @@
 #include <Debug.h> //temp
 
 #include "PluginParser.h"
+
+using namespace std;
 
 /*============================================================================================================*/
 

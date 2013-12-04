@@ -23,6 +23,8 @@
  * Original code by:
  * Ramshankar
  *
+ * Modified by:
+ * :Puck Meerburg
  */
 
 #include <Debug.h>
@@ -36,7 +38,7 @@
 #include <Messenger.h>
 #include <NodeInfo.h>
 
-#include <iostream.h>
+#include <iostream>
 
 #include "FileLooper.h"
 #include "FilWip.h"
