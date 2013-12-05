@@ -1,6 +1,6 @@
-;; NetPositive plugin
+;; WebPositive plugin
 
-[NetPositive]
+[WebPositive]
 TYPE=hierarchical
 CHECK INSTALL OF=/boot/home/config/settings/WebPositive
 
