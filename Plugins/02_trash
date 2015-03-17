@@ -5,6 +5,6 @@ TYPE=linear
 CHECK INSTALL OF=
 
 [Trashed items]
-FOLDER=/boot/home/Desktop/Trash
+FOLDER=/boot/trash
 EXCLUDE FILE=
 RECURSE=yes
