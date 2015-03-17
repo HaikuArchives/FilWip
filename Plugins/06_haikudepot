@@ -1,0 +1,10 @@
+;; HaikuDepot cache plugin
+
+[HaikuDepot cache]
+TYPE=linear
+CHECK INSTALL OF=
+
+[HaikuDepot cache]
+FOLDER=/boot/home/config/cache/HaikuDepot
+EXCLUDE FILE=
+RECURSE=
