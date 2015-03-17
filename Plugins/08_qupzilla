@@ -1,0 +1,25 @@
+;; QupZilla plugin
+
+[QupZilla]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/home/config/settings/Qt/.qupzilla
+
+[Cache]
+FOLDER=/boot/home/config/settings/Qt/.qupzilla/profiles/default/networkcache
+EXCLUDE FILE=
+RECURSE=yes
+
+[Cookies]
+FILE=/boot/home/config/settings/Qt/.qupzilla/profiles/default/cookies.dat
+EXCLUDE FILE=
+RECURSE=
+
+[History]
+FILE=/boot/home/config/settings/Qt/.qupzilla/profiles/default/browsedata.db
+EXCLUDE FILE=
+RECURSE=
+
+[LocalStorage]
+FOLDER=/boot/home/config/settings/Qt/.qupzilla/profiles/default/LocalStorage
+EXCLUDE FILE=
+RECURSE=yes
