@@ -25,6 +25,7 @@
  *
  * Modified by:
  * :Puck Meerburg
+ * Humdinger
  */
 
 #include <Roster.h>
@@ -48,6 +49,7 @@
 #include <Debug.h>
 #include <StatusBar.h>
 #include <Beep.h>
+#include <FindDirectory.h>
 
 #include <ctype.h>
 #include <iostream>
@@ -89,15 +91,28 @@ MainWindow::MainWindow ()
 	allowRecurse = prefs.FindBoolDef ("pv_recurse", true);
 
 	/* Initialize BDirectory for Presets & Docs (if found) */
+	BPath presetsPath;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &presetsPath) != B_OK)
+		return;
+
+	presetsFolder = BDirectory(presetsPath.Path());
+	presetsPath.Append("FilWip");
+
+	if (!presetsFolder.Contains(presetsPath.Path()))
+		presetsFolder.CreateDirectory(presetsPath.Path(), NULL);
+
+	presetsPath.Append("Presets");
+
+	if (!presetsFolder.Contains(presetsPath.Path()))
+		presetsFolder.CreateDirectory(presetsPath.Path(), NULL);
+
+	presetsFolder.SetTo(presetsPath.Path());
+
 	app_info appInfo;
 	be_app->GetAppInfo (&appInfo);
 	
 	BEntry appEntry (&appInfo.ref);
 	appEntry.GetParent (&appEntry);
-	
-	BPath presetsPath (&appEntry);
-	if (presetsPath.Append ("Presets/") == B_OK)
-		presetsFolder.SetTo (presetsPath.Path());
 
 	BPath docsPath (&appEntry);
 	if (docsPath.Append ("Docs/") == B_OK)
@@ -298,12 +313,12 @@ MainWindow::MainWindow ()
 	toolTip = new BubbleHelper();
 	toolTip->SetHelp (helpButton, "Help (F1)");
 	toolTip->SetHelp (aboutButton, "About");
-	toolTip->SetHelp (saveButton, "Save Preset (Cmd S)");
+	toolTip->SetHelp (saveButton, "Save preset (ALT S)");
 	toolTip->SetHelp (optionsButton, "Preferences");
-	toolTip->SetHelp (previewButton, "Preview (Cmd P)");
-	toolTip->SetHelp (selectAllButton, "Select All (Cmd A)");
-	toolTip->SetHelp (deselectAllButton, "Deselect All (Cmd D)");
-	toolTip->SetHelp (smartSelectButton, "Select As Needed (Cmd M)");
+	toolTip->SetHelp (previewButton, "Preview (ALT P)");
+	toolTip->SetHelp (selectAllButton, "Select all (ALT A)");
+	toolTip->SetHelp (deselectAllButton, "Deselect all (ALT D)");
+	toolTip->SetHelp (smartSelectButton, "Select as needed (ALT M)");
 	toolTip->SetHelp (presetField, "Load preset options");
 	toolTip->SetHelp (cleanUp, "Begin the erasing process");
 

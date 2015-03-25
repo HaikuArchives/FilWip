@@ -25,8 +25,10 @@
  *
  * Modified by:
  * :Puck Meerburg
+ * Humdinger
  */
 
+#include <ControlLook.h>
 #include <View.h>
 #include <Region.h>
 
@@ -72,30 +74,34 @@ PrefsListItem::~PrefsListItem()
 
 void PrefsListItem::DrawItem (BView *owner, BRect frame, bool complete)
 {
-	if (IsSelected() || complete)
-	{
-		rgb_color color;
-		color = IsSelected() ? selBackColor : owner->ViewColor();
-		owner->SetHighColor (color);
-		owner->FillRect (frame);
-		owner->SetLowColor (color);
-	}
-	else
-		owner->SetLowColor (owner->ViewColor());
-	
-	owner->MovePenTo (frame.left + 5, frame.bottom - 4);
+	bool isSelected = IsSelected();
 
-	if (IsEnabled())
-	{
-		if (IsSelected())
-			owner->SetHighColor (selTextColor);
+	if (isSelected || complete) {
+		rgb_color color;
+		if (isSelected)
+			color = ui_color(B_LIST_SELECTED_BACKGROUND_COLOR);
 		else
-			owner->SetHighColor (0,0,0,255);
+			color = owner->ViewColor();
+
+		owner->SetHighColor(color);
+		owner->SetLowColor(color);
+		owner->FillRect(frame);
 	}
+
+	if (isSelected)
+		owner->SetHighColor(ui_color(B_LIST_SELECTED_ITEM_TEXT_COLOR));
 	else
-		owner->SetHighColor (182,182,182,255);
-	
-	owner->DrawString (label);
+		owner->SetHighColor(ui_color(B_LIST_ITEM_TEXT_COLOR));
+
+	font_height fheight;
+	owner->GetFontHeight(&fheight);
+
+	owner->DrawString(label,
+		BPoint(frame.left + be_control_look->DefaultLabelSpacing(),
+			frame.top + fheight.ascent + floorf(fheight.leading / 2)));
+
+	owner->SetHighColor(ui_color(B_LIST_ITEM_TEXT_COLOR));
+	owner->SetLowColor(owner->ViewColor());
 }
 
 /*============================================================================================================*/

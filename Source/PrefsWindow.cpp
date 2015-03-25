@@ -121,9 +121,9 @@ PrefsWindow::PrefsWindow()
 	font_height fntHt;
 	be_plain_font->GetHeight (&fntHt);
 	
-	float height = fntHt.ascent + fntHt.descent + 4;
-	for (int32 i = 0; i < optionsListView->CountItems(); i++)
-		optionsListView->ItemAt(i)->SetHeight (height);
+//	float height = fntHt.ascent + fntHt.descent + 4;
+//	for (int32 i = 0; i < optionsListView->CountItems(); i++)
+//		optionsListView->ItemAt(i)->SetHeight (height);
 
 	optionsListView->Select (0L, false);
 
