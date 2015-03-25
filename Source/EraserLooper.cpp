@@ -232,13 +232,13 @@ BString EraserLooper::GetByteSizeString (int64 v) const
 		optimized by the (GCC) compiler  */
 	char buf[256];
 	if (v > (1024LL * 1024LL * 1024LL * 1024LL))
-		sprintf (buf, "%.2f TB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
+		sprintf (buf, "%.2f TiB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
 	else if (v > (1024LL * 1024LL * 1024LL))
-		sprintf(buf, "%.2f GB", ((double)v)/(1024LL * 1024LL * 1024LL));
+		sprintf(buf, "%.2f GiB", ((double)v)/(1024LL * 1024LL * 1024LL));
 	else if (v > (1024LL * 1024LL))
-		sprintf(buf, "%.2f MB", ((double)v) / (1024LL * 1024LL));
+		sprintf(buf, "%.2f MiB", ((double)v) / (1024LL * 1024LL));
 	else if (v > (1024LL))
-		sprintf(buf, "%.2f KB", ((double)v) / 1024LL);
+		sprintf(buf, "%.2f KiB", ((double)v) / 1024LL);
 	else
 		sprintf(buf, "%Li bytes", v);
 	

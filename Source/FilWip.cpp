@@ -218,8 +218,8 @@ void FilWip::RegisterMimeType ()
 	smallIcon->SetBits (kSmallIconBits, 16 * 16, 0, kSmallIconColorSpace);
 
 	/* Set file type details  & its icon from "DataBits.h" */
-	fileType.SetShortDescription ("FilWip Preset");
-	fileType.SetLongDescription ("FilWip Preset");
+	fileType.SetShortDescription ("FilWip preset");
+	fileType.SetLongDescription ("FilWip preset");
 	fileType.SetPreferredApp (AppSignature, B_OPEN);
 	fileType.SetIcon (largeIcon, B_LARGE_ICON);
 	fileType.SetIcon (smallIcon, B_MINI_ICON);

@@ -677,7 +677,7 @@ void MainWindow::Quit ()
 			suspend_thread (eraserLooper->Thread());
 			int32 warning;
 			warning = (new BAlert ("Warning", "Clean-up process is in progress, force it to stop?",
-						"Don't Force", "Force", NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_WARNING_ALERT))->Go();
+						"Don't force", "Force", NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_WARNING_ALERT))->Go();
 			
 			if (warning == 1)
 				eraserLooper->stopErasing = true;
@@ -1266,7 +1266,7 @@ void MainWindow::TellUserNoOptions ()
 	static BString warning[] =
 	{
 		"Select one or more options for the clean-up process",
-		"I said... Select atleast one checkbox before the clean-up process",
+		"I said... Select at least one checkbox before the clean-up process",
 		"Look... For the last time!\n\nSELECT SOME OPTION!!",
 		"That's it! I've had enough!"
 	};
@@ -1274,8 +1274,8 @@ void MainWindow::TellUserNoOptions ()
 	BAlert *cantAlert;
 	if (isModeGUI == true)
 	{
-		cantAlert = new BAlert ("Can't Clean-Up", warning[nWarns].String(),
-						"Okay", NULL, NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING,
+		cantAlert = new BAlert ("Can't clean-Up", warning[nWarns].String(),
+						"OK", NULL, NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING,
 						B_STOP_ALERT);
 		cantAlert->Go();
 	}
@@ -1355,13 +1355,13 @@ BString MainWindow::GetByteSizeString (int64 v) const
 	/* Hacked from BeShare with minor changes -- many thanks to Jeremy Freisner */
 	char buf[256];
 	if (v > (1024LL * 1024LL * 1024LL * 1024LL))
-		sprintf (buf, "%.2f TB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
+		sprintf (buf, "%.2f TiB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
 	else if (v > (1024LL * 1024LL * 1024LL))
-		sprintf(buf, "%.2f GB", ((double)v)/(1024LL * 1024LL * 1024LL));
+		sprintf(buf, "%.2f GiB", ((double)v)/(1024LL * 1024LL * 1024LL));
 	else if (v > (1024LL * 1024LL))
-		sprintf(buf, "%.2f MB", ((double)v) / (1024LL * 1024LL));
+		sprintf(buf, "%.2f MiB", ((double)v) / (1024LL * 1024LL));
 	else if (v > (1024LL))
-		sprintf(buf, "%.2f KB", ((double)v) / 1024LL);
+		sprintf(buf, "%.2f KiB", ((double)v) / 1024LL);
 	else
 		sprintf(buf, "%Li bytes", v);
 	
@@ -1773,7 +1773,7 @@ bool MainWindow::ConfirmCleanUp () const
 	/* Setup the confirm pop-up box */
 	confirm = new BAlert ("Confirmation", "Warning\n\nThis clean-up process is irreversible!"
 							" Once the data has been removed it cannot be recovered.\n\n"
-							"Do you wish to begin the clean-up process?\n", "No","Yes",
+							"Do you wish to begin the clean-up process?\n", "Cancel","Clean-up",
 							NULL, B_WIDTH_AS_USUAL, B_WARNING_ALERT);
 	confirm->SetShortcut (0, B_ESCAPE);
 	
