@@ -313,12 +313,12 @@ MainWindow::MainWindow ()
 	toolTip = new BubbleHelper();
 	toolTip->SetHelp (helpButton, "Help (F1)");
 	toolTip->SetHelp (aboutButton, "About");
-	toolTip->SetHelp (saveButton, "Save preset (ALT S)");
+	toolTip->SetHelp (saveButton, "Save preset (Alt-S)");
 	toolTip->SetHelp (optionsButton, "Preferences");
-	toolTip->SetHelp (previewButton, "Preview (ALT P)");
-	toolTip->SetHelp (selectAllButton, "Select all (ALT A)");
-	toolTip->SetHelp (deselectAllButton, "Deselect all (ALT D)");
-	toolTip->SetHelp (smartSelectButton, "Select as needed (ALT M)");
+	toolTip->SetHelp (previewButton, "Preview (Alt-P)");
+	toolTip->SetHelp (selectAllButton, "Select all (Alt-A)");
+	toolTip->SetHelp (deselectAllButton, "Deselect all (Alt-D)");
+	toolTip->SetHelp (smartSelectButton, "Select as needed (Alt-M)");
 	toolTip->SetHelp (presetField, "Load preset options");
 	toolTip->SetHelp (cleanUp, "Begin the erasing process");
 
@@ -1370,13 +1370,13 @@ BString MainWindow::GetByteSizeString (int64 v) const
 	/* Hacked from BeShare with minor changes -- many thanks to Jeremy Freisner */
 	char buf[256];
 	if (v > (1024LL * 1024LL * 1024LL * 1024LL))
-		sprintf (buf, "%.2f TiB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
+		sprintf (buf, "%.2f TB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
 	else if (v > (1024LL * 1024LL * 1024LL))
-		sprintf(buf, "%.2f GiB", ((double)v)/(1024LL * 1024LL * 1024LL));
+		sprintf(buf, "%.2f GB", ((double)v)/(1024LL * 1024LL * 1024LL));
 	else if (v > (1024LL * 1024LL))
-		sprintf(buf, "%.2f MiB", ((double)v) / (1024LL * 1024LL));
+		sprintf(buf, "%.2f MB", ((double)v) / (1024LL * 1024LL));
 	else if (v > (1024LL))
-		sprintf(buf, "%.2f KiB", ((double)v) / 1024LL);
+		sprintf(buf, "%.2f KB", ((double)v) / 1024LL);
 	else
 		sprintf(buf, "%Li bytes", v);
 	
