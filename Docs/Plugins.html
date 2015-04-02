@@ -24,31 +24,36 @@
 
 <P>What makes FilWip a versatile and flexible app is plugins. Plugins (as far as FilWip is concerned) is a way of specifying what files to monitor, delete. In otherwords, it is a simple text file, written in a particular format understandable by FilWip, that specifies the locations to clean.</P>
 
-<P>You get a set of standard plugins with FilWip. You can edit these plugins to suit your system, mostly you won't need to - except maybe the <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>Mozilla</FONT></I> plugin (to change the directory name). Some of the standard plugins include: NetPositive files, Trashed items, Custom Query files, Temporary files, Bash history file etc.</P>
+<P>You get a set of standard plugins with FilWip. You can edit these plugins to suit your system, mostly you won't need to. You'll find the plugins at <TT>~/config/settings/FilWip/Plugins/</TT>. Some of the standard plugins include: WebPositive files, Trashed items, Custom Query files, Temporary files, Bash history file etc.</P>
 
 <P>Before we proceed explaining the format specs for the plugin, here are 2 sample plugins. Just read them once, and read the explaination below. Its quite simple enough to understand.</P>
 
-<P>Here is a hierarchical plugin - meaning you can "expand" the plugin and it will have sub-items. Here is how <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>NetPositive</FONT></I> plugin looks: </P>
+<P>Here is a hierarchical plugin - meaning you can "expand" the plugin and it will have sub-items. Here is how <I><FONT SIZE=2 FACE=Helvetica COLOR=#991122>WebPositive</FONT></I> plugin looks: </P>
 
 <CENTER><TABLE BGCOLOR=#F5F5F5 BORDER="0" WIDTH=80% CELLSPACING="5"> 
 <TR> <TD WIDTH=45%><PRE>;; NetPositive plugin
 
-[NetPositive]
+[WebPositive]
 TYPE=hierarchical
-CHECK INSTALL OF=/boot/home/config/settings/NetPositive
+CHECK INSTALL OF=/boot/home/config/settings/WebPositive
 
 [Cache]
-FOLDER=/boot/home/config/settings/NetPositive/NetCache
+FOLDER=/boot/home/config/settings/WebPositive/NetCache
 EXCLUDE FILE=Cookies
 RECURSE=
 
 [Cookies]
-FILE=/boot/home/config/settings/NetPositive/NetCache/Cookies
+FILE=/boot/home/config/settings/WebPositive/Cookies
 EXCLUDE FILE=
 RECURSE=
 
 [History]
-FOLDER=/boot/home/config/settings/History
+FILE=/boot/home/config/settings/WebPositive/BrowsingHistory
+EXCLUDE FILE=
+RECURSE=
+
+[Site icons]
+FILE=/boot/home/config/settings/WebPositive/WebpageIcons.db
 EXCLUDE FILE=
 RECURSE=
 </PRE></TR>

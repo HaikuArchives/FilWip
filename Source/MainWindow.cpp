@@ -368,14 +368,12 @@ void MainWindow::Show ()
 {
 	PRINT (("MainWindow::Show()\n"));
 
-	/* Check for the plugins folder and act accordingly */
-	app_info appInfo;
-	be_app->GetAppInfo (&appInfo);
-	
-	BEntry appEntry (&appInfo.ref);
-	appEntry.GetParent (&appEntry);
-	
-	BPath pluginsPath (&appEntry);
+	/* Check for the plugins folder and act accordingly */	
+	BPath pluginsPath;
+	if (find_directory (B_USER_SETTINGS_DIRECTORY, &pluginsPath) != B_OK)
+		return;
+
+	pluginsPath.Append("FilWip");
 	if (pluginsPath.Append ("Plugins/") == B_OK)
 		pluginsFolder.SetTo (pluginsPath.Path());
 	
