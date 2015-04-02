@@ -305,8 +305,8 @@ void FileLooper::SetUpSelf (bool performSafeCheck, BPath processLocation, int32 
 	{
 		/* Fill out the paths that FileLooper will never process (these add a measure of safety
 			for misspelt paths in plugins) */
-		BString untouchablePath = "/boot/beos/";		// Nothing inside /boot/beos dir can be deleted
-		BString untouchablePath2 = "/boot/beos";
+		BString untouchablePath = "/boot/system/";		// Nothing inside /boot/beos dir can be deleted
+		BString untouchablePath2 = "/boot/system";
 		BString corePaths[] =							// The following dirs can't be deleted
 		{
 			"/",
@@ -319,7 +319,7 @@ void FileLooper::SetUpSelf (bool performSafeCheck, BPath processLocation, int32 
 		
 		
 		/* SafePath check begins!
-			(1) First check if the path isn't /boot/beos or anywhere inside */
+			(1) First check if the path isn't /boot/system or anywhere inside */
 		BString passedPath = processLocation.Path();
 		passedPath.Append ('/', 1);
 		if (passedPath == untouchablePath)
