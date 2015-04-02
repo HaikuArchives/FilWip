@@ -53,20 +53,20 @@ const char * const rv_spaceFreeStr = "Disk space freed",
 	*const it_autoCheckLiveStr = "Check items live (if monitoring)",
 	*const it_unCheckAfterDelStr = "Un-check items after clean-up",
 	*const lo_syncStr = "Make loopers " B_UTF8_OPEN_QUOTE "sync" B_UTF8_CLOSE_QUOTE " to disk",
-	*const lo_safeStr = "Safe Check (recommended)",
+	*const lo_safeStr = "Safe check (recommended)",
 	*const lo_monitorStr = "Live monitoring",
 	*const lo_priorityFieldStr = "Eraser priority:",
-	*const lo_item1Str = "Low Priority [5]",
-	*const lo_item2Str = "Normal Priority [10]",
-	*const lo_item3Str = "Display Priority [15]",
-	*const lo_item4Str = "Urgent Display Priority [20]",
-	*const lo_item5Str = "Low Custom Priority [30]",
-	*const lo_item6Str = "Normal Custom Priority [35]",
-	*const lo_item7Str = "High Custom Priority [40]",
+	*const lo_item1Str = "Low priority [5]",
+	*const lo_item2Str = "Normal priority [10]",
+	*const lo_item3Str = "Display priority [15]",
+	*const lo_item4Str = "Urgent display priority [20]",
+	*const lo_item5Str = "Low custom priority [30]",
+	*const lo_item6Str = "Normal custom priority [35]",
+	*const lo_item7Str = "High custom priority [40]",
 	*const lo_capacityFieldStr = "Port capacity:",
 	*const rm_treeStr = "Tree state",
 	*const rm_winPosStr = "Window positions and sizes",
-	*const rm_itemsStr = "Clean-up items (changeable by Item Options)",
+	*const rm_itemsStr = "Clean-up items (changeable by Items options)",
 	*const pv_asyncLoadStr = "Load plugins asynchronously",
 	*const pv_debugStr = "Debug mode",
 	*const pv_checkInstallStr = "Check install path existence",
@@ -121,9 +121,9 @@ PrefsWindow::PrefsWindow()
 	font_height fntHt;
 	be_plain_font->GetHeight (&fntHt);
 	
-	float height = fntHt.ascent + fntHt.descent + 4;
-	for (int32 i = 0; i < optionsListView->CountItems(); i++)
-		optionsListView->ItemAt(i)->SetHeight (height);
+//	float height = fntHt.ascent + fntHt.descent + 4;
+//	for (int32 i = 0; i < optionsListView->CountItems(); i++)
+//		optionsListView->ItemAt(i)->SetHeight (height);
 
 	optionsListView->Select (0L, false);
 

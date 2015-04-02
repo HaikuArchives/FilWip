@@ -25,6 +25,7 @@
  *
  * Modified by:
  * :Puck Meerburg
+ * Humdinger
  */
 
 #include <Roster.h>
@@ -48,6 +49,7 @@
 #include <Debug.h>
 #include <StatusBar.h>
 #include <Beep.h>
+#include <FindDirectory.h>
 
 #include <ctype.h>
 #include <iostream>
@@ -89,15 +91,28 @@ MainWindow::MainWindow ()
 	allowRecurse = prefs.FindBoolDef ("pv_recurse", true);
 
 	/* Initialize BDirectory for Presets & Docs (if found) */
+	BPath presetsPath;
+	if (find_directory(B_USER_SETTINGS_DIRECTORY, &presetsPath) != B_OK)
+		return;
+
+	presetsFolder = BDirectory(presetsPath.Path());
+	presetsPath.Append("FilWip");
+
+	if (!presetsFolder.Contains(presetsPath.Path()))
+		presetsFolder.CreateDirectory(presetsPath.Path(), NULL);
+
+	presetsPath.Append("Presets");
+
+	if (!presetsFolder.Contains(presetsPath.Path()))
+		presetsFolder.CreateDirectory(presetsPath.Path(), NULL);
+
+	presetsFolder.SetTo(presetsPath.Path());
+
 	app_info appInfo;
 	be_app->GetAppInfo (&appInfo);
 	
 	BEntry appEntry (&appInfo.ref);
 	appEntry.GetParent (&appEntry);
-	
-	BPath presetsPath (&appEntry);
-	if (presetsPath.Append ("Presets/") == B_OK)
-		presetsFolder.SetTo (presetsPath.Path());
 
 	BPath docsPath (&appEntry);
 	if (docsPath.Append ("Docs/") == B_OK)
@@ -298,12 +313,12 @@ MainWindow::MainWindow ()
 	toolTip = new BubbleHelper();
 	toolTip->SetHelp (helpButton, "Help (F1)");
 	toolTip->SetHelp (aboutButton, "About");
-	toolTip->SetHelp (saveButton, "Save Preset (Cmd S)");
+	toolTip->SetHelp (saveButton, "Save preset (Alt-S)");
 	toolTip->SetHelp (optionsButton, "Preferences");
-	toolTip->SetHelp (previewButton, "Preview (Cmd P)");
-	toolTip->SetHelp (selectAllButton, "Select All (Cmd A)");
-	toolTip->SetHelp (deselectAllButton, "Deselect All (Cmd D)");
-	toolTip->SetHelp (smartSelectButton, "Select As Needed (Cmd M)");
+	toolTip->SetHelp (previewButton, "Preview (Alt-P)");
+	toolTip->SetHelp (selectAllButton, "Select all (Alt-A)");
+	toolTip->SetHelp (deselectAllButton, "Deselect all (Alt-D)");
+	toolTip->SetHelp (smartSelectButton, "Select as needed (Alt-M)");
 	toolTip->SetHelp (presetField, "Load preset options");
 	toolTip->SetHelp (cleanUp, "Begin the erasing process");
 
@@ -677,7 +692,7 @@ void MainWindow::Quit ()
 			suspend_thread (eraserLooper->Thread());
 			int32 warning;
 			warning = (new BAlert ("Warning", "Clean-up process is in progress, force it to stop?",
-						"Don't Force", "Force", NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_WARNING_ALERT))->Go();
+						"Don't force", "Force", NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_WARNING_ALERT))->Go();
 			
 			if (warning == 1)
 				eraserLooper->stopErasing = true;
@@ -1266,7 +1281,7 @@ void MainWindow::TellUserNoOptions ()
 	static BString warning[] =
 	{
 		"Select one or more options for the clean-up process",
-		"I said... Select atleast one checkbox before the clean-up process",
+		"I said... Select at least one checkbox before the clean-up process",
 		"Look... For the last time!\n\nSELECT SOME OPTION!!",
 		"That's it! I've had enough!"
 	};
@@ -1274,8 +1289,8 @@ void MainWindow::TellUserNoOptions ()
 	BAlert *cantAlert;
 	if (isModeGUI == true)
 	{
-		cantAlert = new BAlert ("Can't Clean-Up", warning[nWarns].String(),
-						"Okay", NULL, NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING,
+		cantAlert = new BAlert ("Can't clean-Up", warning[nWarns].String(),
+						"OK", NULL, NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING,
 						B_STOP_ALERT);
 		cantAlert->Go();
 	}
@@ -1773,7 +1788,7 @@ bool MainWindow::ConfirmCleanUp () const
 	/* Setup the confirm pop-up box */
 	confirm = new BAlert ("Confirmation", "Warning\n\nThis clean-up process is irreversible!"
 							" Once the data has been removed it cannot be recovered.\n\n"
-							"Do you wish to begin the clean-up process?\n", "No","Yes",
+							"Do you wish to begin the clean-up process?\n", "Cancel","Clean-up",
 							NULL, B_WIDTH_AS_USUAL, B_WARNING_ALERT);
 	confirm->SetShortcut (0, B_ESCAPE);
 	

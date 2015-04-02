@@ -28,6 +28,7 @@
 #include "Preferences.h"
 #include "FilWip.h"
 #include "Constants.h"
+#include "Directory.h"
 
 Preferences prefs;
 
@@ -36,9 +37,17 @@ Preferences prefs;
 Preferences::Preferences ()
 {
 	/* Initialize "prefsPath" */
-	find_directory (B_USER_SETTINGS_DIRECTORY, &prefsPath);
+	if (find_directory (B_USER_SETTINGS_DIRECTORY, &prefsPath) != B_OK)
+		return;
+
+	prefsPath.Append("FilWip");
+	BDirectory prefsDir(prefsPath.Path());
+
+	if (!prefsDir.Contains(prefsPath.Path()))
+		prefsDir.CreateDirectory(prefsPath.Path(), NULL);
+
 	prefsPath.SetTo (prefsPath.Path(), PREFS_FILENAME);
-	
+
 	ReadSettings ();
 }
 
