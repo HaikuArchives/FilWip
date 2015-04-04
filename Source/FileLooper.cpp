@@ -305,8 +305,6 @@ void FileLooper::SetUpSelf (bool performSafeCheck, BPath processLocation, int32 
 	{
 		/* Fill out the paths that FileLooper will never process (these add a measure of safety
 			for misspelt paths in plugins) */
-		BString untouchablePath = "/boot/system/";		// Nothing inside /boot/beos dir can be deleted
-		BString untouchablePath2 = "/boot/system";
 		BString corePaths[] =							// The following dirs can't be deleted
 		{
 			"/",
@@ -316,28 +314,12 @@ void FileLooper::SetUpSelf (bool performSafeCheck, BPath processLocation, int32 
 			"/boot/home/config/settings",
 			"/boot/home/Desktop"
 		};	/* 6 paths (0 to 5) */
-		
-		
+
 		/* SafePath check begins!
-			(1) First check if the path isn't /boot/system or anywhere inside */
+		/* Next make sure it isn't any of the corePaths (but it CAN be some file/folder
+			inside the corePath entry) the below check makes sure any trailing '/'s are removed */
 		BString passedPath = processLocation.Path();
 		passedPath.Append ('/', 1);
-		if (passedPath == untouchablePath)
-		{
-			ShowErrorAndQuit (untouchablePath.String(), fileName);
-			return;
-		}
-		
-		if ((passedPath.FindFirst (untouchablePath) == 0) &&
-				(strlen (passedPath.String()) != strlen (untouchablePath2.String())))
-		{
-			ShowErrorAndQuit (untouchablePath.String(), fileName);
-			return;
-		}
-	
-	
-		/* (2) Next make sure it isn't any of the corePaths (but it CAN be some file/folder
-			inside the corePath entry) the below check makes sure any trailing '/'s are removed */
 		if (passedPath.ByteAt (passedPath.CountChars() - 1) == '/');
 			passedPath.RemoveLast ("/");
 		
