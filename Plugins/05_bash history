@@ -5,6 +5,6 @@ TYPE=linear
 CHECK INSTALL OF=
 
 [Bash History]
-FILE=/boot/home/.bash_history
+FILE=/boot/home/config/settings/bash_history
 EXCLUDE FILE=
 RECURSE=
