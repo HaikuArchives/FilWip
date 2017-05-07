@@ -47,6 +47,8 @@
 #include "MainWindow.h"
 #include "NodeLimit.h"
 
+using namespace std;
+
 /*============================================================================================================*/
 
 NodeEntry::NodeEntry ()

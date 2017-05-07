@@ -33,14 +33,14 @@
 #include <Messenger.h>
 #include <Path.h>
 
-#include <string>
+#include <string.h>
 
 #include "InfoStrView.h"
 
 /*============================================================================================================*/
 
 InfoStrView::InfoStrView (BRect bounds, const char *name, const char *text,
-				uint32 resizeFlags = B_FOLLOW_LEFT, uint32 flags = B_WILL_DRAW)
+				uint32 resizeFlags, uint32 flags)
 	: BStringView (bounds, name, text, resizeFlags, flags),
 		itemPath (NULL),
 		trackerSignature ("application/x-vnd.Be-TRAK")
