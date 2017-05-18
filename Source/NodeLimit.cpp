@@ -16,6 +16,10 @@
 
 #include "NodeLimit.h"
 
+#include <errno.h>
+#include <sys/resource.h>
+#include <sys/stat.h>
+
 /* Set nodeCount to the current limit and bumpValue additional monitors for each 4096 limit */
 int nodeCount = 4096;
 const int32 bumpValue = 512;
@@ -32,7 +36,14 @@ status_t NeedMoreNodeMonitors ()
 	nodeCount += bumpValue;
 	codeLocker.Unlock();
 
-	return _kset_mon_limit_ (nodeCount);
+	struct rlimit rl;
+	if (nodeCount < 1)
+		return EINVAL;
+	rl.rlim_cur = nodeCount;
+	rl.rlim_max = RLIM_SAVED_MAX;
+	if (setrlimit(RLIMIT_NOVMON, &rl) < 0)
+		return errno;
+	return B_OK;
 }
 
 /*============================================================================================================*/

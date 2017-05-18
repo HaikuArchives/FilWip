@@ -104,7 +104,7 @@ class PluginParser
 		/* Private variables */
 		BEntry			pluginEntry;
 		bool			fileExists;
-		fstream			pluginStream;
+		std::fstream	pluginStream;
 		BList			itemList;
 };
 

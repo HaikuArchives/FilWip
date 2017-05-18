@@ -181,7 +181,8 @@ void EraserLooper::EraseList (bool guiMode)
 								B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_INFO_ALERT);
 		BTextView *vw = report->TextView();
 		vw->SetStylable (true);
-		vw->SetFontAndColor (0, 6, &font, B_FONT_ALL, &(rgb_color){0, 0, 198});
+		rgb_color alertColor = {0, 0, 198};
+		vw->SetFontAndColor (0, 6, &font, B_FONT_ALL, &alertColor);
 	
 		report->SetShortcut (0L, B_ESCAPE);
 		report->Go(NULL);

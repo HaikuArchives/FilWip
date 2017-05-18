@@ -521,10 +521,10 @@ void PrefsWindow::SaveViewLoopers ()
 	prefs.SetBool ("lo_monitor", IsChecked (lo_monitorChk));
 	
 	prefs.SetInt8 ("lo_priority",
-		(int8)lo_priorityList.ItemAt(lo_priorityPopup->IndexOf(lo_priorityPopup->FindMarked())));
+		(int8)(addr_t)lo_priorityList.ItemAt(lo_priorityPopup->IndexOf(lo_priorityPopup->FindMarked())));
 		
 	prefs.SetInt16 ("lo_capacity",
-		(int16)lo_capacityList.ItemAt(lo_capacityPopup->IndexOf(lo_capacityPopup->FindMarked())));
+		(int16)(addr_t)lo_capacityList.ItemAt(lo_capacityPopup->IndexOf(lo_capacityPopup->FindMarked())));
 }
 
 /*============================================================================================================*/
@@ -542,7 +542,7 @@ void PrefsWindow::LoadViewLoopers ()
 	if (prefs.FindInt8 ("lo_priority", &p) == B_OK)
 	{
 		for (int32 x = 0; x < lo_priorityList.CountItems(); x++)
-			if ((int8)lo_priorityList.ItemAt(x) == p)
+			if ((int8)(addr_t)lo_priorityList.ItemAt(x) == p)
 			{
 				(lo_priorityPopup->ItemAt(x))->SetMarked (true);
 				break;
@@ -558,7 +558,7 @@ void PrefsWindow::LoadViewLoopers ()
 	if (prefs.FindInt16 ("lo_capacity", &c) == B_OK)
 	{
 		for (int32 x = 0; x < lo_capacityList.CountItems(); x++)
-			if ((int16)lo_capacityList.ItemAtFast(x) == c)
+			if ((int16)(addr_t)lo_capacityList.ItemAtFast(x) == c)
 			{
 				(lo_capacityPopup->ItemAt(x))->SetMarked (true);
 				break;
