@@ -28,8 +28,6 @@
 #include "PrefsView.h"
 #include "Constants.h"
 
-#include <string.h>
-
 /*============================================================================================================*/
 
 PrefsView::PrefsView (BRect frame, const char *description)

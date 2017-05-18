@@ -37,8 +37,6 @@
 #include <fstream>
 #include <string.h>
 
-using namespace std;
-
 #define PLUGIN_NAME_DEF					"name"
 #define PLUGIN_TYPE_DEF					"type"
 #define PLUGIN_TYPE_DEF_LEN				4

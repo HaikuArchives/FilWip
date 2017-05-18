@@ -172,7 +172,6 @@ void EraserLooper::EraseList (bool guiMode)
 		reportStr << timeTakenStr << "\n";
 	
 	/* Show report */
-	rgb_color kBlue = (rgb_color){ 0, 0, 200 };
 	if (guiMode)
 	{
 		BFont font (be_plain_font);
@@ -182,7 +181,7 @@ void EraserLooper::EraseList (bool guiMode)
 								B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_INFO_ALERT);
 		BTextView *vw = report->TextView();
 		vw->SetStylable (true);
-		vw->SetFontAndColor (0, 6, &font, B_FONT_ALL, &kBlue);
+		vw->SetFontAndColor (0, 6, &font, B_FONT_ALL, &(rgb_color){0, 0, 198});
 	
 		report->SetShortcut (0L, B_ESCAPE);
 		report->Go(NULL);
