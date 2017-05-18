@@ -35,7 +35,6 @@
 #include <Directory.h>
 
 class BBox;
-class BFilePanel;
 class BMenuField;
 class BPopUpMenu;
 class BStatusBar;

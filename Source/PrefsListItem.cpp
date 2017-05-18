@@ -32,7 +32,7 @@
 #include <View.h>
 #include <Region.h>
 
-#include <string.h>
+#include <string>
 #include <malloc.h>
 
 #include "PrefsListItem.h"

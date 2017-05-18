@@ -1796,9 +1796,7 @@ bool MainWindow::ConfirmCleanUp () const
 	
 	BFont font (be_plain_font);
 	font.SetFace (B_BOLD_FACE);
-	rgb_color kRed = (rgb_color){ 198, 0, 0, 255 };
-
-	vw->SetFontAndColor (0, 7, &font, B_FONT_ALL, &kRed);
+	vw->SetFontAndColor (0, 7, &font, B_FONT_ALL, &(rgb_color){198, 0, 0, 255});
 
 	/* Popup a scary warning :) */
 	buttonIndex = confirm->Go ();
