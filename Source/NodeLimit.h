@@ -27,16 +27,6 @@
 #include <SupportDefs.h>
 #include <StorageDefs.h>
 
-#ifndef _IMPEXP_ROOT
-#define _IMPEXP_ROOT
-#endif
-
-/* We need this internal call in order to break the node limit */
-#ifdef __cplusplus
-	extern "C" _IMPEXP_ROOT int _kset_mon_limit_ (int num);
-#else
-	_IMPEXP_ROOT int _kset_mon_limit_ (int num);
-#endif
 
 /* Prototypes */
 status_t NeedMoreNodeMonitors ();

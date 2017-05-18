@@ -34,6 +34,7 @@
 
 #include <string>
 #include <malloc.h>
+#include <string.h>
 
 #include "PrefsListItem.h"
 #include "Constants.h"

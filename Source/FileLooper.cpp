@@ -278,7 +278,7 @@ FileLooper::FileLooper (EraserLooper *eraser, const char *processPath, const cha
 		BAlert *debugAlert = new BAlert ("OK", debugStr.String(), "OK");
 		debugAlert->Go();
 		
-		cout << processPath << endl; cout.flush();
+		std::cout << processPath << std::endl; std::cout.flush();
 	}
 }
 

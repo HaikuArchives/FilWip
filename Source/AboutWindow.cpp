@@ -43,7 +43,7 @@
 /*============================================================================================================*/
 
 MarqueeView::MarqueeView (BRect frame, const char *name, BRect textRect,
-		uint32 resizeMask, uint32 flags = B_WILL_DRAW)
+		uint32 resizeMask, uint32 flags)
 	: BTextView (frame, name, textRect, resizeMask, flags)
 {
 	curPos = Bounds().top;
@@ -278,8 +278,9 @@ AboutWindow::AboutWindow ()
 	{
 		if ((strt = temp.FindFirst (mainHeadings[i].String())) != B_ERROR)
 		{
+			rgb_color mainHeadingColor = {0, 0, 200};
 			textView->SetFontAndColor (strt, strt + strlen(mainHeadings[i].String()),
-							be_plain_font, B_FONT_ALL, &(rgb_color){0, 0, 200});
+							be_plain_font, B_FONT_ALL, &mainHeadingColor);
 		}
 	}
 	
