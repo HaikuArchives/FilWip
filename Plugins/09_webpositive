@@ -23,3 +23,8 @@ RECURSE=
 FILE=/boot/home/config/settings/WebPositive/WebpageIcons.db
 EXCLUDE FILE=
 RECURSE=
+
+[Session]
+FILE=/boot/home/config/settings/WebPositive/Session
+EXCLUDE FILE=
+RECURSE=
