@@ -44,7 +44,7 @@ class BubbleHelper
 		BView			*FindView (BPoint where);
 		
 		/* Thread function */
-		static long		_helper (void *arg);
+		static int32		_helper (void *arg);
 
 		/* Misc. private variables */
 		bigtime_t		delayTime;
@@ -54,7 +54,7 @@ class BubbleHelper
 		BTextView		*textview;
 		bool			enabled;
 		
-		static long		runcount;
+		static int32		runcount;
 };
 
 #endif /* _BUBBLEHELPER_H */

@@ -58,7 +58,7 @@ PluginContainerItem::~PluginContainerItem ()
 	PluginItem *sItem (NULL);
 	for (;;)
 	{
-		sItem = (PluginItem*)subItems.RemoveItem (0L);
+		sItem = (PluginItem*)subItems.RemoveItem ((int32)0);
 		if (sItem == NULL)
 			break;
 		

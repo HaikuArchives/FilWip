@@ -28,6 +28,7 @@
 #include "PrefsView.h"
 #include "Constants.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 /*============================================================================================================*/
