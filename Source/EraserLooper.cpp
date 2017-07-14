@@ -99,7 +99,7 @@ void EraserLooper::EraseList (bool guiMode)
 
 	for (;;)
 	{
-		const char *path = (const char*)entryList.RemoveItem (0L);
+		const char *path = (const char*)entryList.RemoveItem ((int32)0);
 		
 		if (!path)
 			break;

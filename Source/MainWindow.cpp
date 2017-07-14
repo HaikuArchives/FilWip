@@ -355,7 +355,7 @@ MainWindow::~MainWindow ()
 	PluginContainerItem *cItem (NULL);
 	do
 	{
-		cItem = (PluginContainerItem*)containerItems.RemoveItem (0L);
+		cItem = (PluginContainerItem*)containerItems.RemoveItem ((int32)0);
 		if (cItem != NULL)
 			delete cItem;
 	} while (cItem != NULL);

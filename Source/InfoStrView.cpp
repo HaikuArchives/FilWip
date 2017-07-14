@@ -33,6 +33,7 @@
 #include <Messenger.h>
 #include <Path.h>
 
+#include <stdlib.h>
 #include <string>
 #include <string.h>
 
