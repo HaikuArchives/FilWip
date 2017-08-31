@@ -134,13 +134,11 @@ MainWindow::MainWindow ()
 	backView->SetViewColor (BeViewColor);
 	
 	descView = new BTextView (BRect (DialogMargin, DialogMargin,
-						Bounds().right - DialogMargin, 80), "MainWindow:DescTextView",
+						Bounds().right - DialogMargin, 40), "MainWindow:DescTextView",
 						BRect (2, 2, Bounds().right - DialogMargin - 2, 50),
 						B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW);
 	backView->AddChild (descView);
-	descView->SetText ("Welcome to FilWip...\n\n"
-						"This tool cleans your system of unwanted data "
-						"such as temporary files, caches, logs etc.");
+	descView->SetText ("Choose the temporary files, caches, logs etc. to be cleaned.");
 	descView->MakeEditable (false);
 	descView->MakeSelectable (false);
 	descView->SetViewColor(backView->ViewColor());
