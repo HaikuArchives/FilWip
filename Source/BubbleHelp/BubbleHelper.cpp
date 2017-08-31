@@ -109,7 +109,7 @@ BubbleHelper::~BubbleHelper()
 
 /*============================================================================================================*/
 
-void BubbleHelper::SetHelp (BView *view, char *text)
+void BubbleHelper::SetHelp (BView *view, char const *text)
 {
 	if (this && view)
 	{

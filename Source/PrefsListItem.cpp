@@ -44,14 +44,8 @@
 PrefsListItem::PrefsListItem (const char *text)
 	: BListItem ()
 {
-	/* Use "new" where possible. Stupid PPC compiler does not allow char[strlen(text)+1] as it
-		does not consider strlen() as a constant. So use C's strdup in case of PPC ie not Intel.  */
-	#ifdef __INTEL__
-		label = new char [strlen (text) + 1];
-		strcpy (label, text);
-	#else
-		label = strdup (label);
-	#endif
+	label = new char [strlen (text) + 1];
+	strcpy (label, text);
 	
 	selBackColor = PrefsItemSelBackColor;
 	selTextColor = PrefsItemSelForeColor;
@@ -62,13 +56,7 @@ PrefsListItem::PrefsListItem (const char *text)
 PrefsListItem::~PrefsListItem()
 {
 	if (label)
-	{
-		#ifdef __INTEL__
-			delete[] label;
-		#else
-			free (label);
-		#endif
-	}
+		delete[] label;
 }
 
 /*============================================================================================================*/

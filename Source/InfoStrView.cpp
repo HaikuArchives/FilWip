@@ -61,15 +61,9 @@ InfoStrView::~InfoStrView()
 
 void InfoStrView::DeAllocPath ()
 {
-	/* Deallocates string according to the platform */
 	if (itemPath != NULL)
 	{
-		#ifdef __INTEL__
-			delete[] itemPath;
-		#else
-			free (itemPath);
-		#endif
-
+		delete[] itemPath;
 		itemPath = NULL;
 	}
 }
@@ -78,13 +72,8 @@ void InfoStrView::DeAllocPath ()
 
 void InfoStrView::AllocPath (const char *str)
 {
-	/* Allocates string according to the platform (stupid PPC doesn't alloc new char[strlen()] */
-	#ifdef __INTEL__
-		itemPath = new char[strlen(str) + 1];
-		strcpy (itemPath, str);
-	#else
-		itemPath = strdup (str);
-	#endif
+	itemPath = new char[strlen(str) + 1];
+	strcpy (itemPath, str);
 }
 
 /*============================================================================================================*/

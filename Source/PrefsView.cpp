@@ -36,13 +36,9 @@
 PrefsView::PrefsView (BRect frame, const char *description)
 	: BevelView (frame, NULL, btNoBevel, B_FOLLOW_LEFT, B_WILL_DRAW)
 {
-	#ifdef __INTEL__
-		descStr = new char[strlen(description) + 1];
-		strcpy (descStr, description);
-	#else
-		descStr = strdup (description);
-	#endif
-	
+	descStr = new char[strlen(description) + 1];
+	strcpy (descStr, description);
+
 	SetViewColor (BeViewColor);
 }
 
@@ -51,13 +47,7 @@ PrefsView::PrefsView (BRect frame, const char *description)
 PrefsView::~PrefsView()
 {
 	if (descStr)
-	{
-		#ifdef __INTEL__
-			delete[] descStr;
-		#else
-			free (descStr);
-		#endif
-	}
+		delete[] descStr;
 }
 
 /*============================================================================================================*/

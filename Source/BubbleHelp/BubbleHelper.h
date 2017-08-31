@@ -28,7 +28,7 @@ class BubbleHelper
 		virtual ~BubbleHelper ();
 		
 		/* Additional hooks */
-		void			SetHelp (BView *view, char *text);
+		void			SetHelp (BView *view, char const *text);
 		void			EnableHelp (bool enable = true);
 
 		void			SetDelayTime (bigtime_t useconds);

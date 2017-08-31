@@ -432,7 +432,6 @@ void MainWindow::ParsePlugins (BDirectory pluginFolder)
 	/* This function parses all the plugins using the PluginParser class */
 	BEntry entry;
 	float yPos = mTop - 2;
-	float htIncrement;
 	int index = 0;
 
 	bool checkInstall = prefs.FindBoolDef ("pv_checkInstall", true);
@@ -466,7 +465,7 @@ void MainWindow::ParsePlugins (BDirectory pluginFolder)
 		else
 		{
 			yPos++;
-			htIncrement = AddHierarchialItem (cItem, yPos, itemsView, index, (char*)filePath.Leaf());
+			AddHierarchialItem (cItem, yPos, itemsView, index, (char*)filePath.Leaf());
 			index++;
 			yPos += strHeight;
 		}
@@ -1376,7 +1375,7 @@ BString MainWindow::GetByteSizeString (int64 v) const
 	else if (v > (1024LL))
 		sprintf(buf, "%.2f KB", ((double)v) / 1024LL);
 	else
-		sprintf(buf, "%Li bytes", v);
+		sprintf(buf, "%" PRId64 " bytes", v);
 	
 	BString str;
 	str << buf;
