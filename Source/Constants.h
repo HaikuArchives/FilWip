@@ -30,7 +30,7 @@
 
 #define AppTitle					"FilWip"
 #define AppSignature				"application/x-vnd.Ram-FilWip"
-#define AppVersion					"0.1.0 (x86)"
+#define AppVersion					"0.1.1 (x86)"
 #define PresetSignature				"application/x-vnd.FilWip-Preset"
 
 const uint32
