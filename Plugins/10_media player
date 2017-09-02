@@ -1,0 +1,10 @@
+;; MediaPlayer plugin
+
+[MediaPlayer]
+TYPE=linear
+CHECK INSTALL OF=/boot/home/config/settings
+
+[MediaPlayer Current Playlist]
+FILE=/boot/home/config/settings/MediaPlayer Current Playlist
+INCLUDE MIME=
+RECURSE=
