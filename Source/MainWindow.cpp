@@ -77,7 +77,7 @@ class MainWindow *pWnd;
 /*============================================================================================================*/
 
 MainWindow::MainWindow ()
-	: BWindow (BRect(240, 160, 630, 536), AppTitle, B_TITLED_WINDOW, B_NOT_ZOOMABLE, B_CURRENT_WORKSPACE)
+	: BWindow (BRect(240, 160, 700, 536), AppTitle, B_TITLED_WINDOW, B_CURRENT_WORKSPACE)
 {
 	PRINT (("MainWindow::MainWindow ()\n"));
 	
@@ -265,7 +265,7 @@ MainWindow::MainWindow ()
 	mTop = 5;
 	mMargin = 40;
 	mVGap = 0;
-	checkRight = itemsView->StringWidth ("Visited Links Database") + mLeft + mMargin;
+	checkRight = itemsView->StringWidth ("Visited Links very long Database") + mLeft + mMargin;
 	infoRight = itemsView->Bounds().right;	
 	
 	/* Draw the button, busyview and presetField AFTER resizing the boxView */
