@@ -2,15 +2,15 @@
 resource app_flags B_SINGLE_LAUNCH;
 
 resource app_version {
-	major  = 0,
-	middle = 1,
+	major  = 1,
+	middle = 0,
 	minor  = 1,
 
 	variety = B_APPV_BETA,
 	internal = 0,
 
-	short_info = "0.1",
-	long_info = "v0.1 © 2002 Ramshankar\t"
+	short_info = "Clean up temporary files",
+	long_info = "v1.0 © 2002 Ramshankar\t"
 };
 
 resource(1000, "Image:HelpButton") #'BBMP' archive BBitmap {
