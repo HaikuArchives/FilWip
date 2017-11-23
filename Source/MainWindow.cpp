@@ -132,6 +132,7 @@ MainWindow::MainWindow ()
 	backView = new BevelView (Bounds(), "MainWindow:View", btOutset, B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
 	AddChild (backView);
 	backView->SetViewColor (BeViewColor);
+	backView->SetLowColor (BeViewColor);
 	
 	descView = new BTextView (BRect (DialogMargin, DialogMargin,
 						Bounds().right - DialogMargin, 40), "MainWindow:DescTextView",
@@ -167,7 +168,7 @@ MainWindow::MainWindow ()
 
 	statusBar = new BStatusBar (BRect (DialogMargin, boxView->Frame().bottom + ButtonSpacing,
 						Bounds().right - 4 * DialogMargin - ButtonWidth, 0), NULL, NULL);
-	statusBar->SetFlags (statusBar->Flags() | B_FOLLOW_BOTTOM);
+	statusBar->SetResizingMode(B_FOLLOW_BOTTOM);
 	statusBar->SetTrailingText ("0 of 0");
 	statusBar->SetBarColor (StatusBarColor);
 	statusBar->SetBarHeight (statusBar->BarHeight() - 2);
