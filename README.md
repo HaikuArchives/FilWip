@@ -1,6 +1,8 @@
-FilWip v.0.1
+# FilWip v.0.1
 
 FilWip is the BeOS Clean-Up Manager replacement app.
+
+![screenshot](screenshot.png)
 
 It cleans your hard disk of all unwanted files such as left-over temporary files, cache files of internet sessions, logs, history files and the like. FilWip is the successor of the BeOS Clean-Up Manager. The reason why the Clean-Up Manager was dropped was because it had certain problems that needed almost a complete rewrite to be fixed. It was not worth doing because I wanted to add more features and change the overall approach. So I decided to create a new program and so here is FilWip, and another reason was I wanted a shorter name :P
 
