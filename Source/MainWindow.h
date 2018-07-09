@@ -33,6 +33,8 @@
 #include <Window.h>
 #include <Bitmap.h>
 #include <Directory.h>
+#include <ToolBar.h>
+#include "ElementListView.h"
 
 class BBox;
 class BFilePanel;
@@ -41,11 +43,7 @@ class BPopUpMenu;
 class BStatusBar;
 class BTextView;
 
-class BevelView;
-class BubbleHelper;
 class EraserLooper;
-class ImageButton;
-class ItemsView;
 class PluginContainerItem;
 
 extern class MainWindow *pWnd;
@@ -66,8 +64,6 @@ class MainWindow : public BWindow
 		/* Additional Hooks */
 		void				CreateSavePanel ();
 		void				DeleteSavePanel ();
-		void				RecalcItems (int8 index, uint32 action);
-		void				RecalcScrollBar ();
 		void				RestoreWindowPosition ();
 		void				SaveWindowPosition () const;
 		void				TellUserNoOptions ();
@@ -81,17 +77,16 @@ class MainWindow : public BWindow
 		void				LoadTreeState (BMessage *message);
 		void				LoadPreset (BMessage *message);
 		void				FillPreset (BMessage *message) const;
-		float				AddSubItems (PluginContainerItem *item, BView *parent, char *fileName);
+		void				AddSubItems (PluginContainerItem *item, BRow *parentRow, char *fileName);
 		bool				GetGUIModeFromMessage (BMessage *message) const;
 		BBitmap				*ResourceBitmap (const char *resourceName) const;
-		BString				GetByteSizeString (int64 size) const;
+		BBitmap				*ResVectorToBitmap(const char *resName);
 		status_t			SavePreset (entry_ref *saveRef);
 		status_t			OpenPreset (entry_ref *openRef, bool guiMode, bool addToList);
 		void				ParsePlugins (BDirectory pluginFolder);
 		void				ParseAndSetupUI ();
-		void				AddLinearItem (PluginContainerItem *item, float yPos, BView *vw, char *fileName);
-		float				AddHierarchialItem (PluginContainerItem *item, float yPos, BView *vw, int index,
-								char *fileName);
+		void				AddLinearItem (PluginContainerItem *item, char *fileName);
+		void				AddHierarchialItem (PluginContainerItem *item, char *fileName);
 		
 		EraserLooper		*eraserLooper;
 		
@@ -107,19 +102,6 @@ class MainWindow : public BWindow
 							totalTime;
 
 		/* Imagebutton and image pointers */
-		BList				toolButtons;
-		BScrollBar			*vertScrollBar;
-		BScrollView			*scrollView;
-		
-		ImageButton			*helpButton,
-							*optionsButton,
-							*saveButton,
-							*aboutButton,
-							*previewButton,
-							*selectAllButton,
-							*deselectAllButton,
-							*smartSelectButton;
-
 		BBitmap				*helpButtonBitmap,
 							*optionsButtonBitmap,
 							*saveButtonBitmap,
@@ -135,30 +117,17 @@ class MainWindow : public BWindow
 		BBox				*boxView;
 		BMenuField			*presetField;
 		BPopUpMenu			*presetPopup;
-		BubbleHelper		*toolTip;
 
+		// TODO change the checkbox id <-> loop id
+		// Use a class to encapsulate the relation
 		BList				checkBoxes,
+							checkBoxesFields,
 							infoViews,
-							superItems,
-							subViews,
-							treeViews,
 							containerItems,
-							hierarchialItems,
 							fileLoopers;
-		
-		ItemsView			*itemsView;
-		BevelView			*backView;
-		BTextView			*descView;
 
-		/* Interface headaches */
-		float				strHeight,
-							mLeft,
-							mTop,
-							mMargin,
-							mVGap,
-							checkRight,
-							infoRight;
-				
+		BToolBar			*mainToolBar;
+
 		/* Controller variable */
 		volatile bool		isProcessingPlugins;
 				
@@ -174,6 +143,8 @@ class MainWindow : public BWindow
 							liveMonitoring,
 							allowRecurse;
 		int16				looperPortCapacity;
+
+		ElementListView		*fElementListView;
 };
 
 #endif /* _MAIN_WINDOW_H */

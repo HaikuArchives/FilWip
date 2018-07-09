@@ -215,11 +215,12 @@ bool HashTable::Delete (node_ref *nref, off_t *size)
 
 FileLooper::FileLooper (EraserLooper *eraser, const char *processPath, const char *name, int32 priority,
 				bool performSafeCheck, bool isDir, bool recurse, bool debugMode, char *fileName, int32 uniqueID,
-				int32 portCapacity)
+				BRow *row, int32 portCapacity)
 	: BLooper (name, priority, portCapacity),
 	eraserLooper (eraser),
 	includedMimeType (NULL),
-	excludedFileName (NULL)
+	excludedFileName (NULL),
+	fRow(row)
 {
 	/* Setup our internal hash-table representation, make sure its allocated. Assume on an average
 		a folder will contain 197 entries :) nice prime number */
@@ -315,7 +316,7 @@ void FileLooper::SetUpSelf (bool performSafeCheck, BPath processLocation, int32 
 			"/boot/home/Desktop"
 		};	/* 6 paths (0 to 5) */
 
-		/* SafePath check begins!
+		/* SafePath check begins! */
 		/* Next make sure it isn't any of the corePaths (but it CAN be some file/folder
 			inside the corePath entry) the below check makes sure any trailing '/'s are removed */
 		BString passedPath = processLocation.Path();
@@ -702,6 +703,7 @@ void FileLooper::BeginOverviewOperation()
 	reportMsg.AddInt64 ("entries_counted", entriesWiped);
 	reportMsg.AddInt64 ("bytes_counted", sizeWiped);
 	reportMsg.AddBool ("first_scan", firstScan);
+	reportMsg.AddPointer ("row_pointer", fRow);
 	firstScan = false;
 	filWip->mainWnd->PostMessage (&reportMsg);
 	
@@ -886,6 +888,7 @@ void FileLooper::SendNodeChangedMessage ()
 	reportMsg.AddInt32 ("looper_id", looperID);
 	reportMsg.AddInt64 ("entries_counted", nEntriesLive);
 	reportMsg.AddInt64 ("bytes_counted", nSizeLive);
+	reportMsg.AddPointer ("row_pointer", fRow);
 	filWip->mainWnd->PostMessage (&reportMsg);
 }
 

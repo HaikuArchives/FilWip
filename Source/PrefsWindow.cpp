@@ -44,7 +44,7 @@
 #include "PrefsListItem.h"
 #include "PrefsView.h"
 #include "Preferences.h"
-#include "BevelView.h"
+
 
 const char * const rv_spaceFreeStr = "Disk space freed",
 	*const rv_nFilesDeletedStr = "Number of files, folders deleted",
@@ -87,7 +87,7 @@ PrefsWindow::PrefsWindow()
 	SetFeel (B_MODAL_APP_WINDOW_FEEL);
 
 	/* Construct basic outline controls */
-	backView = new BevelView (Bounds(), "Preferences:backView", btOutset, B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
+	backView = new BView (Bounds(), "Preferences:backView", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
 	backView->SetViewColor (BeViewColor);
 	AddChild (backView);
 
@@ -128,9 +128,9 @@ PrefsWindow::PrefsWindow()
 	optionsListView->Select (0L, false);
 
 	/* Construct the description bevelview and the string view inside it */
-	descView = new BevelView (BRect (scrollView->Frame().right + SmallMargin, SmallMargin,
-					Bounds().right - SmallMargin, fntHt.ascent + fntHt.descent + SmallMargin + 4 + 
-					BevelView::EdgeThickness(btInset)), "Preferences:descView", btInset, B_FOLLOW_LEFT,
+	descView = new BView (BRect (scrollView->Frame().right + SmallMargin, SmallMargin,
+					Bounds().right - SmallMargin, fntHt.ascent + fntHt.descent + SmallMargin + 4), 
+					"Preferences:descView", B_FOLLOW_LEFT,
 					B_WILL_DRAW);
 	descView->SetViewColor (ItemsViewColor);
 	backView->AddChild (descView);

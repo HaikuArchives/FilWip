@@ -28,9 +28,10 @@
 #ifndef _PREFS_VIEW_H
 #define _PREFS_VIEW_H
 
-#include "BevelView.h"
 
-class PrefsView : public BevelView
+#include <View.h>
+
+class PrefsView : public BView
 {
 	public:
 		PrefsView (BRect frame, const char *description);

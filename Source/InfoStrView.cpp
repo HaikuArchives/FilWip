@@ -41,9 +41,8 @@
 
 /*============================================================================================================*/
 
-InfoStrView::InfoStrView (BRect bounds, const char *name, const char *text,
-				uint32 resizeFlags, uint32 flags)
-	: BStringView (bounds, name, text, resizeFlags, flags),
+InfoStrView::InfoStrView (const char *name, const char *text, uint32 flags)
+	: BStringView (name, text, flags),
 		itemPath (NULL),
 		trackerSignature ("application/x-vnd.Be-TRAK")
 {

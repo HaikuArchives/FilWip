@@ -56,7 +56,6 @@ class BMenuField;
 class BMenuItem;
 
 class PrefsView;
-class BevelView;
 
 class PrefsWindow : public BWindow
 {
@@ -101,10 +100,10 @@ class PrefsWindow : public BWindow
 		float				CheckBoxWidth (const char *str) const;
 		
 		/* Protected members */
-		BevelView			*backView;
+		BView				*backView;
 		BListView			*optionsListView;
 		BScrollView			*scrollView;
-		BevelView			*descView;
+		BView				*descView;
 		PrefsView			*reportView,
 							*itemsView,
 							*currentView;

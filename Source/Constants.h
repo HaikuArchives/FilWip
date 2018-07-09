@@ -53,14 +53,16 @@ const uint32
 	 M_OPEN_PRESET =		'rdps',
 	 M_JUST_GOT_FOCUS =		'jgfc',
 	 M_THREAD_EXITED = 		'tskd',
-	 M_SUPERITEM_EXP =		'spxp',
-	 M_SUPERITEM_COL =		'spcl',
-	 M_SUPERITEM_MID =		'spmw',
 	 M_TREE_STATES =		'tres',
 	 M_WIPE_DONE =			'wpdn',
 	 M_BEGIN_OVERVIEW =		'bgov',
 	 M_OVERVIEW_STATS =		'ovws',
 	 M_RESET_LOOPERS =		'rslp';
+
+const uint32
+	 ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX = 0,
+	 ROW_FIELD_ENTRIES_COUNTS = 1,
+	 ROW_FIELD_BYTES_COUNTS = 2;
 
 const float
 	DialogMargin =			12,
@@ -68,7 +70,8 @@ const float
 	ButtonHeight =			25,
 	ButtonWidth =			73,
 	ButtonSpacing =			12,
-	PresetVerifyCode =		-184597316.598712;
+	//PresetVerifyCode =		-184597316.598712;
+	PresetVerifyCode =		-203468901.235678;
 
 const rgb_color
 	TreeLabelColor =		{152,   0,   0, 255},

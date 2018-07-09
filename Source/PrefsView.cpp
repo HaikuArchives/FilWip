@@ -34,7 +34,7 @@
 /*============================================================================================================*/
 
 PrefsView::PrefsView (BRect frame, const char *description)
-	: BevelView (frame, NULL, btNoBevel, B_FOLLOW_LEFT, B_WILL_DRAW)
+	: BView (frame, NULL, B_FOLLOW_LEFT, B_WILL_DRAW)
 {
 	descStr = new char[strlen(description) + 1];
 	strcpy (descStr, description);
