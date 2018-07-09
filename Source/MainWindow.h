@@ -120,8 +120,7 @@ class MainWindow : public BWindow
 
 		// TODO change the checkbox id <-> loop id
 		// Use a class to encapsulate the relation
-		BList				checkBoxes,
-							checkBoxesFields,
+		BList				checkBoxesFields,
 							infoViews,
 							containerItems,
 							fileLoopers;

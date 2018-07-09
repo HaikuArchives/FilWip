@@ -678,21 +678,15 @@ void MainWindow::MessageReceived (BMessage *message)
 						{
 							if (first_scan == true)
 							{
-								int8 firstMark = B_CONTROL_OFF;
-								if (entriesCounted > 0)
-									firstMark = B_CONTROL_ON;
-								
-								((BCheckBox*)checkBoxes.ItemAtFast(looperID))->SetValue (firstMark);
+								bool firstMark = (entriesCounted > 0);	
+								((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(looperID))->SetMarked(firstMark);
 							}
 						}
 						else if (prefs.FindBoolDef ("it_autoCheckLive", false) == true)
 						{
 							/* Do live check even if it is the first time! */
-							int8 firstMark = B_CONTROL_OFF;
-							if (entriesCounted > 0)
-								firstMark = B_CONTROL_ON;
-							
-							((BCheckBox*)checkBoxes.ItemAtFast(looperID))->SetValue (firstMark);
+								bool firstMark = (entriesCounted > 0);	
+								((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(looperID))->SetMarked(firstMark);
 						}
 					}
 					else
@@ -700,11 +694,8 @@ void MainWindow::MessageReceived (BMessage *message)
 						/* Live checking/unchecking (if prefs wants) */
 						if (prefs.FindBoolDef ("it_autoCheckLive", false) == true)
 						{
-							int8 autoMark = B_CONTROL_OFF;
-							if (entriesCounted > 0)
-								autoMark = B_CONTROL_ON;
-
-							((BCheckBox*)checkBoxes.ItemAtFast(looperID))->SetValue (autoMark);
+								bool firstMark = (entriesCounted > 0);		
+								((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(looperID))->SetMarked(firstMark);
 						}
 					}
 				}
@@ -1236,7 +1227,7 @@ void MainWindow::AddLinearItem (PluginContainerItem *item, char *fileName)
 	/* This function adds a linear item (a simple checkbox - bstringview combination) and adds
 		them to the corresponding BLists */
 	BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-	msg->AddInt8 ("checkbox_index", (int8)checkBoxes.CountItems());
+	msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
 	// TODO pass message to CheckBoxWithStringField
 
 	InfoStrView *linearInfo = new InfoStrView ("MainWindow:InfoView",
@@ -1308,7 +1299,7 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 		pluginSubItem = (PluginItem*)item->subItems.ItemAtFast (i);
 		
 		BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-		msg->AddInt8 ("checkbox_index", (int8)checkBoxes.CountItems());
+		msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
 		// TODO pass message to CheckBoxWithStringField
 		itemInfo = new InfoStrView (pluginSubItem->itemName.String(), liveMonitoring ? "[0 files, 0 bytes]" : "",
 							B_WILL_DRAW);
