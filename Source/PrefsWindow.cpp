@@ -28,7 +28,9 @@
 #include <Debug.h>
 #include <View.h>
 #include <Application.h>
+#include <Box.h>
 #include <Screen.h>
+#include <LayoutBuilder.h>
 #include <ListView.h>
 #include <ScrollView.h>
 #include <CheckBox.h>
@@ -41,7 +43,6 @@
 
 #include "PrefsWindow.h"
 #include "Constants.h"
-#include "PrefsListItem.h"
 #include "PrefsView.h"
 #include "Preferences.h"
 
@@ -78,7 +79,7 @@ const char * const rv_spaceFreeStr = "Disk space freed",
 /*============================================================================================================*/
 
 PrefsWindow::PrefsWindow()
-	: BWindow (BRect (0, 0, 440, 270-60), "Preferences", B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE,
+	: BWindow (BRect (0, 0, 440, 270-60), "Preferences", B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_AUTO_UPDATE_SIZE_LIMITS,
 				B_CURRENT_WORKSPACE),
 		checkBoxWidth (30.0f)
 {
@@ -87,25 +88,15 @@ PrefsWindow::PrefsWindow()
 	SetFeel (B_MODAL_APP_WINDOW_FEEL);
 
 	/* Construct basic outline controls */
-	backView = new BView (Bounds(), "Preferences:backView", B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
-	backView->SetViewColor (BeViewColor);
-	AddChild (backView);
+	backView = new BView ("Preferences:backView", B_WILL_DRAW);
 
-	optionsListView = new BListView (BRect (SmallMargin, SmallMargin, backView->StringWidth ("MiscellaneousWW"),
-						Bounds().bottom - SmallMargin), "Preferences:optionsView");
+	optionsListView = new BListView ("Preferences:optionsView",
+		B_SINGLE_SELECTION_LIST);
 	optionsListView->SetSelectionMessage (new BMessage (M_PREF_OPTION_CHANGED));
 
-	scrollView = new BScrollView ("Preferences:scrollView", optionsListView, B_FOLLOW_LEFT, 0, false, true);
-	backView->AddChild (scrollView);
+	scrollView = new BScrollView ("Preferences:scrollView", optionsListView,
+		B_FRAME_EVENTS | B_WILL_DRAW, false, true);
 
-	/* Fill-in the preferences panel */
-	optionsListView->AddItem (new PrefsListItem ("Report"));
-	optionsListView->AddItem (new PrefsListItem ("Items"));
-	optionsListView->AddItem (new PrefsListItem ("Loopers"));
-	optionsListView->AddItem (new PrefsListItem ("Remember"));
-	optionsListView->AddItem (new PrefsListItem ("Plugins"));
-	optionsListView->AddItem (new PrefsListItem ("Miscellaneous"));
-	
 	/* Fill-in the corresponding description strings */
 	const char *descStrings[] = 
 	{
@@ -116,47 +107,10 @@ PrefsWindow::PrefsWindow()
 		"Plugin options (needs app restart to take effect)",	// Plugins
 		"Some miscellaneous options"							// Miscellaneous
 	};
+
+	saveBtn = new BButton ("Preferences:saveBtn", "Save", new BMessage (M_SAVE_PREFS));
 	
-	/* Make the items in the listview a bit taller (looks better). Do this according to the font */
-	font_height fntHt;
-	be_plain_font->GetHeight (&fntHt);
-	
-//	float height = fntHt.ascent + fntHt.descent + 4;
-//	for (int32 i = 0; i < optionsListView->CountItems(); i++)
-//		optionsListView->ItemAt(i)->SetHeight (height);
-
-	optionsListView->Select (0L, false);
-
-	/* Construct the description bevelview and the string view inside it */
-	descView = new BView (BRect (scrollView->Frame().right + SmallMargin, SmallMargin,
-					Bounds().right - SmallMargin, fntHt.ascent + fntHt.descent + SmallMargin + 4), 
-					"Preferences:descView", B_FOLLOW_LEFT,
-					B_WILL_DRAW);
-	descView->SetViewColor (ItemsViewColor);
-	backView->AddChild (descView);
-
-	descStringView = new BStringView (BRect (SmallMargin, 2, descView->Bounds().right - 2,
-							fntHt.ascent + fntHt.descent + 4), "Preferences:descStringView", descStrings[0]);
-	descView->AddChild (descStringView);
-	descStringView->SetHighColor (ItemsSelectColor);
-	descStringView->SetLowColor (descStringView->ViewColor());
-
-	saveBtn = new BButton (BRect (Bounds().right - SmallMargin - ButtonWidth, Bounds().bottom - SmallMargin
-						- ButtonHeight, Bounds().right - SmallMargin, Bounds().bottom - SmallMargin),
-						"Preferences:saveBtn", "Save", new BMessage (M_SAVE_PREFS));
-	
-	cancelBtn = new BButton (BRect (saveBtn->Frame().left - SmallMargin - ButtonWidth, saveBtn->Frame().top,
-						saveBtn->Frame().left - SmallMargin, saveBtn->Frame().bottom), "Preferences:cancelBtn",
-						"Cancel", new BMessage (M_CLOSE_PREFS));
-
-	backView->AddChild (saveBtn);
-	backView->AddChild (cancelBtn);
-	
-	/* Calculate the area in which the panels must appear */
-	prefArea.left = scrollView->Frame().right + SmallMargin;
-	prefArea.top = descView->Frame().bottom + SmallMargin;
-	prefArea.right = Bounds().right - SmallMargin;
-	prefArea.bottom = Bounds().bottom - 2 * SmallMargin - ButtonHeight;
+	cancelBtn = new BButton ("Preferences:cancelBtn", "Cancel", new BMessage (M_CLOSE_PREFS));
 	
 	/* Below is generic code to render panels (makes addition of panels easy) */
 	RenderFunc reportFuncPtr = &PrefsWindow::MakeViewReport;
@@ -213,6 +167,11 @@ PrefsWindow::PrefsWindow()
 	loadList.AddItem ((void*)&pluginsLoadPtr);
 	loadList.AddItem ((void*)&miscLoadPtr);
 	
+	BBox *fLabelBox = new BBox("SettingsContainerBox2");
+	fSettingsContainerBox = new BView("SettingsContainerBox",0);
+	fSettingsContainerBox->SetLayout(new BCardLayout());
+	fLabelBox->AddChild(fSettingsContainerBox);
+
 	int32 panelCount = funcList.CountItems();
 	for (int32 i = 0; i < panelCount; i++)
 	{
@@ -221,11 +180,33 @@ PrefsWindow::PrefsWindow()
 
 		PrefsView *vw = ConstructPrefsView (descStrings[i], func, loadFunc);
 		viewList.AddItem ((void*)vw);
+		((BCardLayout*) fSettingsContainerBox->GetLayout())->AddView(vw);
 	}
 
-	currentView = (PrefsView*)viewList.ItemAtFast(0L);
-	currentView->Show();
-	
+	BLayoutBuilder::Group<>(this)
+		.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+			.Add(scrollView)
+			.AddGroup(B_VERTICAL, B_USE_DEFAULT_SPACING)
+				.Add(fLabelBox)
+				.AddGroup(B_HORIZONTAL, B_USE_DEFAULT_SPACING)
+					.AddGlue()
+					.Add(cancelBtn)
+					.Add(saveBtn)
+				.End()
+			.End()
+		.SetInsets(B_USE_WINDOW_SPACING)
+	.End();
+
+	/* Fill-in the preferences panel */	
+
+	AddOptionsToListView(optionsListView, new BStringItem ("Report"));
+	AddOptionsToListView(optionsListView, new BStringItem ("Items"));
+	AddOptionsToListView(optionsListView, new BStringItem ("Loopers"));
+	AddOptionsToListView(optionsListView, new BStringItem ("Remember"));
+	AddOptionsToListView(optionsListView, new BStringItem ("Plugins"));
+	AddOptionsToListView(optionsListView, new BStringItem ("Miscellaneous"));
+
+	optionsListView->Select (0L, false);
 	/* Center window on-screen */
 	BRect screen_rect (BScreen().Frame());
 	MoveTo (screen_rect.Width() / 2 - Frame().Width() / 2, screen_rect.Height() / 2 - Frame().Height() / 2);
@@ -241,6 +222,7 @@ PrefsWindow::PrefsWindow()
 				MoveTo (wndPt);
 		}
 	}
+
 }
 
 /*============================================================================================================*/
@@ -270,29 +252,21 @@ void PrefsWindow::MessageReceived (BMessage *message)
 			int32 selectedItem = optionsListView->CurrentSelection();
 			if (selectedItem >= 0L && selectedItem < funcList.CountItems())
 			{
-				PrefsView *vw = reinterpret_cast<PrefsView*>(viewList.ItemAtFast (selectedItem));
-				if (currentView != vw)
-				{
-					currentView->Hide();
-					currentView = vw;
-					currentView->Show();
-					descStringView->SetText (currentView->Description());
-				}
-			}
-			else
-			{
+				((BCardLayout*) fSettingsContainerBox->GetLayout())->SetVisibleItem(selectedItem);
+			} 
+//			else
+//			{
 				/* Find previously selected item (stored in currentView) and make that the selected view
 					This happens when user tries to deselect an item in the list */
-				int32 previousSelection (0L), listCount (viewList.CountItems());
+/*				int32 previousSelection (0L), listCount (viewList.CountItems());
 				for (int32 i = 0L; i < listCount; i++)
 					if (currentView == reinterpret_cast<PrefsView*>(viewList.ItemAtFast(i)))
 					{
 						previousSelection = i;
 						break;
 					}
-				
 				optionsListView->Select (previousSelection);
-			}
+			} */
 			
 			break;
 		}
@@ -327,16 +301,14 @@ void PrefsWindow::MessageReceived (BMessage *message)
 
 PrefsView* PrefsWindow::ConstructPrefsView (const char *desc, RenderFunc func, SLFunc slfunc)
 {
-	PrefsView *vw = new PrefsView (prefArea, desc);
-	backView->AddChild (vw);
+	PrefsView *vw = new PrefsView (desc);
 
 	/* Call render function */	
 	(this->*func)(vw);
-	vw->Hide();
 
 	/* Call load function */	
 	(this->*slfunc)();
-		
+	vw->GroupLayout()->AddItem(BSpaceLayoutItem::CreateGlue());
 	return vw;
 }
 
@@ -346,16 +318,11 @@ void PrefsWindow::MakeViewReport (BView *vw)
 {
 	PRINT (("PrefsWindow::MakeViewReport (BView*)\n"));
 	
-	rv_spaceFreeChk = new BCheckBox (BRect (SmallMargin, SmallMargin, CheckBoxWidth (rv_spaceFreeStr), 0),
-							"Preferences:rv_spaceFreeChk", rv_spaceFreeStr, NULL);
+	rv_spaceFreeChk = new BCheckBox ("Preferences:rv_spaceFreeChk", rv_spaceFreeStr, NULL);
 
-	rv_nFilesDeletedChk = new BCheckBox (BRect (SmallMargin, rv_spaceFreeChk->Frame().bottom,
-							CheckBoxWidth (rv_nFilesDeletedStr), 0), "Preferences:rv_nFilesDeletedChk",
-							rv_nFilesDeletedStr, NULL);
+	rv_nFilesDeletedChk = new BCheckBox ("Preferences:rv_nFilesDeletedChk",	rv_nFilesDeletedStr, NULL);
 
-	rv_timeTakenChk = new BCheckBox (BRect (SmallMargin, rv_nFilesDeletedChk->Frame().bottom,
-							CheckBoxWidth (rv_timeTakenStr), 0), "Preferences:rv_timeTakenChk", 
-							rv_timeTakenStr, NULL);
+	rv_timeTakenChk = new BCheckBox ("Preferences:rv_timeTakenChk",	rv_timeTakenStr, NULL);
 
 	vw->AddChild (rv_spaceFreeChk);
 	vw->AddChild (rv_nFilesDeletedChk);
@@ -390,15 +357,12 @@ void PrefsWindow::MakeViewItems (BView *vw)
 {
 	PRINT (("PrefsWindow::MakeViewItems (BView*)\n"));
 
-	it_autoCheckStartChk = new BCheckBox (BRect (SmallMargin, SmallMargin, CheckBoxWidth (it_autoCheckStartStr),
-							0),	"Preferences:it_autoCheckStartChk", it_autoCheckStartStr, NULL);
+	it_autoCheckStartChk = new BCheckBox ("Preferences:it_autoCheckStartChk", it_autoCheckStartStr, NULL);
 
-	it_autoCheckLiveChk = new BCheckBox (BRect (SmallMargin, it_autoCheckStartChk->Frame().bottom,
-							CheckBoxWidth (it_autoCheckLiveStr), 0), "Preferences:it_autoCheckLiveChk",
+	it_autoCheckLiveChk = new BCheckBox ("Preferences:it_autoCheckLiveChk",
 							it_autoCheckLiveStr, NULL);
 
-	it_unCheckAfterDelChk = new BCheckBox (BRect (SmallMargin, it_autoCheckLiveChk->Frame().bottom,
-							CheckBoxWidth (it_unCheckAfterDelStr), 0), "Preferences:it_unCheckAfterDelChk",
+	it_unCheckAfterDelChk = new BCheckBox ("Preferences:it_unCheckAfterDelChk",
 							it_unCheckAfterDelStr, NULL);
 
 	vw->AddChild (it_autoCheckStartChk);
@@ -434,15 +398,12 @@ void PrefsWindow::MakeViewLoopers (BView *vw)
 {
 	PRINT (("PrefsWindow::MakeViewLoopers (BView*)\n"));
 	
-	lo_syncChk = new BCheckBox (BRect (SmallMargin, SmallMargin, CheckBoxWidth (lo_syncStr), 0),
-						"Preferences:lo_syncChk", lo_syncStr, NULL);
+	lo_syncChk = new BCheckBox ("Preferences:lo_syncChk", lo_syncStr, NULL);
 
-	lo_safeChk = new BCheckBox (BRect (SmallMargin, lo_syncChk->Frame().bottom,	CheckBoxWidth (lo_safeStr), 0),
-						"Preferences:lo_safeChk", lo_safeStr, NULL);
+	lo_safeChk = new BCheckBox ("Preferences:lo_safeChk", lo_safeStr, NULL);
 	lo_safeChk->SetValue (B_CONTROL_ON); lo_safeChk->SetEnabled (false); // no need this option
 	
-	lo_monitorChk = new BCheckBox (BRect (SmallMargin, lo_safeChk->Frame().bottom,
-						CheckBoxWidth (lo_monitorStr), 0), "Preferences:lo_monitorChk", lo_monitorStr, NULL);
+	lo_monitorChk = new BCheckBox ("Preferences:lo_monitorChk", lo_monitorStr, NULL);
 
 	/* Construct eraser looper priority menu */
 	lo_priorityPopup = new BPopUpMenu ("");
@@ -480,8 +441,7 @@ void PrefsWindow::MakeViewLoopers (BView *vw)
 	
 	/* Construct the looper capacity menus */
 	lo_capacityPopup = new BPopUpMenu ("");
-	lo_capacityField = new BMenuField (BRect (SmallMargin, lo_priorityField->Frame().bottom + SmallMargin, 
-						Bounds().right - SmallMargin, 0), "Preferences:lo_capacityField",
+	lo_capacityField = new BMenuField ("Preferences:lo_capacityField",
 						lo_capacityFieldStr, (BMenu*)lo_capacityPopup);
 	lo_capacityField->SetDivider (backView->StringWidth (lo_capacityField->Label()) +
 						backView->StringWidth ("W"));
@@ -576,14 +536,11 @@ void PrefsWindow::MakeViewRemember (BView *vw)
 {
 	PRINT (("PrefsWindow::MakeViewRemember (BView*)\n"));
 	
-	rm_treeChk = new BCheckBox (BRect (SmallMargin, SmallMargin, CheckBoxWidth (rm_treeStr), 0),
-					"Preferences:rm_treeChk", rm_treeStr, NULL);
+	rm_treeChk = new BCheckBox ("Preferences:rm_treeChk", rm_treeStr, NULL);
 
-	rm_winPosChk = new BCheckBox (BRect (SmallMargin, rm_treeChk->Frame().bottom,
-						CheckBoxWidth (rm_winPosStr), 0), "Preferences:rm_winPosChk", rm_winPosStr, NULL);
+	rm_winPosChk = new BCheckBox ("Preferences:rm_winPosChk", rm_winPosStr, NULL);
 
-	rm_itemsChk = new BCheckBox (BRect (SmallMargin, rm_winPosChk->Frame().bottom,
-						CheckBoxWidth (rm_itemsStr), 0), "Preferences:rm_itemsChk", rm_itemsStr, NULL);
+	rm_itemsChk = new BCheckBox ("Preferences:rm_itemsChk", rm_itemsStr, NULL);
 
 	vw->AddChild (rm_treeChk);
 	vw->AddChild (rm_winPosChk);
@@ -618,18 +575,14 @@ void PrefsWindow::MakeViewPlugins (BView *vw)
 {
 	PRINT (("PrefsWindow::MakeViewPlugins (BView*)\n"));
 
-	pv_asyncLoadChk = new BCheckBox (BRect (SmallMargin, SmallMargin, CheckBoxWidth (pv_asyncLoadStr), 0),
-							"Preferences:pv_asyncLoadChk", pv_asyncLoadStr, NULL);
+	pv_asyncLoadChk = new BCheckBox ("Preferences:pv_asyncLoadChk", pv_asyncLoadStr, NULL);
 
-	pv_debugChk = new BCheckBox (BRect (SmallMargin, pv_asyncLoadChk->Frame().bottom,
-							CheckBoxWidth (pv_debugStr), 0), "Preferences:pv_debugChk", pv_debugStr, NULL);
+	pv_debugChk = new BCheckBox ("Preferences:pv_debugChk", pv_debugStr, NULL);
 
-	pv_checkInstallChk = new BCheckBox (BRect (SmallMargin, pv_debugChk->Frame().bottom,
-							CheckBoxWidth (pv_checkInstallStr), 0), "Preferences:pv_checkInstallChk",
+	pv_checkInstallChk = new BCheckBox ("Preferences:pv_checkInstallChk",
 							pv_checkInstallStr, NULL);
 
-	pv_recurseChk = new BCheckBox (BRect (SmallMargin, pv_checkInstallChk->Frame().bottom,
-							CheckBoxWidth (pv_recurseStr), 0), "Preferences:pv_recuseChk",
+	pv_recurseChk = new BCheckBox ("Preferences:pv_recuseChk",
 							pv_recurseStr, NULL);
 
 	vw->AddChild (pv_asyncLoadChk);
@@ -668,14 +621,11 @@ void PrefsWindow::MakeViewMiscellaneous (BView *vw)
 {
 	PRINT (("PrefsWindow::MakeViewMiscellaneous (BView*)\n"));
 	
-	ms_confirmChk = new BCheckBox (BRect (SmallMargin, SmallMargin, CheckBoxWidth (ms_confirmStr), 0),
-					"Preferences:ms_confirm", ms_confirmStr, NULL);
+	ms_confirmChk = new BCheckBox ("Preferences:ms_confirm", ms_confirmStr, NULL);
 
-	ms_registerChk = new BCheckBox (BRect (SmallMargin, ms_confirmChk->Frame().bottom,
-						CheckBoxWidth (ms_registerStr), 0), "Preferences:ms_register", ms_registerStr, NULL);
+	ms_registerChk = new BCheckBox ("Preferences:ms_register", ms_registerStr, NULL);
 
-	ms_quitAppChk = new BCheckBox (BRect (SmallMargin, ms_registerChk->Frame().bottom,
-						CheckBoxWidth (ms_quitAppStr), 0), "Preferences:ms_quitApp", ms_quitAppStr, NULL);
+	ms_quitAppChk = new BCheckBox ("Preferences:ms_quitApp", ms_quitAppStr, NULL);
 
 	vw->AddChild (ms_confirmChk);
 	vw->AddChild (ms_registerChk);
@@ -703,6 +653,20 @@ void PrefsWindow::LoadViewMiscellaneous ()
 	ms_registerChk->SetValue (CheckBoxValue (prefs.FindBoolDef ("ms_register", false)));
 	ms_quitAppChk->SetValue (CheckBoxValue (prefs.FindBoolDef ("ms_quitApp", false)));
 }
+
+
+void PrefsWindow::AddOptionsToListView(BListView* listView, BStringItem* item)
+{
+	listView->AddItem(item);
+	// constraint the listview width so that the longest item fits
+	float width = 0;
+	listView->GetPreferredSize(&width, NULL);
+	width += B_V_SCROLL_BAR_WIDTH;
+	listView->SetExplicitMinSize(BSize(width, 0));
+	listView->SetExplicitMaxSize(BSize(width, B_SIZE_UNLIMITED));
+
+}
+
 
 /*============================================================================================================*/
 

@@ -28,13 +28,13 @@
 #ifndef _PREFS_VIEW_H
 #define _PREFS_VIEW_H
 
+#include <GroupView.h>
 
-#include <View.h>
 
-class PrefsView : public BView
+class PrefsView : public BGroupView
 {
 	public:
-		PrefsView (BRect frame, const char *description);
+		PrefsView (const char *description);
 		virtual ~PrefsView ();
 		
 		const char			*Description() const;

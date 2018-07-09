@@ -39,7 +39,6 @@ SRCS = AboutWindow.cpp \
 	NodeLimit.cpp \
 	PluginParser.cpp \
 	Preferences.cpp \
-	PrefsListItem.cpp \
 	PrefsView.cpp \
 	PrefsWindow.cpp
 

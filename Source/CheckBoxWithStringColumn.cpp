@@ -34,8 +34,7 @@ CheckBoxWithStringField::HasCheckBox() const
 CheckBoxWithStringColumn::CheckBoxWithStringColumn(const char* title, float width, float minWidth,
 	float maxWidth, uint32 truncate, alignment align)
 	:
-	BStringColumn(title, width, minWidth, maxWidth, align),
-	fOffsetH(0)
+	BStringColumn(title, width, minWidth, maxWidth, align)
 {
 	SetWantsEvents(true);
 }
@@ -90,5 +89,4 @@ CheckBoxWithStringColumn::DrawField(BField* _field, BRect rect, BView* parent)
 	parent->SetHighColor(color);	
 	BStringColumn::DrawField(_field, rect, parent);
 	parent->SetHighColor(color);
-	fOffsetH = rect.left;
 }

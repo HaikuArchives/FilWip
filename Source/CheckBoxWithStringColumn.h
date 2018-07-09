@@ -39,7 +39,6 @@ public:
 					uint32 /*buttons*/);
 private:
 			BRect 	CheckBoxFrame(BView* parent, BRect rect);
-			float 	fOffsetH;
 };
 
 #endif	// CHECKBOX_WITH_STRING_COLUMN_H
