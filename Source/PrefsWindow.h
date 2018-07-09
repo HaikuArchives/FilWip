@@ -98,16 +98,11 @@ class PrefsWindow : public BWindow
 
 		bool				IsChecked (BCheckBox *chkBox) const;
 		int32				CheckBoxValue (bool value) const;
-		float				CheckBoxWidth (const char *str) const;
 		void				AddOptionsToListView(BListView* listView, BStringItem* item);
 		
 		/* Protected members */
-		BView				*backView;
 		BListView			*optionsListView;
 		BScrollView			*scrollView;
-		PrefsView			*reportView,
-							*itemsView,
-							*currentView;
 		BButton				*saveBtn,
 							*cancelBtn;
 		
@@ -159,7 +154,7 @@ class PrefsWindow : public BWindow
 							*lo_cap3,
 							*lo_cap4,
 							*lo_cap5;
-		float				checkBoxWidth;
+		int32				fPreviousSelection;
 		BView *				fSettingsContainerBox;
 };
 

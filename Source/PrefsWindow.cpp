@@ -29,6 +29,7 @@
 #include <View.h>
 #include <Application.h>
 #include <Box.h>
+#include <GridView.h>
 #include <Screen.h>
 #include <LayoutBuilder.h>
 #include <ListView.h>
@@ -81,14 +82,11 @@ const char * const rv_spaceFreeStr = "Disk space freed",
 PrefsWindow::PrefsWindow()
 	: BWindow (BRect (0, 0, 440, 270-60), "Preferences", B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_AUTO_UPDATE_SIZE_LIMITS,
 				B_CURRENT_WORKSPACE),
-		checkBoxWidth (30.0f)
+		fPreviousSelection(0)
 {
 	PRINT (("PrefsWindow::PrefsWindow ()\n"));
 
 	SetFeel (B_MODAL_APP_WINDOW_FEEL);
-
-	/* Construct basic outline controls */
-	backView = new BView ("Preferences:backView", B_WILL_DRAW);
 
 	optionsListView = new BListView ("Preferences:optionsView",
 		B_SINGLE_SELECTION_LIST);
@@ -253,20 +251,14 @@ void PrefsWindow::MessageReceived (BMessage *message)
 			if (selectedItem >= 0L && selectedItem < funcList.CountItems())
 			{
 				((BCardLayout*) fSettingsContainerBox->GetLayout())->SetVisibleItem(selectedItem);
+				fPreviousSelection = selectedItem;
 			} 
-//			else
-//			{
+			else
+			{
 				/* Find previously selected item (stored in currentView) and make that the selected view
 					This happens when user tries to deselect an item in the list */
-/*				int32 previousSelection (0L), listCount (viewList.CountItems());
-				for (int32 i = 0L; i < listCount; i++)
-					if (currentView == reinterpret_cast<PrefsView*>(viewList.ItemAtFast(i)))
-					{
-						previousSelection = i;
-						break;
-					}
-				optionsListView->Select (previousSelection);
-			} */
+				optionsListView->Select (fPreviousSelection);
+			}
 			
 			break;
 		}
@@ -407,11 +399,8 @@ void PrefsWindow::MakeViewLoopers (BView *vw)
 
 	/* Construct eraser looper priority menu */
 	lo_priorityPopup = new BPopUpMenu ("");
-	lo_priorityField = new BMenuField (BRect (SmallMargin, lo_monitorChk->Frame().bottom + SmallMargin, 
-						Bounds().right - SmallMargin, 0), "Preferences:lo_priorityField",
+	lo_priorityField = new BMenuField ("Preferences:lo_priorityField",
 						lo_priorityFieldStr, (BMenu*)lo_priorityPopup);
-	lo_priorityField->SetDivider (backView->StringWidth (lo_priorityField->Label()) + 
-						backView->StringWidth ("W"));
 	
 	lo_priorityList.AddItem ((void*)B_LOW_PRIORITY);
 	lo_priorityList.AddItem ((void*)B_NORMAL_PRIORITY);
@@ -436,15 +425,11 @@ void PrefsWindow::MakeViewLoopers (BView *vw)
 	lo_priorityPopup->AddItem (lo_item5);
 	lo_priorityPopup->AddItem (lo_item6);
 	lo_priorityPopup->AddItem (lo_item7);
-
-	vw->AddChild (lo_priorityField);
 	
 	/* Construct the looper capacity menus */
 	lo_capacityPopup = new BPopUpMenu ("");
 	lo_capacityField = new BMenuField ("Preferences:lo_capacityField",
-						lo_capacityFieldStr, (BMenu*)lo_capacityPopup);
-	lo_capacityField->SetDivider (backView->StringWidth (lo_capacityField->Label()) +
-						backView->StringWidth ("W"));
+						lo_capacityFieldStr, (BMenu*)lo_capacityPopup);;
 	
 	lo_capacityList.AddItem ((void*)CAPACITY_100);
 	lo_capacityList.AddItem ((void*)CAPACITY_500);
@@ -467,7 +452,15 @@ void PrefsWindow::MakeViewLoopers (BView *vw)
 	vw->AddChild (lo_syncChk);
 	vw->AddChild (lo_safeChk);
 	vw->AddChild (lo_monitorChk);
-	vw->AddChild (lo_capacityField);
+
+	BGridView* gridView = new BGridView();
+	vw->AddChild(gridView);
+
+	gridView->GridLayout()->AddItem(lo_priorityField->CreateLabelLayoutItem(), 0, 0);
+	gridView->GridLayout()->AddItem(lo_priorityField->CreateMenuBarLayoutItem(), 1, 0);
+	gridView->GridLayout()->AddItem(lo_capacityField->CreateLabelLayoutItem(), 0, 1);
+	gridView->GridLayout()->AddItem(lo_capacityField->CreateMenuBarLayoutItem(), 1, 1);
+
 }
 
 /*============================================================================================================*/
@@ -688,13 +681,6 @@ int32 PrefsWindow::CheckBoxValue (bool value) const
 		return B_CONTROL_ON;
 	else
 		return B_CONTROL_OFF;
-}
-
-/*============================================================================================================*/
-
-float PrefsWindow::CheckBoxWidth (const char *str) const
-{
-	return backView->StringWidth (str) + 30.0f;
 }
 
 /*============================================================================================================*/

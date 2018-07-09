@@ -36,11 +36,6 @@ class PrefsView : public BGroupView
 	public:
 		PrefsView (const char *description);
 		virtual ~PrefsView ();
-		
-		const char			*Description() const;
-				
-	protected:
-		char				*descStr;
 };
 
 #endif /* _PREFS_VIEW_H */

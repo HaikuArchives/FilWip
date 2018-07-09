@@ -37,8 +37,6 @@
 PrefsView::PrefsView (const char *description)
 	: BGroupView("Property", B_VERTICAL, B_USE_DEFAULT_SPACING)
 {
-	descStr = new char[strlen(description) + 1];
-	strcpy (descStr, description);
 	GroupLayout()->SetInsets(B_USE_WINDOW_SPACING,
 			B_USE_WINDOW_SPACING,B_USE_WINDOW_SPACING,B_USE_WINDOW_SPACING);
 
@@ -53,15 +51,7 @@ PrefsView::PrefsView (const char *description)
 
 PrefsView::~PrefsView()
 {
-	if (descStr)
-		delete[] descStr;
-}
 
-/*============================================================================================================*/
-
-const char *PrefsView::Description() const
-{
-	return const_cast<const char*>(descStr);
 }
 
 /*============================================================================================================*/
