@@ -74,6 +74,7 @@
 #include "CheckBoxWithStringColumn.h"
 using namespace std;
 
+#define B_TRANSLATE(x) x
 
 bool
 SelectItems(BRow *row, void *data)
@@ -182,17 +183,43 @@ MainWindow::MainWindow ()
 	statusBar = new BStatusBar ("statusBar");
 	statusBar->Hide();
 
-	// Tool Bar
-	mainToolBar = new BToolBar(B_VERTICAL);
+	// Menu Bar
+	BMenuBar* menuBar = new BMenuBar("MenuBar");
+	BMenu* menu;
+	menu = new BMenu("FilWip");
+	menuBar->AddItem(menu);
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Preferences..."), new BMessage(M_PREFS), ','));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Help"), new BMessage(M_HELP)));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("About FilWip..."), new BMessage(B_ABOUT_REQUESTED)));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));
 
-	mainToolBar->AddAction(new BMessage(M_HELP), this, ResVectorToBitmap("HELP"),"Help (F1)","",false);
-	mainToolBar->AddAction(new BMessage(B_ABOUT_REQUESTED),this, ResVectorToBitmap("ABOUT"),"About","",false);
+	menu = new BMenu(B_TRANSLATE("Selection"));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Select all"), new BMessage(M_SELECT_ALL), 'A'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Deselect all"), new BMessage(M_DESELECT_ALL), 'D'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Save as preset"), new BMessage(M_SAVE_PRESET), 'S'));
+	menuBar->AddItem(menu);
+
+	// Tool Bar
+	mainToolBar = new BToolBar(B_HORIZONTAL);
+
+	mainToolBar->AddAction(new BMessage(M_SELECT_ALL), this, ResVectorToBitmap("MARKED_CHECKBOX"),"Select all (Alt-A)","",false);
+	mainToolBar->AddAction(new BMessage(M_DESELECT_ALL), this, ResVectorToBitmap("EMPTY_CHECKBOX"),"Deselect all (Alt-D)","",false);
+	mainToolBar->AddAction(new BMessage(M_SMART_SELECT),this, ResVectorToBitmap("SMART_CHECKBOX"), "Select as needed (Alt-M)","",false);
+	mainToolBar->GroupLayout()->AddItem(BSpaceLayoutItem::CreateHorizontalStrut(B_USE_HALF_ITEM_SPACING));
+	mainToolBar->AddSeparator();
+	mainToolBar->GroupLayout()->AddItem(BSpaceLayoutItem::CreateHorizontalStrut(B_USE_HALF_ITEM_SPACING));
 	mainToolBar->AddAction(new BMessage(M_SAVE_PRESET), this, ResVectorToBitmap("SAVE"), "Save preset (Alt-S)","",false);
 	mainToolBar->AddAction(new BMessage(M_PREFS),this, ResVectorToBitmap("PREFERENCES"),"Preferences","",false);
+
+	mainToolBar->AddAction(new BMessage(M_HELP), this, ResVectorToBitmap("HELP"),"Help (F1)","",false);
+//	mainToolBar->AddAction(new BMessage(B_ABOUT_REQUESTED),this, ResVectorToBitmap("ABOUT"),"About","",false);
 //	mainToolBar->AddAction(new BMessage(M_PREVIEW),this,
 //		previewButtonBitmap /*ResVectorToBitmap("PREVIEW") */,"Preview (Alt-P)","",false);
 
-	mainToolBar->AddSeparator();
 
 	/* Create tooltips for all the toolbar buttons */
 	/*
@@ -200,22 +227,20 @@ MainWindow::MainWindow ()
 	toolTip->SetHelp (cleanUp, "Begin the erasing process");
 	*/
 
-	mainToolBar->AddAction(new BMessage(M_SELECT_ALL), this, ResVectorToBitmap("MARKED_CHECKBOX"),"Select all (Alt-A)","",false);
-	mainToolBar->AddAction(new BMessage(M_DESELECT_ALL), this, ResVectorToBitmap("EMPTY_CHECKBOX"),"Deselect all (Alt-D)","",false);
-	mainToolBar->AddAction(new BMessage(M_SMART_SELECT),this, ResVectorToBitmap("SMART_CHECKBOX"), "Select as needed (Alt-M)","",false);
 	mainToolBar->AddGlue();
 	/* "Select As needed" won't work if there are no infostrings */
 	/* TODO FIX THIS
 	if (liveMonitoring == false)
 		smartSelectButton->Hide();
 	*/
+	/*
 	static const float spacing = be_control_look->DefaultLabelSpacing();
 	BGroupLayout *boxLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
 		.SetInsets(B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS,
 			B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
 		.Add(fElementListView = new ElementListView("MainWindow:ElementListView"))
 		.Add(mainToolBar);
-	boxView->AddChild(boxLayout->View());
+	boxView->AddChild(boxLayout->View()); */
 
 	/* Draw the button, busyview and presetField AFTER resizing the boxView */
 	cleanUp = new BButton ("MainWindow:CleanUp", "Clean up", new BMessage (M_CLEANUP));
@@ -248,16 +273,20 @@ MainWindow::MainWindow ()
 	
 	eraserLooper = new EraserLooper (eraserPriority, statusBar);
 
-	BLayoutBuilder::Group<>(this,B_VERTICAL, B_USE_ITEM_SPACING)
-		.SetInsets(B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING, B_USE_WINDOW_SPACING)
-		.Add(new BStringView("descView", "Choose the temporary files, caches, logs etc. to be cleaned."))
-		.Add(boxView, 100)
-		.AddGroup(B_HORIZONTAL, 0)
-			//.SetInsets(0, 3, B_USE_ITEM_SPACING, 0)
-			.Add(presetField,1)
-			.Add(statusBar, 10)
-			.AddGlue()
-			.Add(cleanUp,1)
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 5)
+		.SetInsets(0, 0, 0, 0)
+		.Add(menuBar)
+		.Add(mainToolBar)
+		.AddGroup(B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_INSETS, 0, B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
+			.Add(fElementListView = new ElementListView("MainWindow:ElementListView"), 100)
+			.AddGroup(B_HORIZONTAL, 0)
+				//.SetInsets(0, 3, B_USE_ITEM_SPACING, 0)
+				.Add(presetField,1)
+				.Add(statusBar, 10)
+				.AddGlue()
+				.Add(cleanUp,1)
+			.End()
 		.End()
 		.End();
 }

@@ -14,11 +14,11 @@
 */
 
 ElementListView::ElementListView(const char *name)
-	: BColumnListView("elementListView", B_FRAME_EVENTS|B_NAVIGABLE, B_NO_BORDER, false)
+	: BColumnListView("elementListView", B_FRAME_EVENTS|B_NAVIGABLE, B_FANCY_BORDER, false)
 {	
 //	BColumn* column;
 	int32 i = 0;
-	AddColumn(new CheckBoxWithStringColumn(B_TRANSLATE("Name"), 150, 10, 600, 0), i++);
+	AddColumn(new CheckBoxWithStringColumn(B_TRANSLATE("Remove"), 150, 10, 600, 0), i++);
 	AddColumn(new BIntegerColumn(B_TRANSLATE("Items"), 80, 10, 100, B_ALIGN_RIGHT), i++);
 	AddColumn(new BSizeColumn(B_TRANSLATE("Size"), 80, 10, 600), i++);
 //	column->SetVisible(false);
