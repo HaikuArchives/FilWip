@@ -206,29 +206,19 @@ void FilWip::AboutRequested ()
 void FilWip::RegisterMimeType ()
 {
 	PRINT (("FilWip::RegisterMimeType ()\n"));
-	
+
 	/* Register the preset file type if prefs allows us */
 	BMimeType fileType ("application/x-vnd.FilWip-Preset");
-	BBitmap *largeIcon = new BBitmap (BRect (0, 0, kLargeIconWidth - 1,	kLargeIconHeight - 1),
-								kLargeIconColorSpace);
-	BBitmap *smallIcon = new BBitmap (BRect (0, 0, kSmallIconWidth - 1, kSmallIconHeight - 1),
-								kSmallIconColorSpace);
-
-	largeIcon->SetBits (kLargeIconBits, 32 * 32, 0, kLargeIconColorSpace);
-	smallIcon->SetBits (kSmallIconBits, 16 * 16, 0, kSmallIconColorSpace);
 
 	/* Set file type details  & its icon from "DataBits.h" */
 	fileType.SetShortDescription ("FilWip preset");
 	fileType.SetLongDescription ("FilWip preset");
 	fileType.SetPreferredApp (AppSignature, B_OPEN);
-	fileType.SetIcon (largeIcon, B_LARGE_ICON);
-	fileType.SetIcon (smallIcon, B_MINI_ICON);
-	
+	fileType.SetIcon (kVectorIconBits, sizeof(kVectorIconBits));
+
 	if (fileType.IsInstalled() == false)
 		fileType.Install();
-	
-	delete largeIcon;
-	delete smallIcon;
+
 }
 
 /*============================================================================================================*/
