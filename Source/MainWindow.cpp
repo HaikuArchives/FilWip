@@ -1287,9 +1287,9 @@ void MainWindow::AddHierarchialItem (PluginContainerItem *item, char *fileName)
 	PRINT (("MainWindow::AddHierarchialItem (PluginContainerItem*, float, BView*, int, char*)\n"));
 	
 	BRow *row = new BRow();
-	int32 i = 0;
+
 	CheckBoxWithStringField* checkBoxString;
-	row->SetField(checkBoxString = new CheckBoxWithStringField(item->name.String(), false), i++);
+	row->SetField(checkBoxString = new CheckBoxWithStringField(item->name.String(), false), 0);
 	//row->SetField(new BIntegerField(0), i++); // TOTAL
 	//row->SetField(new BSizeField(0), i++);		//TOTAL
 	fElementListView->AddRow(row);
@@ -1327,11 +1327,11 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 		itemInfo->SetPath (sItem->itemPath.String());
 		
 		BRow *row = new BRow();
-		int32 i = 0;
+		int32 index = 0;
 		CheckBoxWithStringField* checkBoxField;
-		row->SetField(checkBoxField = new CheckBoxWithStringField(pluginSubItem->itemName.String()), i++);
-		row->SetField(new BIntegerField(0), i++); // TOTAL
-		row->SetField(new BSizeField(0), i++);		//TOTAL
+		row->SetField(checkBoxField = new CheckBoxWithStringField(pluginSubItem->itemName.String()), index++);
+		row->SetField(new BIntegerField(0), index++); // TOTAL
+		row->SetField(new BSizeField(0), index++);		//TOTAL
 
 		fElementListView->AddRow(row, parentRow);
 
