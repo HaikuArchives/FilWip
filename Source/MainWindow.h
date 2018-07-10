@@ -100,16 +100,6 @@ class MainWindow : public BWindow
 		double				startTime,
 							endTime,
 							totalTime;
-
-		/* Imagebutton and image pointers */
-		BBitmap				*helpButtonBitmap,
-							*optionsButtonBitmap,
-							*saveButtonBitmap,
-							*aboutButtonBitmap,
-							*previewButtonBitmap,
-							*selectAllButtonBitmap,
-							*deselectAllButtonBitmap,
-							*smartSelectButtonBitmap;
 							
 		/* Other control pointers */
 		BStatusBar			*statusBar;

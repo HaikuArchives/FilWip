@@ -161,17 +161,6 @@ MainWindow::MainWindow ()
 	BPath docsPath (&appEntry);
 	if (docsPath.Append ("Docs/") == B_OK)
 		docsFolder.SetTo (docsPath.Path());
-	
-	/* Load toolbar images from the resource */
-	/* TODO remove this when converted to vector icons*/
-	helpButtonBitmap = ResourceBitmap ("Image:HelpButton");
-	optionsButtonBitmap = ResourceBitmap ("Image:OptionsButton");
-	saveButtonBitmap = ResourceBitmap ("Image:SaveButton");
-	aboutButtonBitmap = ResourceBitmap ("Image:AboutButton");
-	previewButtonBitmap = ResourceBitmap ("Image:PreviewButton");
-	selectAllButtonBitmap = ResourceBitmap ("Image:SelectAll");
-	deselectAllButtonBitmap = ResourceBitmap ("Image:DeselectAll");
-	smartSelectButtonBitmap = ResourceBitmap ("Image:SmartSelect");
 
 	/* Move window to the center of the screen & set size limits (default position, size) */
 	BRect screen_rect (BScreen().Frame());
@@ -213,14 +202,13 @@ MainWindow::MainWindow ()
 
 	mainToolBar->AddAction(new BMessage(M_SELECT_ALL), this, ResVectorToBitmap("MARKED_CHECKBOX"),"Select all (Alt-A)","",false);
 	mainToolBar->AddAction(new BMessage(M_DESELECT_ALL), this, ResVectorToBitmap("EMPTY_CHECKBOX"),"Deselect all (Alt-D)","",false);
-	mainToolBar->AddAction(new BMessage(M_SMART_SELECT),this,
-		smartSelectButtonBitmap/* TSimplePictureButton::ResVectorToBitmap("NAVIGATION_BACKWARD") */, "Select as needed (Alt-M)","",false);
+	mainToolBar->AddAction(new BMessage(M_SMART_SELECT),this, ResVectorToBitmap("SMART_CHECKBOX"), "Select as needed (Alt-M)","",false);
 	mainToolBar->AddGlue();
 	/* "Select As needed" won't work if there are no infostrings */
 	/* TODO FIX THIS
 	if (liveMonitoring == false)
 		smartSelectButton->Hide();
-*/
+	*/
 	static const float spacing = be_control_look->DefaultLabelSpacing();
 	BGroupLayout *boxLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
 		.SetInsets(B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS,
