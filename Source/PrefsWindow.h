@@ -55,8 +55,8 @@ class BPopUpMenu;
 class BMenuField;
 class BMenuItem;
 
+class PrefsListItem;
 class PrefsView;
-class BevelView;
 
 class PrefsWindow : public BWindow
 {
@@ -98,17 +98,11 @@ class PrefsWindow : public BWindow
 
 		bool				IsChecked (BCheckBox *chkBox) const;
 		int32				CheckBoxValue (bool value) const;
-		float				CheckBoxWidth (const char *str) const;
+		void				AddOptionsToListView(BListView* listView, BStringItem* item);
 		
 		/* Protected members */
-		BevelView			*backView;
 		BListView			*optionsListView;
 		BScrollView			*scrollView;
-		BevelView			*descView;
-		PrefsView			*reportView,
-							*itemsView,
-							*currentView;
-		BStringView			*descStringView;
 		BButton				*saveBtn,
 							*cancelBtn;
 		
@@ -116,8 +110,7 @@ class PrefsWindow : public BWindow
 							funcList,
 							saveList,
 							loadList;
-		BRect				prefArea;
-		
+
 		BCheckBox			*rv_spaceFreeChk,
 							*rv_nFilesDeletedChk,
 							*rv_timeTakenChk,
@@ -161,7 +154,8 @@ class PrefsWindow : public BWindow
 							*lo_cap3,
 							*lo_cap4,
 							*lo_cap5;
-		float				checkBoxWidth;
+		int32				fPreviousSelection;
+		BView *				fSettingsContainerBox;
 };
 
 #endif /* _PREFS_WINDOW_H */

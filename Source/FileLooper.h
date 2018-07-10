@@ -29,6 +29,7 @@
 #define _FILE_LOOPER_H
 
 #include <Looper.h>
+#include <ColumnListView.h>
 
 class EraserLooper;
 
@@ -73,7 +74,7 @@ class FileLooper : public BLooper
 	public:
 		FileLooper (EraserLooper *eraser, const char *path, const char *name, int32 priority,
 				bool performSafeCheck, bool isDir, bool recurse, bool debugMode, char *fileName,
-				int32 uniqueID, int32 portCapacity = 1000);
+				int32 uniqueID, BRow *row, int32 portCapacity = 1000);
 		virtual ~FileLooper();
 		
 		/* Extra hooks */
@@ -134,7 +135,7 @@ class FileLooper : public BLooper
 		node_ref			fileNodeRef,
 							folderNodeRef,
 							fileParentNodeRef;
-		
+		BRow				*fRow;
 		/* Statistics :) */
 		off_t				sizeWiped,
 							nSizeLive;

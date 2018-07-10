@@ -25,16 +25,17 @@
  *
  */
 
+#include <AboutWindow.h>
 #include <Debug.h>
 #include <String.h>
 #include <Entry.h>
 #include <Mime.h>
 
+
 #include "FilWip.h"
 #include "DataBits.h"
 #include "Constants.h"
 #include "MainWindow.h"
-#include "AboutWindow.h"
 #include "PrefsWindow.h"
 #include "Preferences.h"
 
@@ -71,16 +72,9 @@ void FilWip::MessageReceived (BMessage *message)
 {
 	switch (message->what)
 	{
-		case M_ABOUT:
+		case B_ABOUT_REQUESTED:
 		{
-			if (aboutWnd)
-				aboutWnd->Activate();
-			else
-			{
-				aboutWnd = new AboutWindow();
-				aboutWnd->Show();
-			}
-				
+			AboutRequested();
 			break;
 		}
 		
@@ -94,12 +88,6 @@ void FilWip::MessageReceived (BMessage *message)
 				prefsWnd->Show();
 			}
 
-			break;
-		}
-		
-		case M_CLOSE_ABOUT:
-		{
-			aboutWnd = NULL;
 			break;
 		}
 		
@@ -198,7 +186,17 @@ void FilWip::RefsReceived (BMessage *message)
 void FilWip::AboutRequested ()
 {
 	/* Implement AboutRequested to show about even when external apps like "hey" ask for it */
-	filWip->PostMessage (M_ABOUT);
+
+	BAboutWindow* aboutWin = new BAboutWindow("FilWip", AppSignature);
+	aboutWin->AddDescription("A clean-up manager for Haiku");
+	aboutWin->SetVersion("0.2");
+	aboutWin->AddCopyright(2002, "Ramshankar");
+	const char* authors[] = {
+			"Ramshankar (ramshankar@themail.com)",
+			NULL
+	};
+	aboutWin->AddAuthors(authors);
+	aboutWin->Show();
 }
 
 /*============================================================================================================*/
@@ -206,29 +204,19 @@ void FilWip::AboutRequested ()
 void FilWip::RegisterMimeType ()
 {
 	PRINT (("FilWip::RegisterMimeType ()\n"));
-	
+
 	/* Register the preset file type if prefs allows us */
 	BMimeType fileType ("application/x-vnd.FilWip-Preset");
-	BBitmap *largeIcon = new BBitmap (BRect (0, 0, kLargeIconWidth - 1,	kLargeIconHeight - 1),
-								kLargeIconColorSpace);
-	BBitmap *smallIcon = new BBitmap (BRect (0, 0, kSmallIconWidth - 1, kSmallIconHeight - 1),
-								kSmallIconColorSpace);
-
-	largeIcon->SetBits (kLargeIconBits, 32 * 32, 0, kLargeIconColorSpace);
-	smallIcon->SetBits (kSmallIconBits, 16 * 16, 0, kSmallIconColorSpace);
 
 	/* Set file type details  & its icon from "DataBits.h" */
 	fileType.SetShortDescription ("FilWip preset");
 	fileType.SetLongDescription ("FilWip preset");
 	fileType.SetPreferredApp (AppSignature, B_OPEN);
-	fileType.SetIcon (largeIcon, B_LARGE_ICON);
-	fileType.SetIcon (smallIcon, B_MINI_ICON);
-	
+	fileType.SetIcon (kVectorIconBits, sizeof(kVectorIconBits));
+
 	if (fileType.IsInstalled() == false)
 		fileType.Install();
-	
-	delete largeIcon;
-	delete smallIcon;
+
 }
 
 /*============================================================================================================*/

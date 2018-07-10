@@ -34,6 +34,7 @@
 #include <Box.h>
 #include <Button.h>
 #include <CheckBox.h>
+#include <LayoutBuilder.h>
 #include <Screen.h>
 #include <Resources.h>
 #include <Alert.h>
@@ -50,6 +51,10 @@
 #include <StatusBar.h>
 #include <Beep.h>
 #include <FindDirectory.h>
+#include <ControlLook.h>
+#include <IconUtils.h>
+#include <TranslationUtils.h>
+
 
 #include <ctype.h>
 #include <iostream>
@@ -58,19 +63,59 @@
 
 #include "MainWindow.h"
 #include "Constants.h"
-#include "ImageButton.h"
-#include "ItemsView.h"
 #include "Preferences.h"
-#include "TreeView.h"
 #include "FileLooper.h"
 #include "PluginParser.h"
 #include "InfoStrView.h"
-#include "BevelView.h"
 #include "FilWip.h"
-#include "BubbleHelp/BubbleHelper.h"
 #include "EraserLooper.h"
-
+#include "ElementListView.h"
+#include <ColumnTypes.h>
+#include "CheckBoxWithStringColumn.h"
 using namespace std;
+
+#define B_TRANSLATE(x) x
+
+bool
+SelectItems(BRow *row, void *data)
+{
+	BField *field = row->GetField(ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX);
+	CheckBoxWithStringField* checkBoxStringField = static_cast<CheckBoxWithStringField*>(field);
+	BColumnListView* columnListView = static_cast<BColumnListView*>(data);
+	checkBoxStringField->SetMarked(true);
+	columnListView->InvalidateRow(row);
+	return true;
+}
+
+
+bool
+SelectSmartItems(BRow *row, void *data)
+{
+	BField *field = row->GetField(ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX);
+	BField *fieldSize = row->GetField(ROW_FIELD_BYTES_COUNTS);
+
+	CheckBoxWithStringField* checkBoxStringField = static_cast<CheckBoxWithStringField*>(field);
+	BSizeField* sizeField = static_cast<BSizeField*>(fieldSize);
+
+	bool selected = sizeField != NULL && sizeField->Size() > 0;
+	BColumnListView* columnListView = static_cast<BColumnListView*>(data);
+	checkBoxStringField->SetMarked(selected);
+	columnListView->InvalidateRow(row);
+	return true;
+}
+
+
+bool
+DeselectItems(BRow *row, void *data)
+{
+	BField *field = row->GetField(ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX);
+	CheckBoxWithStringField* checkBoxStringField = static_cast<CheckBoxWithStringField*>(field);
+	BColumnListView* columnListView = static_cast<BColumnListView*>(data);
+	checkBoxStringField->SetMarked(false);
+	columnListView->InvalidateRow(row);
+	return true;
+}
+
 
 class MainWindow *pWnd;
 
@@ -117,32 +162,6 @@ MainWindow::MainWindow ()
 	BPath docsPath (&appEntry);
 	if (docsPath.Append ("Docs/") == B_OK)
 		docsFolder.SetTo (docsPath.Path());
-	
-	/* Load toolbar images from the resource */
-	helpButtonBitmap = ResourceBitmap ("Image:HelpButton");
-	optionsButtonBitmap = ResourceBitmap ("Image:OptionsButton");
-	saveButtonBitmap = ResourceBitmap ("Image:SaveButton");
-	aboutButtonBitmap = ResourceBitmap ("Image:AboutButton");
-	previewButtonBitmap = ResourceBitmap ("Image:PreviewButton");
-	selectAllButtonBitmap = ResourceBitmap ("Image:SelectAll");
-	deselectAllButtonBitmap = ResourceBitmap ("Image:DeselectAll");
-	smartSelectButtonBitmap = ResourceBitmap ("Image:SmartSelect");	
-
-	/* Draw basic underlying controls */
-	backView = new BevelView (Bounds(), "MainWindow:View", btOutset, B_FOLLOW_ALL_SIDES, B_WILL_DRAW);
-	AddChild (backView);
-	backView->SetViewColor (BeViewColor);
-	backView->SetLowColor (BeViewColor);
-	
-	descView = new BTextView (BRect (DialogMargin, DialogMargin,
-						Bounds().right - DialogMargin, 40), "MainWindow:DescTextView",
-						BRect (2, 2, Bounds().right - DialogMargin - 2, 50),
-						B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW);
-	backView->AddChild (descView);
-	descView->SetText ("Choose the temporary files, caches, logs etc. to be cleaned.");
-	descView->MakeEditable (false);
-	descView->MakeSelectable (false);
-	descView->SetViewColor(backView->ViewColor());
 
 	/* Move window to the center of the screen & set size limits (default position, size) */
 	BRect screen_rect (BScreen().Frame());
@@ -159,145 +178,78 @@ MainWindow::MainWindow ()
 			RestoreWindowPosition();
 
 	/* Begin drawing more controls */
-	boxView = new BBox (BRect (DialogMargin, descView->Frame().bottom + 0.5 * DialogMargin,
-						Bounds().right - DialogMargin, Bounds().bottom - (2 * DialogMargin) - ButtonHeight),
- 						"MainWindow:BBox", B_FOLLOW_ALL_SIDES,	B_WILL_DRAW | B_SUBPIXEL_PRECISE,
- 						B_FANCY_BORDER);
-	boxView->SetLabel("Remove");
-	backView->AddChild(boxView);
+	boxView = new BBox("MainWindow:BBox");
 
-	statusBar = new BStatusBar (BRect (DialogMargin, boxView->Frame().bottom + ButtonSpacing,
-						Bounds().right - 4 * DialogMargin - ButtonWidth, 0), NULL, NULL);
-	statusBar->SetResizingMode(B_FOLLOW_BOTTOM);
-	statusBar->SetTrailingText ("0 of 0");
-	statusBar->SetBarColor (StatusBarColor);
-	statusBar->SetBarHeight (statusBar->BarHeight() - 2);
-	backView->AddChild (statusBar);
+	statusBar = new BStatusBar ("statusBar");
 	statusBar->Hide();
 
-	/* Some interface proportionate constants/calculations */
-	float boxViewRight = boxView->Bounds().right;
-	font_height fontHeight;
-	backView->GetFontHeight(&fontHeight);
-	float fntHt = fontHeight.ascent + fontHeight.descent + fontHeight.leading;
-	float boxViewTop = boxView->Bounds().top + fntHt - fontHeight.descent + DialogMargin;
-	float boxViewTopEx = boxViewTop - 2;
+	// Menu Bar
+	BMenuBar* menuBar = new BMenuBar("MenuBar");
+	BMenu* menu;
+	menu = new BMenu("FilWip");
+	menuBar->AddItem(menu);
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Preferences..."), new BMessage(M_PREFS), ','));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Help"), new BMessage(M_HELP)));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("About FilWip..."), new BMessage(B_ABOUT_REQUESTED)));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));
 
-	/* Draw the image buttons and align them in the group box */
-	helpButton = new ImageButton ("MainWindow:HelpButton", helpButtonBitmap,
-						new BMessage (M_HELP), BeViewColor);
-	helpButton->MoveTo (boxView->Frame().right - 1.5 * DialogMargin - 24, boxViewTopEx);
-	boxView->AddChild (helpButton);
+	menu = new BMenu(B_TRANSLATE("Selection"));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Select all"), new BMessage(M_SELECT_ALL), 'A'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Deselect all"), new BMessage(M_DESELECT_ALL), 'D'));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
+	menu->AddSeparatorItem();
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Save as preset"), new BMessage(M_SAVE_PRESET), 'S'));
+	menuBar->AddItem(menu);
 
-	aboutButton = new ImageButton ("MainWindow:AboutButton", aboutButtonBitmap,
-						new BMessage (M_ABOUT), BeViewColor);
-	aboutButton->MoveTo (boxView->Frame().right - 1.5 * DialogMargin - 24,
-						boxViewTopEx + helpButton->Bounds().Height() + 3);
-	boxView->AddChild (aboutButton);
-	
-	saveButton = new ImageButton ("MainWindow:SaveButton", saveButtonBitmap,
-						new BMessage (M_SAVE_PRESET), BeViewColor);
-	saveButton->MoveTo (helpButton->Frame().left,
-						boxViewTopEx + 2 * (helpButton->Bounds().Height() + 3));
-	boxView->AddChild (saveButton);
-	
-	optionsButton = new ImageButton ("MainWindow:OptionsButton", optionsButtonBitmap,
-						new BMessage (M_PREFS), BeViewColor);
-	optionsButton->MoveTo (helpButton->Frame().left,
-						boxViewTopEx + 3 * (helpButton->Bounds().Height() + 3));
-	boxView->AddChild (optionsButton);
+	// Tool Bar
+	mainToolBar = new BToolBar(B_HORIZONTAL);
 
-	previewButton = new ImageButton ("MainWindow:PreviewButton", previewButtonBitmap,
-						new BMessage (M_PREVIEW), BeViewColor);
-	previewButton->MoveTo (helpButton->Frame().left,
-						boxViewTopEx + 4 * (helpButton->Bounds().Height() + 3));
-	boxView->AddChild (previewButton);
-	
-	BView *sepView = new BView (BRect (helpButton->Frame().left,
-						boxViewTopEx - 1 + 5 * (helpButton->Bounds().Height() + 3), helpButton->Frame().right,
-						boxViewTopEx - 1 + 5 * (helpButton->Bounds().Height() + 3)), "MainWindow:SepView",
-						B_FOLLOW_RIGHT, B_WILL_DRAW);
-	sepView->SetViewColor (BeDarkenedShadow);
-	boxView->AddChild (sepView);
+	mainToolBar->AddAction(new BMessage(M_SELECT_ALL), this, ResVectorToBitmap("MARKED_CHECKBOX"),"Select all (Alt-A)","",false);
+	mainToolBar->AddAction(new BMessage(M_DESELECT_ALL), this, ResVectorToBitmap("EMPTY_CHECKBOX"),"Deselect all (Alt-D)","",false);
+	mainToolBar->AddAction(new BMessage(M_SMART_SELECT),this, ResVectorToBitmap("SMART_CHECKBOX"), "Select as needed (Alt-M)","",false);
+	mainToolBar->GroupLayout()->AddItem(BSpaceLayoutItem::CreateHorizontalStrut(B_USE_HALF_ITEM_SPACING));
+	mainToolBar->AddSeparator();
+	mainToolBar->GroupLayout()->AddItem(BSpaceLayoutItem::CreateHorizontalStrut(B_USE_HALF_ITEM_SPACING));
+	mainToolBar->AddAction(new BMessage(M_SAVE_PRESET), this, ResVectorToBitmap("SAVE"), "Save preset (Alt-S)","",false);
+	mainToolBar->AddAction(new BMessage(M_PREFS),this, ResVectorToBitmap("PREFERENCES"),"Preferences","",false);
 
-	BView *sepViewEdge = new BView (BRect (helpButton->Frame().left, sepView->Frame().bottom + 1,
-						helpButton->Frame().right,	sepView->Frame().bottom + 1), "MainWindow:SepViewEdge",
-						B_FOLLOW_RIGHT, B_WILL_DRAW);
-	sepViewEdge->SetViewColor (BePureWhite);
-	boxView->AddChild (sepViewEdge);
-			
-	selectAllButton = new ImageButton ("MainWindow:SelectAllButton", selectAllButtonBitmap,
-						new BMessage (M_SELECT_ALL), BeViewColor);
-	selectAllButton->MoveTo (helpButton->Frame().left,
-						boxViewTopEx + 2 + 5 * (helpButton->Bounds().Height() + 3));
-	boxView->AddChild (selectAllButton);
-	
-	deselectAllButton = new ImageButton ("MainWindow:PreviewButton", deselectAllButtonBitmap,
-						new BMessage (M_DESELECT_ALL), BeViewColor);
-	deselectAllButton->MoveTo (helpButton->Frame().left,
-						boxViewTopEx + 2 + 6 * (helpButton->Bounds().Height() + 3));
-	boxView->AddChild (deselectAllButton);
+	mainToolBar->AddAction(new BMessage(M_HELP), this, ResVectorToBitmap("HELP"),"Help (F1)","",false);
+//	mainToolBar->AddAction(new BMessage(B_ABOUT_REQUESTED),this, ResVectorToBitmap("ABOUT"),"About","",false);
+//	mainToolBar->AddAction(new BMessage(M_PREVIEW),this,
+//		previewButtonBitmap /*ResVectorToBitmap("PREVIEW") */,"Preview (Alt-P)","",false);
 
-	smartSelectButton = new ImageButton ("MainWindow:SmartSelectButton", smartSelectButtonBitmap,
-						new BMessage (M_SMART_SELECT), BeViewColor);
-	smartSelectButton->MoveTo (helpButton->Frame().left,
-						boxViewTopEx + 2 + 7 * (helpButton->Bounds().Height() + 3));
-	boxView->AddChild (smartSelectButton);
 
+	/* Create tooltips for all the toolbar buttons */
+	/*
+	toolTip->SetHelp (presetField, "Load preset options");
+	toolTip->SetHelp (cleanUp, "Begin the erasing process");
+	*/
+
+	mainToolBar->AddGlue();
 	/* "Select As needed" won't work if there are no infostrings */
+	/* TODO FIX THIS
 	if (liveMonitoring == false)
 		smartSelectButton->Hide();
+	*/
+	/*
+	static const float spacing = be_control_look->DefaultLabelSpacing();
+	BGroupLayout *boxLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
+		.SetInsets(B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS,
+			B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
+		.Add(fElementListView = new ElementListView("MainWindow:ElementListView"))
+		.Add(mainToolBar);
+	boxView->AddChild(boxLayout->View()); */
 
-	/* More interface calculations */
-	float boxChildRightLimit = boxViewRight - helpButton->Frame().Width() - DialogMargin - 3;
-	
-	/* OK, get into the drawing part of the rest of the controls */
-	itemsView = new ItemsView (BRect (DialogMargin,	boxViewTop, boxChildRightLimit - B_V_SCROLL_BAR_WIDTH,
-						boxView->Bounds().bottom - DialogMargin), "MainWindow:ItemsView", B_FOLLOW_ALL_SIDES,
-						B_WILL_DRAW | B_SUBPIXEL_PRECISE);
-	itemsView->SetViewColor (ItemsViewColor);
-	scrollView = new BScrollView ("MainWindow:ScrollView", itemsView, B_FOLLOW_ALL_SIDES,
-										B_WILL_DRAW, false, true, B_FANCY_BORDER);
-	boxView->AddChild (scrollView);
-
-	/* More and more interface stuff... annoying! isn't it? */
-	strHeight = fntHt + fontHeight.descent + 1;
-	mLeft = 5;
-	mTop = 5;
-	mMargin = 40;
-	mVGap = 0;
-	checkRight = itemsView->StringWidth ("Visited Links very long Database") + mLeft + mMargin;
-	infoRight = itemsView->Bounds().right;	
-	
 	/* Draw the button, busyview and presetField AFTER resizing the boxView */
-	cleanUp = new BButton (BRect (Bounds().right - DialogMargin - ButtonWidth,
-						boxView->Frame().bottom + ButtonSpacing,
-						Bounds().right - DialogMargin,
-						boxView->Frame().bottom + ButtonSpacing + ButtonHeight),
-						"MainWindow:CleanUp", "Clean Up!", new BMessage (M_CLEANUP),
-						B_FOLLOW_BOTTOM | B_FOLLOW_RIGHT, B_WILL_DRAW);
-	backView->AddChild (cleanUp);
+	cleanUp = new BButton ("MainWindow:CleanUp", "Clean up", new BMessage (M_CLEANUP));
 	cleanUp->MakeDefault (true);
 
 	presetPopup = new BPopUpMenu ("");
-	presetField = new BMenuField (BRect (DialogMargin,
-						boxView->Frame().bottom + ButtonSpacing,
-						cleanUp->Frame().left - ButtonSpacing, 0), "MainWindow:PresetPopUp",
-						"Presets:", (BMenu*)presetPopup, B_FOLLOW_BOTTOM, B_WILL_DRAW);
-	presetField->SetDivider (backView->StringWidth (presetField->Label()) + 
-							backView->StringWidth ("W"));
-	backView->AddChild (presetField);
+	presetField = new BMenuField ("MainWindow:PresetPopUp",
+						"Presets:", (BMenu*)presetPopup);
 
-	/* Resize the window AFTER drawing the button */
-	ResizeTo (Frame().Width(), cleanUp->Frame().bottom + DialogMargin);
-
-	/* Add toolbar buttons to a BList for use within WindowActivated() */
-	toolButtons.AddItem ((void*)helpButton);
-	toolButtons.AddItem ((void*)aboutButton);
-	toolButtons.AddItem ((void*)saveButton);
-	toolButtons.AddItem ((void*)optionsButton);
-	toolButtons.AddItem ((void*)previewButton);
-	
 	/* Add shortcuts */
 	AddShortcut ('s', B_COMMAND_KEY, new BMessage (M_SAVE_PRESET));
 	AddShortcut ('p', B_COMMAND_KEY, new BMessage (M_PREVIEW));
@@ -308,18 +260,6 @@ MainWindow::MainWindow ()
 	/* List presets */
 	ListPresets ();
 	
-	/* Create tooltips for all the toolbar buttons */
-	toolTip = new BubbleHelper();
-	toolTip->SetHelp (helpButton, "Help (F1)");
-	toolTip->SetHelp (aboutButton, "About");
-	toolTip->SetHelp (saveButton, "Save preset (Alt-S)");
-	toolTip->SetHelp (optionsButton, "Preferences");
-	toolTip->SetHelp (previewButton, "Preview (Alt-P)");
-	toolTip->SetHelp (selectAllButton, "Select all (Alt-A)");
-	toolTip->SetHelp (deselectAllButton, "Deselect all (Alt-D)");
-	toolTip->SetHelp (smartSelectButton, "Select as needed (Alt-M)");
-	toolTip->SetHelp (presetField, "Load preset options");
-	toolTip->SetHelp (cleanUp, "Begin the erasing process");
 
 	/* Read the port capacity for our FileLooper threads (member since we spawn FileLoopers from many
 		places in the code) */
@@ -332,6 +272,23 @@ MainWindow::MainWindow ()
 		eraserPriority = B_NORMAL_PRIORITY;
 	
 	eraserLooper = new EraserLooper (eraserPriority, statusBar);
+
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 5)
+		.SetInsets(0, 0, 0, 0)
+		.Add(menuBar)
+		.Add(mainToolBar)
+		.AddGroup(B_VERTICAL)
+		.SetInsets(B_USE_WINDOW_INSETS, 0, B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
+			.Add(fElementListView = new ElementListView("MainWindow:ElementListView"), 100)
+			.AddGroup(B_HORIZONTAL, 0)
+				//.SetInsets(0, 3, B_USE_ITEM_SPACING, 0)
+				.Add(presetField,1)
+				.Add(statusBar, 10)
+				.AddGlue()
+				.Add(cleanUp,1)
+			.End()
+		.End()
+		.End();
 }
 
 /*============================================================================================================*/
@@ -349,7 +306,6 @@ MainWindow::~MainWindow ()
 	/* Delete un-attached objects, don't delete the fileLooper BList, as
 		each looper receives a B_QUIT_REQUESTED message and deletes itself */
 	delete messenger;
-	delete toolTip;
 	
 	PluginContainerItem *cItem (NULL);
 	do
@@ -387,17 +343,12 @@ void MainWindow::Show ()
 
 	bool asyncLoad = prefs.FindBoolDef ("pv_asyncLoad", false);
 
-	/* Disable scrollbar just before showing the window */
-	vertScrollBar = scrollView->ScrollBar (B_VERTICAL);
-	//vertScrollBar->SetRange (0, 0);
-
-
 	/* Set isProcessingPlugins to true so that FrameResized does not call RecalcScrollBar while 
 		ParseAndSetupUI is doing its stuff, After Show() message loop starts then PostMessage to process
 		the plugins and generate GUI at the end of which that function will reset isProcessingPlugins
 		to false (Very efficient and fast if we go by this method of using MessageReceived) */
 	isProcessingPlugins = true;
-	itemsView->MakeFocus (true);		/* Put focus on this view so keyboard works (arrow key scrolling) */
+	fElementListView->MakeFocus (true);		/* Put focus on this view so keyboard works (arrow key scrolling) */
 
 	/* If asynchronous plugin load mode, then show the window, then load plugins through MessageReceived() */
 	if (asyncLoad == true && asyncLoadAllowed == true)
@@ -430,8 +381,6 @@ void MainWindow::ParsePlugins (BDirectory pluginFolder)
 
 	/* This function parses all the plugins using the PluginParser class */
 	BEntry entry;
-	float yPos = mTop - 2;
-	int index = 0;
 
 	bool checkInstall = prefs.FindBoolDef ("pv_checkInstall", true);
 	
@@ -458,15 +407,11 @@ void MainWindow::ParsePlugins (BDirectory pluginFolder)
 
 		if (cItem->isLinear == true)
 		{
-			AddLinearItem (cItem, yPos, itemsView, (char*)filePath.Leaf());
-			yPos += strHeight + 2;
+			AddLinearItem (cItem, (char*)filePath.Leaf());
 		}
 		else
 		{
-			yPos++;
-			AddHierarchialItem (cItem, yPos, itemsView, index, (char*)filePath.Leaf());
-			index++;
-			yPos += strHeight;
+			AddHierarchialItem (cItem,(char*)filePath.Leaf());
 		}
 		
 		containerItems.AddItem ((void*)cItem);
@@ -519,26 +464,12 @@ void MainWindow::SaveWindowPosition () const
 
 /*============================================================================================================*/
 
-void MainWindow::LoadTreeState (BMessage *message)
+void MainWindow::LoadTreeState (BMessage *prefsMessage)
 {
 	PRINT (("MainWindow::LoadTreeState (BMessage*)\n"));
 	
 	/* Collapse/Expand tree structure from "message" */
-	BMessage *treeMessage (NULL);
-	treeMessage = new BMessage (M_TREE_STATES);
-	message->FindMessage ("tree_states", treeMessage);
-
-	int32 treeItemCount = treeViews.CountItems();
-	for (int32 i = 0; i < treeItemCount; i++)
-	{
-		bool x = treeMessage->FindBool (((PluginContainerItem*)hierarchialItems.ItemAtFast(i))->name.String());
-		((TreeView*)treeViews.ItemAtFast(i))->SetStatus (x);
-		
-		if (x == true)
-			RecalcItems (i, M_SUPERITEM_EXP);
-	}
-	
-	delete treeMessage;
+	fElementListView->LoadTreeState(prefsMessage);
 }
 
 /*============================================================================================================*/
@@ -553,7 +484,8 @@ status_t MainWindow::OpenPreset (entry_ref *ref, bool guiMode, bool addToList)
 		/* 0 */		"Your file isn't real! It doesn't exists!",
 		/* 1 */		"Don't you know I can't handle directories!!",
 		/* 2 */		"How about giving me something I can handle?",
-		/* 3 */		"Unknown error - What rubbish WAS that!?!"
+		/* 3 */		"Incompatible preset version",
+		/* 4 */		"Unknown error - What rubbish WAS that!?!"
 	};
 	
 	int32 error_code (-1);
@@ -598,7 +530,7 @@ status_t MainWindow::OpenPreset (entry_ref *ref, bool guiMode, bool addToList)
 						}
 						else
 						{
-							error_code = 2;
+							error_code = 3;
 						}
 					}
 					else
@@ -616,7 +548,7 @@ status_t MainWindow::OpenPreset (entry_ref *ref, bool guiMode, bool addToList)
 				if (file.IsDirectory() == true)
 					error_code = 1;
 				else
-					error_code = 3;
+					error_code = 4;
 			}
 		}
 	}
@@ -646,32 +578,10 @@ void MainWindow::LoadPreset (BMessage *presetMessage)
 {
 	PRINT (("MainWindow::LoadPreset (BMessage*)\n"));
 
-	/* Load checkboxes with values. Right now based on the index ... */
-	BMessage *message = new BMessage ();
-	BString temp;
-	int8 val;
-	
-	if (presetMessage->FindMessage ("plugin_settings", message) != B_OK)
+	BMessage message;
+	if (presetMessage->FindMessage ("plugin_settings", &message) == B_OK)
 	{
-		delete message;
-		return;
-	}
-	
-	/* Clear checkbox values initially and set only the ones in the preset
-		(since node monitor might have checked some at startup) */
-	for (int32 i = 0; i < checkBoxes.CountItems(); i++)
-	{
-		temp << i;
-		BCheckBox *item = (BCheckBox*)checkBoxes.ItemAtFast(i);
-		if (item)
-		{
-			item->SetValue (B_CONTROL_OFF);
-		
-			if (message->FindInt8 (temp.String(), &val) == B_OK)
-				item->SetValue (val);
-		}
-		
-		temp.SetTo ("");
+		fElementListView->LoadPreset(&message);
 	}
 }
 
@@ -705,6 +615,13 @@ void MainWindow::Quit ()
 	/* Store the tree-view like structure */
 	FillTreeState (&prefs);
 
+	/* Store Columns disposition */
+	BMessage columnViewState('clms');
+	fElementListView->SaveState(&columnViewState);
+
+	prefs.RemoveName ("columns_states");
+	prefs.AddMessage ("columns_states", &columnViewState);
+
 	/* We're done, time to go */
 	be_app_messenger.SendMessage (B_QUIT_REQUESTED);
 	return BWindow::Quit();
@@ -715,19 +632,6 @@ void MainWindow::Quit ()
 void MainWindow::WindowActivated (bool state)
 {
 	PRINT (("MainWindow::WindowActivated (bool)\n"));
-
-	/* Inform toolbar buttons and treeview structures the got/lost focus */
-	BMessage focusNotifier (M_JUST_GOT_FOCUS);
-	focusNotifier.AddBool ("Has Focus", state);
-	
-	for (int32 i = 0; i < toolButtons.CountItems(); i++)
-		PostMessage (&focusNotifier, (ImageButton*)toolButtons.ItemAtFast (i));
-	
-	for (int32 i = 0; i < treeViews.CountItems(); i++)
-		PostMessage (&focusNotifier, (TreeView*)treeViews.ItemAtFast (i));
-	
-	/* Enable or disable tooltips according to the window focus */	
-	toolTip->EnableHelp (state);
 }
 
 /*============================================================================================================*/
@@ -736,13 +640,7 @@ void MainWindow::FrameResized (float newWidth, float newHeight)
 {
 	PRINT (("MainWindow::FrameResized (float,float)\n"));
 
-	/* Handle resizing for a few controls here, invalidate the boxView or else some clipping
-		bugs occur, also if height has changed recalculate the scrollbar etc. */
-	boxView->Invalidate();
-	descView->SetTextRect (BRect (0, 0, newWidth - 2 * DialogMargin, 0));
-
-	if (isProcessingPlugins == false)
-		RecalcScrollBar();
+	BWindow::FrameResized(newWidth, newHeight);
 }
 
 /*============================================================================================================*/
@@ -755,31 +653,33 @@ void MainWindow::MessageReceived (BMessage *message)
 		{
 			if (isModeGUI == false)
 				break;
-			
+
 			bool first_scan = false;
 			int32 looperID = message->FindInt32 ("looper_id");
 			int64 bytesCounted = message->FindInt64 ("bytes_counted");
 			int64 entriesCounted = message->FindInt64 ("entries_counted");
-		
+			BRow *row;
+			status_t status = message->FindPointer ("row_pointer", (void**)&row);
+			if (status != B_OK) {
+				PRINT (("M_OVERVIEW_STATS empty row_pointer\n"));
+				break;
+			};
+			/*
 			BString buf = "[";
 			buf << entriesCounted << (entriesCounted == 1 ? " item, " : " items, ");
 			buf << GetByteSizeString (bytesCounted) << "]";
-
-			BStringView *vw = (BStringView*)infoViews.ItemAtFast (looperID);
 			
+			*/
+			BIntegerField* itemsField = (BIntegerField*)(row->GetField(ROW_FIELD_ENTRIES_COUNTS));
+			if (itemsField->Value() != entriesCounted) {
+				itemsField->SetValue(entriesCounted );
+			}
+			BSizeField* sizeField = (BSizeField*)(row->GetField(ROW_FIELD_BYTES_COUNTS));
+			if (sizeField->Size() != bytesCounted) {
+				sizeField->SetSize(bytesCounted);
+			}
+			fElementListView->UpdateRow(row);
 
-			/* Rewrite into the stringview only if there is some diff in text (prevents some flickering) */	
-			if (strcmp (vw->Text(), buf.String()) == 0 && message->FindBool ("first_scan") == false)
-				break;
-
-			if (entriesCounted == 0)
-				vw->SetHighColor (ItemsUnselectColor);
-			else if (*(vw->Text() + 1) == '0')
-				vw->SetHighColor (ItemsSelectColor);
-
-			vw->SetText (buf.String());
-			
-			
 			/* Make sure we HAVE a "default" item. This item will NOT be there if the settings
 				file is deleted. In which case we cannot use IsMarked() on a NULL item. */
 			if (presetPopup->ItemAt(0L))
@@ -795,21 +695,15 @@ void MainWindow::MessageReceived (BMessage *message)
 						{
 							if (first_scan == true)
 							{
-								int8 firstMark = B_CONTROL_OFF;
-								if (entriesCounted > 0)
-									firstMark = B_CONTROL_ON;
-								
-								((BCheckBox*)checkBoxes.ItemAtFast(looperID))->SetValue (firstMark);
+								bool firstMark = (entriesCounted > 0);	
+								((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(looperID))->SetMarked(firstMark);
 							}
 						}
 						else if (prefs.FindBoolDef ("it_autoCheckLive", false) == true)
 						{
 							/* Do live check even if it is the first time! */
-							int8 firstMark = B_CONTROL_OFF;
-							if (entriesCounted > 0)
-								firstMark = B_CONTROL_ON;
-							
-							((BCheckBox*)checkBoxes.ItemAtFast(looperID))->SetValue (firstMark);
+								bool firstMark = (entriesCounted > 0);	
+								((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(looperID))->SetMarked(firstMark);
 						}
 					}
 					else
@@ -817,11 +711,8 @@ void MainWindow::MessageReceived (BMessage *message)
 						/* Live checking/unchecking (if prefs wants) */
 						if (prefs.FindBoolDef ("it_autoCheckLive", false) == true)
 						{
-							int8 autoMark = B_CONTROL_OFF;
-							if (entriesCounted > 0)
-								autoMark = B_CONTROL_ON;
-
-							((BCheckBox*)checkBoxes.ItemAtFast(looperID))->SetValue (autoMark);
+								bool firstMark = (entriesCounted > 0);		
+								((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(looperID))->SetMarked(firstMark);
 						}
 					}
 				}
@@ -838,29 +729,12 @@ void MainWindow::MessageReceived (BMessage *message)
 		}
 		
 		/* These are handled by our BApp object */
-		case M_ABOUT: case M_PREVIEW: case M_PREFS:
+		case B_ABOUT_REQUESTED: case M_PREVIEW: case M_PREFS:
 		{
 			be_app_messenger.SendMessage (message);
 			break;
 		}
-		
-		/* Dim the superitem as the treeview is in its half-stage */
-		case M_SUPERITEM_MID:
-		{
-			int8 i = message->FindInt8 ("item_index");
-			((BTextView*)superItems.ItemAtFast(i))->SetFontAndColor (be_plain_font, B_FONT_ALL, &TreeLabelDimmed);
-			break;
-		}
-		
-		/* Collapse or expand the superitem tree */
-		case M_SUPERITEM_COL: case M_SUPERITEM_EXP:
-		{
-			int8 i = message->FindInt8 ("item_index");
-			((BTextView*)superItems.ItemAtFast(i))->SetFontAndColor (be_plain_font, B_FONT_ALL, &TreeLabelColor);
-			RecalcItems (i, message->what);
-			break;
-		}
-			
+
 		/* Call Help */
 		case M_HELP:
 		{
@@ -938,7 +812,7 @@ void MainWindow::MessageReceived (BMessage *message)
 			for (int32 i = 0; i < looperCount; i++)
 			{
 				FileLooper *fileLooper = (FileLooper*)fileLoopers.ItemAtFast(i);
-				if ((((BCheckBox*)checkBoxes.ItemAtFast(i))->Value() == B_CONTROL_ON)
+				if ((((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(i))->IsMarked())
 					&& (fileLooper->Lock() == true))
 				{
 					fileLooper->BeginAddOperation();
@@ -1069,39 +943,34 @@ void MainWindow::MessageReceived (BMessage *message)
 		}
 		
 		/* Select/Deselect all the checkboxes */
-		case M_SELECT_ALL: case M_DESELECT_ALL:
+		case M_SELECT_ALL:
 		{
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
-			
-			int32 value = message->what == M_SELECT_ALL ? B_CONTROL_ON : B_CONTROL_OFF;
-			for (int32 i = 0; i < checkBoxes.CountItems(); i++)
-				((BCheckBox*)checkBoxes.ItemAtFast(i))->SetValue (value);
-			
+			fElementListView->FullListDoForEach(SelectItems, fElementListView);
 			break;
 		}
-
+		case M_DESELECT_ALL:
+		{
+			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
+				return;
+			fElementListView->FullListDoForEach(DeselectItems, fElementListView);
+			break;
+		}
 		/* Smart select -- Select 'cleanable' options | works only when overview has finished */
 		case M_SMART_SELECT:
 		{
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
-
-			for (int32 i = 0; i < infoViews.CountItems(); i++)
-			{
-				const char *buf = ((BStringView*)infoViews.ItemAtFast(i))->Text();
-				if (buf == NULL)
-					break;
-
-				((BCheckBox*)checkBoxes.ItemAtFast(i))->SetValue (*++buf == '0' ? B_CONTROL_OFF : B_CONTROL_ON);
-			}
-			
+			fElementListView->FullListDoForEach(SelectSmartItems, fElementListView);
 			break;
 		}
 	}
 	
 	BWindow::MessageReceived (message);
 }
+
+
 
 /*============================================================================================================*/
 
@@ -1191,16 +1060,7 @@ void MainWindow::FillTreeState (BMessage *prefsMessage) const
 	PRINT (("MainWindow::FillTreeState (BMessage*)\n"));
 
 	/* Fill "prefMessage" with the bool values of tree view for all hierarchial items */
-	BMessage *message = new BMessage (M_TREE_STATES);
-	for (int32 i = 0; i < treeViews.CountItems(); i++)
-	{
-		message->AddBool (((PluginContainerItem*)hierarchialItems.ItemAtFast(i))->name.String(),
-					((TreeView*)treeViews.ItemAtFast(i))->IsExpanded());
-	}
-	
-	prefsMessage->RemoveName ("tree_states");
-	prefsMessage->AddMessage ("tree_states", message);
-	delete message;
+	fElementListView->SaveTreeState(prefsMessage);
 }
 
 /*============================================================================================================*/
@@ -1216,12 +1076,14 @@ void MainWindow::FillPreset (BMessage *presetMessage) const
 
 
 	/* Loop and add the settings to "message" for all plugins */
+	/*
 	for (int32 i = 0; i < checkBoxes.CountItems(); i++)
 	{
 		settingName << i;
 		message->AddInt8 (settingName.String(), (int8)((BCheckBox*)checkBoxes.ItemAtFast(i))->Value());
 		settingName.SetTo ("");
-	}
+	} */
+	fElementListView->SavePreset(message);
 	
 	presetMessage->RemoveName ("plugin_settings");
 	presetMessage->AddMessage ("plugin_settings", message);
@@ -1259,9 +1121,10 @@ int MainWindow::CountOptions () const
 {
 	/* Return the number of options selected by the user */
 	int cnt (0);
-	for (int32 i = 0; i < checkBoxes.CountItems(); i++)
-		if (((BCheckBox*)checkBoxes.ItemAtFast(i))->Value() == B_CONTROL_ON)
+	for (int32 i = 0; i < checkBoxesFields.CountItems(); i++)
+		if (((CheckBoxWithStringField*)checkBoxesFields.ItemAtFast(i))->IsMarked())
 			cnt++;
+
 	
 	return cnt;
 }
@@ -1361,28 +1224,6 @@ void MainWindow::ListPresets ()
 
 /*============================================================================================================*/
 
-BString MainWindow::GetByteSizeString (int64 v) const
-{
-	/* Hacked from BeShare with minor changes -- many thanks to Jeremy Freisner */
-	char buf[256];
-	if (v > (1024LL * 1024LL * 1024LL * 1024LL))
-		sprintf (buf, "%.2f TB", ((double)v) / (1024LL * 1024LL * 1024LL * 1024LL));
-	else if (v > (1024LL * 1024LL * 1024LL))
-		sprintf(buf, "%.2f GB", ((double)v)/(1024LL * 1024LL * 1024LL));
-	else if (v > (1024LL * 1024LL))
-		sprintf(buf, "%.2f MB", ((double)v) / (1024LL * 1024LL));
-	else if (v > (1024LL))
-		sprintf(buf, "%.2f KB", ((double)v) / 1024LL);
-	else
-		sprintf(buf, "%" PRId64 " bytes", v);
-	
-	BString str;
-	str << buf;
-	return str;
-}
-
-/*============================================================================================================*/
-
 bool MainWindow::GetGUIModeFromMessage (BMessage *message) const
 {
 	bool mode;
@@ -1396,146 +1237,19 @@ bool MainWindow::GetGUIModeFromMessage (BMessage *message) const
 
 /*============================================================================================================*/
 
-void MainWindow::RecalcItems (int8 index, uint32 action)
-{
-	PRINT (("MainWindow::RecalcItems (int8, uint32)\n"));
-
-	/* Now item at "index" has been either expanded or collapsed specified in "action" */
-	BView *subView = (BView*)subViews.ItemAtFast (index);
-	bool isCollapsed = subView->IsHidden();
-
-
-	/* Make sure a collapsed/expanded item is not collapsed/expanded again */
-	if (action == M_SUPERITEM_EXP && isCollapsed == true)
-		subView->Show();
-	else if (action == M_SUPERITEM_COL && isCollapsed == false)
-		subView->Hide();
-	else
-		return;
-
-
-	/* OK, now go ahead and move the views, first calculate the height to move */
-	float heightDiff = subView->Frame().Height();
-	if (action == M_SUPERITEM_COL)
-		heightDiff = -heightDiff;
-
-
-	/* Do the looped moving of the subitems, treeviews and the stringviews */
-	int32 count = treeViews.CountItems();
-	for (int32 i = index + 1; i < count; i++)
-	{
-		((BTextView*)superItems.ItemAtFast(i))->MoveBy (0, heightDiff);
-		((TreeView*)treeViews.ItemAtFast(i))->MoveBy (0, heightDiff);
-		((BView*)subViews.ItemAtFast(i))->MoveBy (0, heightDiff);
-	}
-	
-	/* Adjust other non-expanding items if any */
-	count = checkBoxes.CountItems();
-	BPoint pt = ((BTextView*)superItems.ItemAtFast(index))->Frame().LeftTop();
-	for (int32 i = 0; i < count; i++)
-	{
-		BCheckBox *item = (BCheckBox*)checkBoxes.ItemAtFast(i);
-		
-		if (item->Parent() == itemsView && item->Frame().top > pt.y)
-		{
-			item->MoveBy (0, heightDiff);
-			((BStringView*)infoViews.ItemAtFast(i))->MoveBy (0, heightDiff);
-		}
-	}
-
-	/* Finally, adjust the vertical scrollbar to the new expanded/collapsed layout */
-	if (isProcessingPlugins == false)
-		RecalcScrollBar();
-}
-
-/*============================================================================================================*/
-
-void MainWindow::RecalcScrollBar ()
-{
-	/* This function calculates the scrollbar's range */
-	float viewHeight;
-	float viewBottom;
-	float originalValue;
-
-	
-	/* Calculate the scrollview's bottom and height to set the range of the scrollbars */
-	viewHeight = itemsView->Frame().Height();
-	
-
-	/* Check if there are NO items in which case we need to disable the scrollbar*/
-	if (checkBoxes.CountItems() == 0)
-	{
-		vertScrollBar->SetRange (0.0, 0.0);
-		vertScrollBar->SetValue (0);
-		return;
-	}
-	
-
-	/* Reset the scrollbar's value to zero, or else get a lot of problems */
-	originalValue = vertScrollBar->Value();
-	vertScrollBar->SetValue (0);
-	
-
-	/* The below calculation makes sure that this function works even if there are no
-		hierarchial items and even checks for linear items */
-	if (subViews.CountItems() > 0)
-	{
-		BView *subvw = (BView*)subViews.LastItem();
-		
-		if (subvw->IsHidden() == true)
-			viewBottom = ((BTextView*)superItems.LastItem())->Frame().bottom + 1;
-		else
-			viewBottom = subvw->Frame().bottom + 1;
-		
-		/* In case we have some linear items below expanding items */
-		BCheckBox *item = NULL;
-		int32 count = checkBoxes.CountItems();
-		float ptY = ((BTextView*)superItems.LastItem())->Frame().LeftTop().y;
-		for (int32 i = 0; i < count; i++)
-		{
-			BCheckBox *tmp = (BCheckBox*)checkBoxes.ItemAtFast(i);
-			if (tmp->Parent() == itemsView && tmp->Frame().top > ptY)
-				item = tmp;
-		}
-		
-		if (item != NULL)
-			viewBottom = item->Frame().bottom + 1;
-	}
-	else
-	{
-		if (checkBoxes.CountItems() > 0)
-			viewBottom = ((BCheckBox*)checkBoxes.LastItem())->Frame().bottom + 1;
-		else
-			viewBottom = viewHeight;
-	}
-
-
-	/* Set the range of the scrollbar & restore old value */
-	if (viewBottom < viewHeight)
-		viewBottom = viewHeight;
-	
-	vertScrollBar->SetRange (0, viewBottom - viewHeight);
-	vertScrollBar->SetValue (originalValue);
-}
-
-/*============================================================================================================*/
-
-void MainWindow::AddLinearItem (PluginContainerItem *item, float yPos, BView *vw, char *fileName)
+void MainWindow::AddLinearItem (PluginContainerItem *item, char *fileName)
 {
 	PRINT (("MainWindow::AddLinearItem (PluginContainerItem*, float, BView*, char*)\n"));
 
 	/* This function adds a linear item (a simple checkbox - bstringview combination) and adds
 		them to the corresponding BLists */
 	BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-	msg->AddInt8 ("checkbox_index", (int8)checkBoxes.CountItems());
-	BCheckBox *linearItem = new BCheckBox (BRect (mLeft, yPos, checkRight, 0), "_checkBox",
-									((PluginItem*)item->subItems.ItemAt(0L))->itemName.String(),
-									msg, B_FOLLOW_LEFT, B_WILL_DRAW);
+	msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
+	// TODO pass message to CheckBoxWithStringField
 
-	InfoStrView *linearInfo = new InfoStrView (BRect (checkRight, linearItem->Frame().top, infoRight,
-						linearItem->Frame().top + strHeight), "MainWindow:InfoView",
-						liveMonitoring ? "[0 files, 0 bytes]" : "",	B_FOLLOW_RIGHT, B_WILL_DRAW);
-	
+	InfoStrView *linearInfo = new InfoStrView ("MainWindow:InfoView",
+						liveMonitoring ? "[0 files, 0 bytes]" : "", B_WILL_DRAW);
+
 	PluginItem *sItem = (PluginItem*)item->subItems.FirstItem ();
 	BString looperName = "_";
 	looperName << sItem->itemName.String();
@@ -1543,92 +1257,53 @@ void MainWindow::AddLinearItem (PluginContainerItem *item, float yPos, BView *vw
 	/* Set path for double-click opening of folder (TODO: pass sItem->isFolder for better path recognition) */
 	linearInfo->SetPath (sItem->itemPath.String());
 
-	
+	BRow *row = new BRow();
+	int32 i = 0;
+	CheckBoxWithStringField* checkBoxField;
+	row->SetField(checkBoxField = new CheckBoxWithStringField(((PluginItem*)item->subItems.ItemAt(0L))->itemName.String()), i++);
+	row->SetField(new BIntegerField(0), i++);
+	row->SetField(new BSizeField(0), i++);
+
+	fElementListView->AddRow(row);
+
 	/* Now initialize and run the FileLooper objects for each linear item */
 	PRINT ((" >> spawing_looper: %s\t\tport_capacity: %ld\n", looperName.String(), looperPortCapacity));
 	FileLooper *looper = new FileLooper (eraserLooper, sItem->itemPath.String(), looperName.String(),
 								B_NORMAL_PRIORITY, true, sItem->isFolder, sItem->recurse && allowRecurse,
-								debugMode, fileName, fileLoopers.CountItems(), looperPortCapacity);
+								debugMode, fileName, fileLoopers.CountItems(), row, looperPortCapacity);
 	if (sItem->excludeFilePath != "")
 		looper->ExcludeFileName ((char*)sItem->excludeFilePath.String());
 	else if (sItem->includeMimeType != "")
 		looper->IncludeMimeType ((char*)sItem->includeMimeType.String());
-	
+
+	checkBoxesFields.AddItem ((void*)checkBoxField);
 	fileLoopers.AddItem ((void*)looper);
-	checkBoxes.AddItem ((void*)linearItem);
-	infoViews.AddItem ((void*)linearInfo);
-	
-	vw->AddChild (linearItem);
-	vw->AddChild (linearInfo);
 }
 
 /*============================================================================================================*/
 
-float MainWindow::AddHierarchialItem (PluginContainerItem *item, float yPos, BView *vw,
-					int index, char *fileName)
+void MainWindow::AddHierarchialItem (PluginContainerItem *item, char *fileName)
 {
 	PRINT (("MainWindow::AddHierarchialItem (PluginContainerItem*, float, BView*, int, char*)\n"));
-
-	/* This function adds a hierarchial item and its corresponding treeview structure and adds
-		them to the corresponding BLists */
-	BTextView *itemStr = new BTextView (BRect (mLeft + 20, yPos,
-						vw->StringWidth (item->name.String()) + 30,
-						yPos + strHeight), item->name.String(),	BRect (0, 0,
-						vw->StringWidth (item->name.String()) + 30, 10), B_FOLLOW_LEFT, B_WILL_DRAW);
-	vw->AddChild (itemStr);
-
-	itemStr->SetText (item->name.String());
-	itemStr->SetViewColor (vw->ViewColor());
-	itemStr->MakeEditable (false);
-	itemStr->MakeSelectable (false);
-	itemStr->SetFontAndColor ((int32)0, itemStr->TextLength(), be_plain_font, B_FONT_ALL, &TreeLabelColor);
-
-	float topPt = itemStr->Frame().top;
-	font_height fntHt;
-	be_plain_font->GetHeight (&fntHt);
-	topPt += ((fntHt.ascent) / 4.0) - 2.0;
-	TreeView *itemTree = new TreeView (mLeft, topPt, item->name.String(),
-							ItemsViewColor, new BMessage (M_SUPERITEM_EXP), new BMessage (M_SUPERITEM_COL),
-							new BMessage (M_SUPERITEM_MID), index);
-	itemsView->AddChild (itemTree);
 	
-	BView *subItemsView = new BView (BRect (mLeft, itemTree->Frame().bottom + mVGap + 1,
-							vw->Frame().right,
-							itemTree->Frame().bottom + mVGap + 3 * strHeight + mVGap),
-							item->name.String(), B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW);
-	vw->AddChild (subItemsView);
-	subItemsView->SetViewColor (vw->ViewColor());
+	BRow *row = new BRow();
+	int32 i = 0;
+	CheckBoxWithStringField* checkBoxString;
+	row->SetField(checkBoxString = new CheckBoxWithStringField(item->name.String(), false), i++);
+	//row->SetField(new BIntegerField(0), i++); // TOTAL
+	//row->SetField(new BSizeField(0), i++);		//TOTAL
+	fElementListView->AddRow(row);
 
-
-	/* Now add all the subitems of this superitem and we get the height of the subItemsView in
-		viewHeight */
-	subItemsView->Hide();
-	float viewHeight = AddSubItems (item, subItemsView, fileName);
-	UpdateIfNeeded();
-
-	subViews.AddItem ((void*)subItemsView);
-	superItems.AddItem ((void*)itemStr);
-	treeViews.AddItem ((void*)itemTree);
-	hierarchialItems.AddItem ((void*)item);
-
-	
-	/* Return the height of the subView (minus a marginal value) */
-	return viewHeight;
+	AddSubItems (item, row, fileName);
+	// UpdateIfNeeded();
 }
 
 /*============================================================================================================*/
 
-float MainWindow::AddSubItems (PluginContainerItem *item, BView *parent, char *fileName)
+void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *fileName)
 {
 	PRINT (("MainWindow::AddSubItems (PluginContainerItem*, BView*, char*)\n"));
 
-	/* This function adds subitems of "item" to "parent" view */
-	float mIndent = 20;
-	checkRight -= mLeft;
-	infoRight -= mLeft;
-	float yPos = mTop;
-
-	BCheckBox *itemCheckBox (NULL);
 	InfoStrView *itemInfo (NULL);
 
 
@@ -1641,47 +1316,39 @@ float MainWindow::AddSubItems (PluginContainerItem *item, BView *parent, char *f
 		pluginSubItem = (PluginItem*)item->subItems.ItemAtFast (i);
 		
 		BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-		msg->AddInt8 ("checkbox_index", (int8)checkBoxes.CountItems());
-		
-		itemCheckBox = new BCheckBox (BRect (mIndent, yPos, checkRight, 0), "_checkBox",
-							pluginSubItem->itemName.String(), msg, B_FOLLOW_NONE, B_WILL_DRAW);
-		
-		itemInfo = new InfoStrView (BRect (checkRight, yPos, infoRight, yPos + strHeight),
-							pluginSubItem->itemName.String(), liveMonitoring ? "[0 files, 0 bytes]" : "",
-							B_FOLLOW_LEFT_RIGHT, B_WILL_DRAW);
+		msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
+		// TODO pass message to CheckBoxWithStringField
+		itemInfo = new InfoStrView (pluginSubItem->itemName.String(), liveMonitoring ? "[0 files, 0 bytes]" : "",
+							B_WILL_DRAW);
 
 		PluginItem *sItem = (PluginItem*)item->subItems.ItemAt (i);
 		BString looperName = "_";
 		looperName << sItem->itemName.String();
 		itemInfo->SetPath (sItem->itemPath.String());
 		
+		BRow *row = new BRow();
+		int32 i = 0;
+		CheckBoxWithStringField* checkBoxField;
+		row->SetField(checkBoxField = new CheckBoxWithStringField(pluginSubItem->itemName.String()), i++);
+		row->SetField(new BIntegerField(0), i++); // TOTAL
+		row->SetField(new BSizeField(0), i++);		//TOTAL
+
+		fElementListView->AddRow(row, parentRow);
+
 		/* Spawn our looper for the sub-item now */
 		PRINT ((" >> spawning_looper: %s\t\tport_capacity: %ld\n", looperName.String(), looperPortCapacity));
 		FileLooper *looper = new FileLooper (eraserLooper, sItem->itemPath.String(), looperName.String(),
 									B_NORMAL_PRIORITY, true, sItem->isFolder, sItem->recurse && allowRecurse,
-									debugMode, fileName, fileLoopers.CountItems(), looperPortCapacity);
+									debugMode, fileName, fileLoopers.CountItems(), row, looperPortCapacity);
 		
 		if (sItem->excludeFilePath != "")
 			looper->ExcludeFileName ((char*)sItem->excludeFilePath.String());
 		else if (sItem->includeMimeType != "")
 			looper->IncludeMimeType ((char*)sItem->includeMimeType.String());
-
-		fileLoopers.AddItem ((void*)looper);
-		checkBoxes.AddItem ((void*)itemCheckBox);
-		infoViews.AddItem ((void*)itemInfo);
 		
-		parent->AddChild (itemCheckBox);
-		parent->AddChild (itemInfo);
-		yPos += strHeight + 2;
+		checkBoxesFields.AddItem ((void*)checkBoxField);
+		fileLoopers.AddItem ((void*)looper);
 	}
-
-
-	/* Resize our parent view, important as we may not have got the exact height while constructing it*/
-	parent->ResizeTo (parent->Frame().Width(), (int)itemCheckBox->Frame().bottom + mVGap + mTop);
-	
-	checkRight += mLeft;
-	infoRight += mLeft;
-	return parent->Frame().Height();
 }
 
 /*============================================================================================================*/
@@ -1696,7 +1363,7 @@ void MainWindow::ParseAndSetupUI ()
 	
 
 	/* Check if our threads have spawned properly */
-	if (fileLoopers.CountItems() != checkBoxes.CountItems())
+	if (fileLoopers.CountItems() != checkBoxesFields.CountItems())
 	{
 		BAlert *fatal = new BAlert ("Error", "FilWip could not spawn all the required threads. This"
 				" is a fatal error and would be not be wise to continue...", "Quit", NULL, NULL,
@@ -1706,10 +1373,6 @@ void MainWindow::ParseAndSetupUI ()
 		be_app->PostMessage (B_QUIT_REQUESTED);
 		return;
 	}
-	
-	if (checkBoxes.CountItems() > 0)
-		vertScrollBar->SetSteps ((int)((BCheckBox*)checkBoxes.ItemAt(0L))->Frame().Height() + mTop, 60);
-
 
 	/* Check if we must restore the tree-view structure and do accordingly */
 	bool loadTree = true;
@@ -1717,12 +1380,13 @@ void MainWindow::ParseAndSetupUI ()
 		if (loadTree == true)
 			LoadTreeState ((BMessage*)&prefs);
 
+	BMessage columnsMessage;
+	if (prefs.FindMessage ("columns_states", &columnsMessage) == B_OK)
+		fElementListView->LoadState(&columnsMessage);
 
 	/* Now reset this flag so that FrameResized from here on can call RecalcScrollBar
 		since we are done accessing the scrollbar and now recalculate it */
 	isProcessingPlugins = false;
-	RecalcScrollBar();
-
 
 	/* Restore clean-up options? */
 	bool loadChkBoxes = true;
@@ -1770,6 +1434,30 @@ BBitmap* MainWindow::ResourceBitmap (const char *resourceName) const
 	return new BBitmap (&msg);
 }
 
+
+BBitmap *MainWindow::ResVectorToBitmap(const char *resName)
+{
+	BResources res;
+	size_t size;
+	app_info appInfo;
+
+	be_app->GetAppInfo(&appInfo);
+	BFile appFile(&appInfo.ref, B_READ_ONLY);
+	res.SetTo(&appFile);
+	BBitmap *aBmp = NULL;
+	const uint8* iconData = (const uint8*) res.LoadResource('VICN', resName, &size);
+
+	if (size > 0 ) {
+		aBmp = new BBitmap (BRect(0,0,20,20), 0, B_RGBA32);
+		status_t result = BIconUtils::GetVectorIcon(iconData, size, aBmp);
+		if (result != B_OK) {
+			delete aBmp;
+			aBmp = NULL;
+		}
+	}
+	return aBmp;
+}
+
 /*============================================================================================================*/
 
 bool MainWindow::ConfirmCleanUp () const
@@ -1810,7 +1498,7 @@ bool MainWindow::CheckIfPluginsExist (const char* errorStr) const
 {
 	PRINT (("MainWindow::CheckIfPluginsExist (const char*)\n"));
 
-	if (checkBoxes.CountItems() == 0)
+	if (fElementListView->CountRows() == 0)
 	{
 		BAlert *fatal = new BAlert ("Error", errorStr, "Quit", NULL, NULL,
 							B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_STOP_ALERT);

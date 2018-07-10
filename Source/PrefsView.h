@@ -28,18 +28,14 @@
 #ifndef _PREFS_VIEW_H
 #define _PREFS_VIEW_H
 
-#include "BevelView.h"
+#include <GroupView.h>
 
-class PrefsView : public BevelView
+
+class PrefsView : public BGroupView
 {
 	public:
-		PrefsView (BRect frame, const char *description);
+		PrefsView (const char *description);
 		virtual ~PrefsView ();
-		
-		const char			*Description() const;
-				
-	protected:
-		char				*descStr;
 };
 
 #endif /* _PREFS_VIEW_H */

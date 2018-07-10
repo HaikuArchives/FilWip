@@ -33,8 +33,7 @@
 class InfoStrView : public BStringView
 {
 	public:
-		InfoStrView (BRect bounds, const char *name, const char *text, uint32 resizeFlags = B_FOLLOW_LEFT,
-				uint32 flags = B_WILL_DRAW);
+		InfoStrView (const char *name, const char *text, uint32 flags = B_WILL_DRAW);
 		virtual ~InfoStrView ();
 		
 		/* Inherited Hooks */
