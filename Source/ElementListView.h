@@ -30,6 +30,7 @@ public:
 	BPopUpMenu *ActionMenu();
 	virtual void MakeFocus(bool focused = true);
 	virtual void SelectionChanged(void);
+	virtual void KeyDown(const char *bytes, int32 numBytes);
 	void FullListDoForEach(bool (*func)(BRow*, void*), void* data);
 	void SaveTreeState(BMessage *prefsMessage);
 	void LoadTreeState(BMessage *prefsMessage);

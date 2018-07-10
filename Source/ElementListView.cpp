@@ -25,7 +25,7 @@ ElementListView::ElementListView(const char *name)
 	SetSortingEnabled(false);
 	SetColumnFlags(B_ALLOW_COLUMN_RESIZE);
 	SetInvocationMessage(new BMessage(TEAM_INV));
-
+	SetSelectionMode(B_SINGLE_SELECTION_LIST);
 	BMessage* selected = new BMessage(SELECTION_CHANGED);
 	selected->AddInt32("buttons",0);
 	SetSelectionMessage(selected);
@@ -51,6 +51,28 @@ void ElementListView::SelectionChanged()
 
 	BColumnListView::SelectionChanged();
 }
+
+void ElementListView::KeyDown(const char *bytes, int32 numBytes)
+{
+	switch (bytes[0]) {
+		case B_SPACE: {
+			BRow* row = CurrentSelection();
+			if (row != NULL) {
+				CheckBoxWithStringField *checkBoxWithStringField =
+					(CheckBoxWithStringField*)row->GetField(ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX);
+				if (checkBoxWithStringField->HasCheckBox()) {
+					checkBoxWithStringField->Toggle();
+					InvalidateRow(row);
+				}
+			}
+			break;
+		}
+		default: {
+			BColumnListView::KeyDown(bytes, numBytes);
+		}
+	}
+}
+
 
 BPopUpMenu *
 ElementListView::ActionMenu()
