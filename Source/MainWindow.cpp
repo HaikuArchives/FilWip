@@ -186,7 +186,7 @@ MainWindow::MainWindow ()
 	mainToolBar = new BToolBar(B_VERTICAL);
 
 	mainToolBar->AddAction(new BMessage(M_HELP), this, ResVectorToBitmap("HELP"),"Help (F1)","",false);
-	mainToolBar->AddAction(new BMessage(M_ABOUT),this, ResVectorToBitmap("ABOUT"),"About","",false);
+	mainToolBar->AddAction(new BMessage(B_ABOUT_REQUESTED),this, ResVectorToBitmap("ABOUT"),"About","",false);
 	mainToolBar->AddAction(new BMessage(M_SAVE_PRESET), this, ResVectorToBitmap("SAVE"), "Save preset (Alt-S)","",false);
 	mainToolBar->AddAction(new BMessage(M_PREFS),this, ResVectorToBitmap("PREFERENCES"),"Preferences","",false);
 //	mainToolBar->AddAction(new BMessage(M_PREVIEW),this,
@@ -700,7 +700,7 @@ void MainWindow::MessageReceived (BMessage *message)
 		}
 		
 		/* These are handled by our BApp object */
-		case M_ABOUT: case M_PREVIEW: case M_PREFS:
+		case B_ABOUT_REQUESTED: case M_PREVIEW: case M_PREFS:
 		{
 			be_app_messenger.SendMessage (message);
 			break;

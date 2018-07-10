@@ -47,8 +47,6 @@ const uint32
 	 M_SMART_SELECT =		'smsl',
 	 M_REPORT =				'rprt',
 	 M_CLOSE_REPORT =		'clrp',
-	 M_ABOUT =				'abtc',
-	 M_CLOSE_ABOUT =		'clab',
 	 M_SAVE_PRESET =		'svps',
 	 M_OPEN_PRESET =		'rdps',
 	 M_JUST_GOT_FOCUS =		'jgfc',
