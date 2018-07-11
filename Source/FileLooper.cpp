@@ -143,6 +143,7 @@ NodeEntry* HashTable::LookUp (node_ref *nref, entry_ref *eref, bool insert, bool
 	bucket->eref = *eref;
 	BEntry entry (eref);
 	entry.GetSize (&(bucket->size));	/* Bug-fix: Don't remove the extra braces */
+	bucket->isDir = entry.IsDirectory();
 
 	bucket->next = table[hashValue];
 	table[hashValue] = bucket;	
@@ -958,9 +959,12 @@ void FileLooper::RemoveNodeFromList (node_ref *nref)
 {
 	/* Delete an existing item, adjust our size and entriesLive statistic variables */
 	off_t size;
-
-	BDirectory directory;
-	bool isDirectory = directory.SetTo(nref) == B_OK;
+	bool isDirectory = false;
+	NodeEntry* nodeEntry = hashTable->Find(nref);
+	if (nodeEntry != NULL && nodeEntry->isDir)
+	{
+		isDirectory = true;
+	}
 
 	if (hashTable->Delete (nref, &size) == true)
 	{

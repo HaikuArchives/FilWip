@@ -41,7 +41,8 @@ class NodeEntry
 		node_ref			nref;
 		entry_ref			eref;
 		off_t				size;
-		
+		bool				isDir;
+
 		NodeEntry			*next;
 };
 
