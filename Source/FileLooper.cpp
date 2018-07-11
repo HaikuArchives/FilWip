@@ -56,6 +56,16 @@ NodeEntry::NodeEntry ()
 }
 
 /*============================================================================================================*/
+
+off_t CalcSize(BStatable *entry) {
+		struct stat statbuf;
+
+		if (entry->GetStat(&statbuf) != B_OK)
+			return 0;
+
+		return statbuf.st_blocks* 512;
+}
+
 /*============================================================================================================*/
 /*============================================================================================================*/
 
@@ -142,7 +152,8 @@ NodeEntry* HashTable::LookUp (node_ref *nref, entry_ref *eref, bool insert, bool
 	bucket->nref = *nref;
 	bucket->eref = *eref;
 	BEntry entry (eref);
-	entry.GetSize (&(bucket->size));	/* Bug-fix: Don't remove the extra braces */
+	bucket->size = CalcSize(&entry);
+
 	bucket->isDir = entry.IsDirectory();
 
 	bucket->next = table[hashValue];
@@ -726,7 +737,7 @@ void FileLooper::OverviewFile ()
 {
 	if (fileEntry->Exists() == true)
 	{
-		fileEntry->GetSize (&sizeWiped);
+		sizeWiped = CalcSize(fileEntry);
 		entriesWiped ++;
 		filesWiped ++;
 	}
@@ -745,7 +756,7 @@ void FileLooper::OverviewFolderExcludeFileName (BDirectory folder)
 {
 	/* Overview all the entries in a folder excepting a filenamed 'excludedFileName' */
 	BEntry entry;
-	off_t size;
+
 	char buffer[B_FILE_NAME_LENGTH];
 
 	if (folder.InitCheck() != B_OK)
@@ -775,8 +786,7 @@ void FileLooper::OverviewFolderExcludeFileName (BDirectory folder)
 		filesWiped++;
 	
 		entriesWiped++;
-		entry.GetSize (&size);
-		sizeWiped += size;
+		sizeWiped += CalcSize(&entry);
 		AddNodeMonitor (entry);
 	}
 }
@@ -787,7 +797,7 @@ void FileLooper::OverviewFolderIncludeMimeType (BDirectory folder)
 {
 	/* Overview all entries in a folder with the mimetype in 'includedMimeType' */
 	BEntry entry;
-	off_t size;
+
 	char buffer[B_MIME_TYPE_LENGTH];
 
 	if (folder.InitCheck() != B_OK)
@@ -818,8 +828,7 @@ void FileLooper::OverviewFolderIncludeMimeType (BDirectory folder)
 		filesWiped++;
 
 		entriesWiped++;
-		entry.GetSize (&size);
-		sizeWiped += size;
+		sizeWiped += CalcSize(&entry);
 		AddNodeMonitor (entry);
 	}
 }
@@ -830,7 +839,7 @@ void FileLooper::OverviewFolder (BDirectory folder)
 {
 	/* Overview full folder and subdirs */
 	BEntry entry;
-	off_t size;
+
 	if (folder.InitCheck() != B_OK)
 		return;
 
@@ -840,7 +849,6 @@ void FileLooper::OverviewFolder (BDirectory folder)
 
 	while (folder.GetNextEntry (&entry, false) != B_ENTRY_NOT_FOUND)
 	{
-		entry.GetSize (&size);
 		if (entry.IsDirectory() == true)
 		{
 			foldersWiped++;
@@ -853,8 +861,7 @@ void FileLooper::OverviewFolder (BDirectory folder)
 		filesWiped++;
 
 		entriesWiped++;
-		entry.GetSize (&size);
-		sizeWiped += size;
+		sizeWiped += CalcSize(&entry);
 		AddNodeMonitor (entry);
 	}
 }
@@ -992,7 +999,8 @@ void FileLooper::UpdateNodeSize (node_ref *nref)
 	
 	oldSize = existingElement->size;
 	entry.SetTo (&(existingElement->eref));
-	entry.GetSize (&newSize);
+
+	newSize = CalcSize(&entry);
 	
 	if (oldSize > newSize)
 		nSizeLive -= (oldSize - newSize);
@@ -1066,8 +1074,7 @@ void FileLooper::AddFile ()
 	BPath path;
 	fileEntry->GetPath (&path);
 
-	off_t size;
-	fileEntry->GetSize (&size);
+	off_t size = CalcSize(fileEntry);
 
 	char *pathStr = new char[B_PATH_NAME_LENGTH];
 	strcpy (pathStr, path.Path());
@@ -1089,7 +1096,7 @@ void FileLooper::AddFolder (BDirectory folder)
 	
 	int32 fileCount = 0L, folderCount = 0L;
 	int64 byteCount = 0LL;
-	off_t size;
+
 	while (folder.GetNextEntry (&entry, false) != B_ENTRY_NOT_FOUND)
 	{
 		if (entry.IsDirectory() == true)
@@ -1112,9 +1119,7 @@ void FileLooper::AddFolder (BDirectory folder)
 			eraserLooper->entryList.AddItem (pathStr);
 			fileCount++;
 		}
-
-		entry.GetSize (&size);
-		byteCount += size;
+		byteCount += CalcSize(&entry);
 	}
 	
 	/* Add sub-directories to delete list (if recursive option is ON) */
@@ -1148,7 +1153,7 @@ void FileLooper::AddFolderExcludeFileName (BDirectory folder)
 
 	int32 fileCount = 0L, folderCount = 0L;
 	int64 byteCount = 0LL;
-	off_t size;
+
 	while (folder.GetNextEntry (&entry, false) == B_OK)
 	{
 		entry.GetName (buffer);
@@ -1175,9 +1180,7 @@ void FileLooper::AddFolderExcludeFileName (BDirectory folder)
 			eraserLooper->entryList.AddItem (pathStr);
 			fileCount++;
 		}
-
-		entry.GetSize (&size);
-		byteCount += size;
+		byteCount += CalcSize(&entry);
 	}
 
 	/* Add sub-directories to delete list */
@@ -1212,7 +1215,7 @@ void FileLooper::AddFolderIncludeMimeType (BDirectory folder)
 	
 	int32 fileCount = 0L, folderCount = 0L;
 	int64 byteCount = 0LL;
-	off_t size;
+
 	while (folder.GetNextEntry (&entry, false) == B_OK)
 	{
 		BNode node (&entry);
@@ -1242,9 +1245,7 @@ void FileLooper::AddFolderIncludeMimeType (BDirectory folder)
 			eraserLooper->entryList.AddItem (pathStr);
 			fileCount++;
 		}
-
-		entry.GetSize (&size);
-		byteCount += size;
+		byteCount += CalcSize(&entry);
 	}
 
 	/* Add sub-directories to delete list */
