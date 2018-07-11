@@ -658,6 +658,8 @@ void MainWindow::MessageReceived (BMessage *message)
 			int32 looperID = message->FindInt32 ("looper_id");
 			int64 bytesCounted = message->FindInt64 ("bytes_counted");
 			int64 entriesCounted = message->FindInt64 ("entries_counted");
+			int64 foldersCounted = message->FindInt64 ("folders_counted");
+			int64 filesCounted = message->FindInt64 ("files_counted");
 			BRow *row;
 			status_t status = message->FindPointer ("row_pointer", (void**)&row);
 			if (status != B_OK) {
@@ -670,9 +672,13 @@ void MainWindow::MessageReceived (BMessage *message)
 			buf << GetByteSizeString (bytesCounted) << "]";
 			
 			*/
-			BIntegerField* itemsField = (BIntegerField*)(row->GetField(ROW_FIELD_ENTRIES_COUNTS));
-			if (itemsField->Value() != entriesCounted) {
-				itemsField->SetValue(entriesCounted );
+			BIntegerField* itemsField = (BIntegerField*)(row->GetField(ROW_FIELD_FOLDERS_COUNTS));
+			if (itemsField->Value() != foldersCounted) {
+				itemsField->SetValue(foldersCounted );
+			}
+			itemsField = (BIntegerField*)(row->GetField(ROW_FIELD_FILES_COUNTS));
+			if (itemsField->Value() != filesCounted) {
+				itemsField->SetValue(filesCounted );
 			}
 			BSizeField* sizeField = (BSizeField*)(row->GetField(ROW_FIELD_BYTES_COUNTS));
 			if (sizeField->Size() != bytesCounted) {
@@ -1258,11 +1264,12 @@ void MainWindow::AddLinearItem (PluginContainerItem *item, char *fileName)
 	linearInfo->SetPath (sItem->itemPath.String());
 
 	BRow *row = new BRow();
-	int32 i = 0;
+	int32 index = 0;
 	CheckBoxWithStringField* checkBoxField;
-	row->SetField(checkBoxField = new CheckBoxWithStringField(((PluginItem*)item->subItems.ItemAt(0L))->itemName.String()), i++);
-	row->SetField(new BIntegerField(0), i++);
-	row->SetField(new BSizeField(0), i++);
+	row->SetField(checkBoxField = new CheckBoxWithStringField(((PluginItem*)item->subItems.ItemAt(0L))->itemName.String()), index++);
+	row->SetField(new BIntegerField(0), index++);
+	row->SetField(new BIntegerField(0), index++);
+	row->SetField(new BSizeField(0), index++);
 
 	fElementListView->AddRow(row);
 
@@ -1330,8 +1337,10 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 		int32 index = 0;
 		CheckBoxWithStringField* checkBoxField;
 		row->SetField(checkBoxField = new CheckBoxWithStringField(pluginSubItem->itemName.String()), index++);
+		row->SetField(new BIntegerField(0), index++);
 		row->SetField(new BIntegerField(0), index++); // TOTAL
 		row->SetField(new BSizeField(0), index++);		//TOTAL
+
 
 		fElementListView->AddRow(row, parentRow);
 

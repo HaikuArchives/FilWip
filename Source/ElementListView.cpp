@@ -18,8 +18,9 @@ ElementListView::ElementListView(const char *name)
 {	
 //	BColumn* column;
 	int32 i = 0;
-	AddColumn(new CheckBoxWithStringColumn(B_TRANSLATE("Remove"), 150, 10, 600, 0), i++);
-	AddColumn(new BIntegerColumn(B_TRANSLATE("Items"), 80, 10, 100, B_ALIGN_RIGHT), i++);
+	AddColumn(new CheckBoxWithStringColumn(B_TRANSLATE("Remove"), 180, 10, 600, 0), i++);
+	AddColumn(new BIntegerColumn(B_TRANSLATE("Folders"), 70, 10, 100, B_ALIGN_RIGHT), i++);
+	AddColumn(new BIntegerColumn(B_TRANSLATE("Files"), 70, 10, 100, B_ALIGN_RIGHT), i++);
 	AddColumn(new BSizeColumn(B_TRANSLATE("Size"), 80, 10, 600), i++);
 //	column->SetVisible(false);
 	SetSortingEnabled(false);

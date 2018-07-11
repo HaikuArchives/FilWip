@@ -140,8 +140,12 @@ class FileLooper : public BLooper
 		off_t				sizeWiped,
 							nSizeLive;
 		bigtime_t			timeTaken;
-		int32				entriesWiped,
-							nEntriesLive;
+		int64				entriesWiped,
+							nEntriesLive,
+							nFoldersLive,
+							nFilesLive,
+							foldersWiped,
+							filesWiped;
 		int32				looperID;
 };
 

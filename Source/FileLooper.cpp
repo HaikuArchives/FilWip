@@ -238,6 +238,7 @@ FileLooper::FileLooper (EraserLooper *eraser, const char *processPath, const cha
 	looperID = uniqueID;
 	ResetStatVariables ();
 	nSizeLive = nEntriesLive = 0;
+	nFoldersLive = nFilesLive = 0;
 
 	BPath path (processPath);
 	if (isFolder == true)
@@ -674,6 +675,8 @@ void FileLooper::ResetStatVariables ()
 {
 	/* Just reset stat variables */
 	entriesWiped = 0;
+	foldersWiped = 0;
+	filesWiped = 0;
 	sizeWiped = 0;
 }
 
@@ -701,6 +704,8 @@ void FileLooper::BeginOverviewOperation()
 	/* Post message about details of the wipeout */
 	reportMsg.AddInt32 ("looper_id", looperID);
 	reportMsg.AddInt64 ("entries_counted", entriesWiped);
+	reportMsg.AddInt64 ("files_counted", filesWiped);
+	reportMsg.AddInt64 ("folders_counted", foldersWiped);
 	reportMsg.AddInt64 ("bytes_counted", sizeWiped);
 	reportMsg.AddBool ("first_scan", firstScan);
 	reportMsg.AddPointer ("row_pointer", fRow);
@@ -709,6 +714,8 @@ void FileLooper::BeginOverviewOperation()
 	
 	nSizeLive = sizeWiped;
 	nEntriesLive = entriesWiped;
+	nFoldersLive = foldersWiped;
+	nFilesLive = filesWiped;
 	ResetStatVariables();
 }
 
@@ -720,6 +727,7 @@ void FileLooper::OverviewFile ()
 	{
 		fileEntry->GetSize (&sizeWiped);
 		entriesWiped ++;
+		filesWiped ++;
 	}
 	
 		
@@ -756,12 +764,14 @@ void FileLooper::OverviewFolderExcludeFileName (BDirectory folder)
 		
 		if (entry.IsDirectory() == true)
 		{
+			foldersWiped++;
 			if (recurseDir == false)
 				continue;
 
 			BDirectory subDir (&entry);
 			OverviewFolderExcludeFileName (subDir);
-		}
+		} else
+		filesWiped++;
 	
 		entriesWiped++;
 		entry.GetSize (&size);
@@ -797,12 +807,14 @@ void FileLooper::OverviewFolderIncludeMimeType (BDirectory folder)
 		
 		if (entry.IsDirectory() == true)
 		{
+			foldersWiped++;
 			if (recurseDir == false)
 				continue;
 
 			BDirectory subDir (&entry);
 			OverviewFolderIncludeMimeType (subDir);
-		}
+		} else
+		filesWiped++;
 
 		entriesWiped++;
 		entry.GetSize (&size);
@@ -830,12 +842,14 @@ void FileLooper::OverviewFolder (BDirectory folder)
 		entry.GetSize (&size);
 		if (entry.IsDirectory() == true)
 		{
+			foldersWiped++;
 			if (recurseDir == false)
 				continue;
 
 			BDirectory subDir (&entry);
 			OverviewFolder (subDir);
-		}
+		} else
+		filesWiped++;
 
 		entriesWiped++;
 		entry.GetSize (&size);
@@ -877,6 +891,8 @@ void FileLooper::DeleteNodeEntryList ()
 	hashTable->InitializeTable ();
 	nSizeLive = 0;
 	nEntriesLive = 0;
+	nFoldersLive = 0;
+	nFilesLive = 0;
 }
 
 /*============================================================================================================*/
@@ -887,6 +903,8 @@ void FileLooper::SendNodeChangedMessage ()
 	BMessage reportMsg (M_OVERVIEW_STATS);
 	reportMsg.AddInt32 ("looper_id", looperID);
 	reportMsg.AddInt64 ("entries_counted", nEntriesLive);
+	reportMsg.AddInt64 ("folders_counted", nFoldersLive);
+	reportMsg.AddInt64 ("files_counted", nFilesLive);
 	reportMsg.AddInt64 ("bytes_counted", nSizeLive);
 	reportMsg.AddPointer ("row_pointer", fRow);
 	filWip->mainWnd->PostMessage (&reportMsg);
@@ -923,10 +941,14 @@ void FileLooper::AddUniqueNodeToList (node_ref *nref, entry_ref *eref)
 
 		/* Setup the node monitor */
 		BEntry entry (eref);
-		if (entry.IsDirectory())
+		if (entry.IsDirectory()) {
+			nFoldersLive++;
 			WatchNode (newElement->nref, B_WATCH_DIRECTORY, NULL, this);
-		else
+		}
+		else {
 			WatchNode (newElement->nref, B_WATCH_NAME | B_WATCH_STAT | B_WATCH_ATTR, NULL, this);
+			nFilesLive++;
+		}
 	}
 }
 
@@ -936,10 +958,18 @@ void FileLooper::RemoveNodeFromList (node_ref *nref)
 {
 	/* Delete an existing item, adjust our size and entriesLive statistic variables */
 	off_t size;
+
+	BDirectory directory;
+	bool isDirectory = directory.SetTo(nref) == B_OK;
+
 	if (hashTable->Delete (nref, &size) == true)
 	{
 		nSizeLive -= size;
 		nEntriesLive--;
+		if (isDirectory)
+			nFoldersLive--;
+		else
+			nFilesLive--;
 	}
 }
 
