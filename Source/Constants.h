@@ -57,7 +57,8 @@ const uint32
 	 M_OVERVIEW_STATS =		'ovws',
 	 M_RESET_LOOPERS =		'rslp',
 	 M_OPEN_FOLDER =		'ofld',
-	 M_SELECTION_CHANGED =	'selc';
+	 M_SELECTION_CHANGED =	'selc',
+	 M_OPEN_FOLDER_CURRENT ='ofcs';
 
 const uint32
 	 ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX = 0,

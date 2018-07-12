@@ -50,11 +50,23 @@ void ElementListView::SelectionChanged()
 
 	SelectionMessage()->ReplaceInt32("buttons",buttons);
 
+	BMessage* invocationMessage = NULL;
 	BRow* row =	CurrentSelection();
-	BMessage* invocationMessage = new BMessage(M_OPEN_FOLDER);
-	invocationMessage->AddPointer("row_pointer",row);
-	invocationMessage->AddInt32("buttons",buttons);
-
+	if (row != NULL) {
+		CheckBoxWithStringField *checkBoxWithStringField =
+				(CheckBoxWithStringField*)row->GetField(ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX);
+		if (checkBoxWithStringField->HasCheckBox()) {
+				BPoint point;
+				uint32 state;
+				GetMouse(&point, &state);
+				CheckBoxWithStringColumn* column = dynamic_cast<CheckBoxWithStringColumn*>(ColumnAt(point));
+				if (column == NULL) {
+					invocationMessage = new BMessage(M_OPEN_FOLDER);
+					invocationMessage->AddPointer("row_pointer",row);
+					invocationMessage->AddInt32("buttons",buttons);
+				}
+		}
+	}
 	SetInvocationMessage(invocationMessage);
 
 	BColumnListView::SelectionChanged();

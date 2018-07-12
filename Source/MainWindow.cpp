@@ -256,7 +256,7 @@ MainWindow::MainWindow ()
 	AddShortcut ('a', B_COMMAND_KEY, new BMessage (M_SELECT_ALL));
 	AddShortcut ('d', B_COMMAND_KEY, new BMessage (M_DESELECT_ALL));	
 	AddShortcut ('m', B_COMMAND_KEY, new BMessage (M_SMART_SELECT));
-
+	AddShortcut ('o', B_COMMAND_KEY, new BMessage (M_OPEN_FOLDER_CURRENT));
 	/* List presets */
 	ListPresets ();
 	
@@ -727,6 +727,13 @@ void MainWindow::MessageReceived (BMessage *message)
 			break;
 		}
 		
+		case M_OPEN_FOLDER_CURRENT:
+		{
+			BRow* row =	fElementListView->CurrentSelection();
+			if (row == NULL)
+				break;
+			message->AddPointer ("row_pointer", row);
+		} // no break pass into M_OPEN_FOLDER
 		case M_OPEN_FOLDER:
 		{
 			BRow *row;
