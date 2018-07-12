@@ -82,7 +82,19 @@ class FileLooper : public BLooper
 		void				IncludeMimeType (char *mimeType);
 		void				ExcludeFileName (char *fileName);
 		void				BeginAddOperation ();
-		
+		BRow*				Row() {return fRow;};
+		BEntry*				ItemEntry() {
+											if (folderEntry != NULL)
+												return folderEntry;
+											else {
+												BEntry* entry = new BEntry();
+												if (fileEntry != NULL && fileEntry->GetParent(entry) == B_OK)
+													return entry;
+												else
+													delete entry;
+												return NULL;
+											}
+										};
 		volatile bool		stopProcessing,
 							ignoreChanges;
 		

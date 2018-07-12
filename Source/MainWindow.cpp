@@ -727,6 +727,37 @@ void MainWindow::MessageReceived (BMessage *message)
 			break;
 		}
 		
+		case M_OPEN_FOLDER:
+		{
+			BRow *row;
+			const char *trackerSignature ("application/x-vnd.Be-TRAK");
+			status_t status = message->FindPointer ("row_pointer", (void**)&row);
+			if (status != B_OK) {
+				PRINT (("M_OPEN_FOLDER empty row_pointer\n"));
+				break;
+			};
+
+			FileLooper* fileLooper = FindLooper(row);
+			if (fileLooper == NULL)
+				break;
+
+			/* This function opens a folder entry_ref through Tracker */
+			BEntry* entry = fileLooper->ItemEntry(); // (path, true);
+			entry_ref refToDir;
+			entry->GetRef (&refToDir);
+
+			if (entry->Exists() == true)
+			{
+				BMessage trakMsg (B_REFS_RECEIVED);
+				trakMsg.AddRef ("refs", &refToDir);
+
+				/* Just check if tracker is running */
+				if (be_roster->IsRunning (trackerSignature) == true)
+					BMessenger(trackerSignature).SendMessage (&trakMsg);
+			}
+			break;
+		}
+
 		/* Startup message call to parse plugins and setup interface */
 		case M_PARSE_AND_SETUP_UI:
 		{
@@ -1544,3 +1575,26 @@ void MainWindow::ResetLoopers (bool monitorNodes)
 }
 
 /*============================================================================================================*/
+// A better solution is to implement a new subclass from BRow and add the looper to that class
+
+FileLooper* MainWindow::FindLooper (BRow* row)
+{
+	PRINT (("MainWindow::FindLooper (BRow*)\n"));
+	FileLooper *fileLooperFound = NULL;
+
+	/* Reset loopers so they stop/start monitoring nodes */
+	for (int32 i = 0; i < fileLoopers.CountItems(); i++)
+	{
+		FileLooper *fileLooper = ((FileLooper*)fileLoopers.ItemAtFast(i));
+		if (fileLooper->Lock())
+		{
+			if (fileLooper->Row() == row) // Test the pointer to row
+				fileLooperFound = fileLooper;
+
+			fileLooper->Unlock();
+			if (fileLooperFound != NULL)
+				break;
+		}
+	}
+	return fileLooperFound;
+}

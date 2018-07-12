@@ -55,7 +55,9 @@ const uint32
 	 M_WIPE_DONE =			'wpdn',
 	 M_BEGIN_OVERVIEW =		'bgov',
 	 M_OVERVIEW_STATS =		'ovws',
-	 M_RESET_LOOPERS =		'rslp';
+	 M_RESET_LOOPERS =		'rslp',
+	 M_OPEN_FOLDER =		'ofld',
+	 M_SELECTION_CHANGED =	'selc';
 
 const uint32
 	 ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX = 0,

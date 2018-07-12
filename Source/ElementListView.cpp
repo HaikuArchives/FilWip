@@ -16,18 +16,18 @@
 ElementListView::ElementListView(const char *name)
 	: BColumnListView("elementListView", B_FRAME_EVENTS|B_NAVIGABLE, B_FANCY_BORDER, false)
 {	
-//	BColumn* column;
+
 	int32 i = 0;
 	AddColumn(new CheckBoxWithStringColumn(B_TRANSLATE("Remove"), 180, 10, 600, 0), i++);
 	AddColumn(new BIntegerColumn(B_TRANSLATE("Folders"), 70, 10, 100, B_ALIGN_RIGHT), i++);
 	AddColumn(new BIntegerColumn(B_TRANSLATE("Files"), 70, 10, 100, B_ALIGN_RIGHT), i++);
 	AddColumn(new BSizeColumn(B_TRANSLATE("Size"), 80, 10, 600), i++);
-//	column->SetVisible(false);
+
 	SetSortingEnabled(false);
 	SetColumnFlags(B_ALLOW_COLUMN_RESIZE);
-	SetInvocationMessage(new BMessage(TEAM_INV));
+
 	SetSelectionMode(B_SINGLE_SELECTION_LIST);
-	BMessage* selected = new BMessage(SELECTION_CHANGED);
+	BMessage* selected = new BMessage(M_SELECTION_CHANGED);
 	selected->AddInt32("buttons",0);
 	SetSelectionMessage(selected);
 
@@ -49,6 +49,13 @@ void ElementListView::SelectionChanged()
 		msg->FindInt32("buttons", (int32 *)&buttons);
 
 	SelectionMessage()->ReplaceInt32("buttons",buttons);
+
+	BRow* row =	CurrentSelection();
+	BMessage* invocationMessage = new BMessage(M_OPEN_FOLDER);
+	invocationMessage->AddPointer("row_pointer",row);
+	invocationMessage->AddInt32("buttons",buttons);
+
+	SetInvocationMessage(invocationMessage);
 
 	BColumnListView::SelectionChanged();
 }
