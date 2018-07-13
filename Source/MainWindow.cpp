@@ -774,12 +774,20 @@ void MainWindow::MessageReceived (BMessage *message)
 		}
 		
 		/* These are handled by our BApp object */
-		case B_ABOUT_REQUESTED: case M_PREVIEW: case M_PREFS:
+		case B_ABOUT_REQUESTED: case M_PREVIEW:
 		{
 			be_app_messenger.SendMessage (message);
 			break;
 		}
 
+		case M_PREFS:
+		{
+			if ((modifiers() & B_SHIFT_KEY) != 0)
+				message->what = M_ADVANCED_PREFS;
+
+			be_app_messenger.SendMessage (message);
+			break;
+		}
 		/* Call Help */
 		case M_HELP:
 		{

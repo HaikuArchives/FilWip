@@ -43,6 +43,7 @@ class Preferences : public BMessage
 		/* Additional Hooks */
 		void				WriteSettings ();
 		void				ReadSettings ();
+		void				InitSettings ();
 		const char			*PrefFilePath();
 
 		status_t			SetBool (const char *name, bool b);

@@ -33,6 +33,7 @@
 class MainWindow;
 class AboutWindow;
 class PrefsWindow;
+class AdvancedPrefsWindow;
 
 extern class FilWip *filWip;
 
@@ -56,7 +57,7 @@ class FilWip : public BApplication
 		MainWindow			*mainWnd;
 		AboutWindow			*aboutWnd;
 		PrefsWindow			*prefsWnd;
-
+		AdvancedPrefsWindow	*advancedPrefsWnd;
 		bool				forgetWindow;
 };
 

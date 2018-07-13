@@ -58,7 +58,9 @@ const uint32
 	 M_RESET_LOOPERS =		'rslp',
 	 M_OPEN_FOLDER =		'ofld',
 	 M_SELECTION_CHANGED =	'selc',
-	 M_OPEN_FOLDER_CURRENT ='ofcs';
+	 M_OPEN_FOLDER_CURRENT ='ofcs',
+	 M_ADVANCED_PREFS =		'apop',
+	 M_CLOSE_ADVANCED_PREFS ='apcl';
 
 const uint32
 	 ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX = 0,
