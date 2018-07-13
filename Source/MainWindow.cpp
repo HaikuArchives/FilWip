@@ -197,7 +197,8 @@ MainWindow::MainWindow ()
 	menu = new BMenu(B_TRANSLATE("Selection"));
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Select all"), new BMessage(M_SELECT_ALL), 'A'));
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Deselect all"), new BMessage(M_DESELECT_ALL), 'D'));
-	menu->AddItem(new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
+	BMenuItem* smartSelectMenuItem;
+	menu->AddItem(smartSelectMenuItem = new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Save as preset"), new BMessage(M_SAVE_PRESET), 'S'));
 	menuBar->AddItem(menu);
@@ -219,28 +220,12 @@ MainWindow::MainWindow ()
 //	mainToolBar->AddAction(new BMessage(M_PREVIEW),this,
 //		previewButtonBitmap /*ResVectorToBitmap("PREVIEW") */,"Preview (Alt-P)","",false);
 
-
-	/* Create tooltips for all the toolbar buttons */
-	/*
-	toolTip->SetHelp (presetField, "Load preset options");
-	toolTip->SetHelp (cleanUp, "Begin the erasing process");
-	*/
-
 	mainToolBar->AddGlue();
-	/* "Select As needed" won't work if there are no infostrings */
-	/* TODO FIX THIS
-	if (liveMonitoring == false)
-		smartSelectButton->Hide();
-	*/
-	/*
-	static const float spacing = be_control_look->DefaultLabelSpacing();
-	BGroupLayout *boxLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
-		.SetInsets(B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS,
-			B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
-		.Add(fElementListView = new ElementListView("MainWindow:ElementListView"))
-		.Add(mainToolBar);
-	boxView->AddChild(boxLayout->View()); */
 
+	if (liveMonitoring == false) {
+		mainToolBar->FindButton(M_SMART_SELECT)->SetEnabled(false);
+		smartSelectMenuItem->SetEnabled(false);
+	}
 	/* Draw the button, busyview and presetField AFTER resizing the boxView */
 	cleanUp = new BButton ("MainWindow:CleanUp", "Clean up", new BMessage (M_CLEANUP));
 	cleanUp->MakeDefault (true);
@@ -258,7 +243,6 @@ MainWindow::MainWindow ()
 	AddShortcut ('o', B_COMMAND_KEY, new BMessage (M_OPEN_FOLDER_CURRENT));
 	/* List presets */
 	ListPresets ();
-	
 
 	/* Read the port capacity for our FileLooper threads (member since we spawn FileLoopers from many
 		places in the code) */
