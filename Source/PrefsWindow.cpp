@@ -98,7 +98,7 @@ PrefsWindow::PrefsWindow()
 	
 	BLayoutBuilder::Group<>(fSettingsBoxStartUp, B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_SPACING)
-				.Add(lo_monitorChk = new BCheckBox("Live monitor"))
+				.Add(lo_monitorChk = new BCheckBox("Live monitoring"))
 				.Add(it_autoCheckStartChk = new BCheckBox("Select as needed"))
 		.End();
 
