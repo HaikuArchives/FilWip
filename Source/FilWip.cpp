@@ -36,6 +36,7 @@
 #include "DataBits.h"
 #include "Constants.h"
 #include "MainWindow.h"
+#include "AdvancedPrefsWindow.h"
 #include "PrefsWindow.h"
 #include "Preferences.h"
 
@@ -48,6 +49,7 @@ FilWip::FilWip ()
 	mainWnd (NULL),
 	aboutWnd (NULL),
 	prefsWnd (NULL),
+	advancedPrefsWnd (NULL),
 	forgetWindow (false)
 {
 	PRINT (("FilWip::FilWip ()\n"));
@@ -96,7 +98,25 @@ void FilWip::MessageReceived (BMessage *message)
 			prefsWnd = NULL;
 			break;
 		}
-						
+
+
+		case M_ADVANCED_PREFS:
+		{
+			if (advancedPrefsWnd)
+				advancedPrefsWnd->Activate();
+			else
+			{
+				advancedPrefsWnd = new AdvancedPrefsWindow();
+				advancedPrefsWnd->Show();
+			}
+
+			break;
+		}
+		case M_CLOSE_ADVANCED_PREFS:
+		{
+			advancedPrefsWnd = NULL;
+			break;
+		}
 		default:
 			BApplication::MessageReceived (message);
 	}

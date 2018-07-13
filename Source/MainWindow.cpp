@@ -66,7 +66,6 @@
 #include "Preferences.h"
 #include "FileLooper.h"
 #include "PluginParser.h"
-#include "InfoStrView.h"
 #include "FilWip.h"
 #include "EraserLooper.h"
 #include "ElementListView.h"
@@ -198,7 +197,8 @@ MainWindow::MainWindow ()
 	menu = new BMenu(B_TRANSLATE("Selection"));
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Select all"), new BMessage(M_SELECT_ALL), 'A'));
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Deselect all"), new BMessage(M_DESELECT_ALL), 'D'));
-	menu->AddItem(new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
+	BMenuItem* smartSelectMenuItem;
+	menu->AddItem(smartSelectMenuItem = new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Save as preset"), new BMessage(M_SAVE_PRESET), 'S'));
 	menuBar->AddItem(menu);
@@ -220,28 +220,12 @@ MainWindow::MainWindow ()
 //	mainToolBar->AddAction(new BMessage(M_PREVIEW),this,
 //		previewButtonBitmap /*ResVectorToBitmap("PREVIEW") */,"Preview (Alt-P)","",false);
 
-
-	/* Create tooltips for all the toolbar buttons */
-	/*
-	toolTip->SetHelp (presetField, "Load preset options");
-	toolTip->SetHelp (cleanUp, "Begin the erasing process");
-	*/
-
 	mainToolBar->AddGlue();
-	/* "Select As needed" won't work if there are no infostrings */
-	/* TODO FIX THIS
-	if (liveMonitoring == false)
-		smartSelectButton->Hide();
-	*/
-	/*
-	static const float spacing = be_control_look->DefaultLabelSpacing();
-	BGroupLayout *boxLayout = BLayoutBuilder::Group<>(B_HORIZONTAL)
-		.SetInsets(B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS,
-			B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
-		.Add(fElementListView = new ElementListView("MainWindow:ElementListView"))
-		.Add(mainToolBar);
-	boxView->AddChild(boxLayout->View()); */
 
+	if (liveMonitoring == false) {
+		mainToolBar->FindButton(M_SMART_SELECT)->SetEnabled(false);
+		smartSelectMenuItem->SetEnabled(false);
+	}
 	/* Draw the button, busyview and presetField AFTER resizing the boxView */
 	cleanUp = new BButton ("MainWindow:CleanUp", "Clean up", new BMessage (M_CLEANUP));
 	cleanUp->MakeDefault (true);
@@ -256,10 +240,9 @@ MainWindow::MainWindow ()
 	AddShortcut ('a', B_COMMAND_KEY, new BMessage (M_SELECT_ALL));
 	AddShortcut ('d', B_COMMAND_KEY, new BMessage (M_DESELECT_ALL));	
 	AddShortcut ('m', B_COMMAND_KEY, new BMessage (M_SMART_SELECT));
-
+	AddShortcut ('o', B_COMMAND_KEY, new BMessage (M_OPEN_FOLDER_CURRENT));
 	/* List presets */
 	ListPresets ();
-	
 
 	/* Read the port capacity for our FileLooper threads (member since we spawn FileLoopers from many
 		places in the code) */
@@ -583,6 +566,8 @@ void MainWindow::LoadPreset (BMessage *presetMessage)
 	{
 		fElementListView->LoadPreset(&message);
 	}
+	// Notify the checkboxs are changed
+	PostMessage(M_CHECKBOX_CHANGED);
 }
 
 /*============================================================================================================*/
@@ -727,6 +712,44 @@ void MainWindow::MessageReceived (BMessage *message)
 			break;
 		}
 		
+		case M_OPEN_FOLDER_CURRENT:
+		{
+			BRow* row =	fElementListView->CurrentSelection();
+			if (row == NULL)
+				break;
+			message->AddPointer ("row_pointer", row);
+		} // no break pass into M_OPEN_FOLDER
+		case M_OPEN_FOLDER:
+		{
+			BRow *row;
+			const char *trackerSignature ("application/x-vnd.Be-TRAK");
+			status_t status = message->FindPointer ("row_pointer", (void**)&row);
+			if (status != B_OK) {
+				PRINT (("M_OPEN_FOLDER empty row_pointer\n"));
+				break;
+			};
+
+			FileLooper* fileLooper = FindLooper(row);
+			if (fileLooper == NULL)
+				break;
+
+			/* This function opens a folder entry_ref through Tracker */
+			BEntry* entry = fileLooper->ItemEntry(); // (path, true);
+			entry_ref refToDir;
+			entry->GetRef (&refToDir);
+
+			if (entry->Exists() == true)
+			{
+				BMessage trakMsg (B_REFS_RECEIVED);
+				trakMsg.AddRef ("refs", &refToDir);
+
+				/* Just check if tracker is running */
+				if (be_roster->IsRunning (trackerSignature) == true)
+					BMessenger(trackerSignature).SendMessage (&trakMsg);
+			}
+			break;
+		}
+
 		/* Startup message call to parse plugins and setup interface */
 		case M_PARSE_AND_SETUP_UI:
 		{
@@ -735,12 +758,20 @@ void MainWindow::MessageReceived (BMessage *message)
 		}
 		
 		/* These are handled by our BApp object */
-		case B_ABOUT_REQUESTED: case M_PREVIEW: case M_PREFS:
+		case B_ABOUT_REQUESTED: case M_PREVIEW:
 		{
 			be_app_messenger.SendMessage (message);
 			break;
 		}
 
+		case M_PREFS:
+		{
+			if ((modifiers() & B_SHIFT_KEY) != 0)
+				message->what = M_ADVANCED_PREFS;
+
+			be_app_messenger.SendMessage (message);
+			break;
+		}
 		/* Call Help */
 		case M_HELP:
 		{
@@ -954,6 +985,7 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 			fElementListView->FullListDoForEach(SelectItems, fElementListView);
+			PostMessage(M_CHECKBOX_CHANGED);
 			break;
 		}
 		case M_DESELECT_ALL:
@@ -961,6 +993,7 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 			fElementListView->FullListDoForEach(DeselectItems, fElementListView);
+			PostMessage(M_CHECKBOX_CHANGED);
 			break;
 		}
 		/* Smart select -- Select 'cleanable' options | works only when overview has finished */
@@ -969,6 +1002,12 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 			fElementListView->FullListDoForEach(SelectSmartItems, fElementListView);
+			PostMessage(M_CHECKBOX_CHANGED);
+			break;
+		}
+		case M_CHECKBOX_CHANGED:
+		{
+			cleanUp->SetEnabled(CountOptions() > 0);
 			break;
 		}
 	}
@@ -1247,21 +1286,10 @@ void MainWindow::AddLinearItem (PluginContainerItem *item, char *fileName)
 {
 	PRINT (("MainWindow::AddLinearItem (PluginContainerItem*, float, BView*, char*)\n"));
 
-	/* This function adds a linear item (a simple checkbox - bstringview combination) and adds
-		them to the corresponding BLists */
-	BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-	msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
-	// TODO pass message to CheckBoxWithStringField
-
-	InfoStrView *linearInfo = new InfoStrView ("MainWindow:InfoView",
-						liveMonitoring ? "[0 files, 0 bytes]" : "", B_WILL_DRAW);
 
 	PluginItem *sItem = (PluginItem*)item->subItems.FirstItem ();
 	BString looperName = "_";
 	looperName << sItem->itemName.String();
-	
-	/* Set path for double-click opening of folder (TODO: pass sItem->isFolder for better path recognition) */
-	linearInfo->SetPath (sItem->itemPath.String());
 
 	BRow *row = new BRow();
 	int32 index = 0;
@@ -1311,9 +1339,6 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 {
 	PRINT (("MainWindow::AddSubItems (PluginContainerItem*, BView*, char*)\n"));
 
-	InfoStrView *itemInfo (NULL);
-
-
 	/* Loop and add subitems of "item" We dont care to lock views because this is meant to be
 		called from a function called from MessageReceived */
 	int32 count = item->subItems.CountItems();
@@ -1321,17 +1346,10 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 	{
 		PluginItem *pluginSubItem;
 		pluginSubItem = (PluginItem*)item->subItems.ItemAtFast (i);
-		
-		BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-		msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
-		// TODO pass message to CheckBoxWithStringField
-		itemInfo = new InfoStrView (pluginSubItem->itemName.String(), liveMonitoring ? "[0 files, 0 bytes]" : "",
-							B_WILL_DRAW);
-
 		PluginItem *sItem = (PluginItem*)item->subItems.ItemAt (i);
+
 		BString looperName = "_";
 		looperName << sItem->itemName.String();
-		itemInfo->SetPath (sItem->itemPath.String());
 		
 		BRow *row = new BRow();
 		int32 index = 0;
@@ -1411,13 +1429,14 @@ void MainWindow::ParseAndSetupUI ()
 		for (int32 i = 0; i < looperCount; i++)
 			((FileLooper*)fileLoopers.ItemAtFast(i))->PostMessage (M_BEGIN_OVERVIEW);
 	}
-	else
-	{
-		/* Don't show [0 files, 0 bytes] if live monitor is switched off, instead hide infostrviews */
-		int32 infoStrCount = infoViews.CountItems();
-		for (int32 i = 0; i < infoStrCount; i++)
-			((InfoStrView*)infoViews.ItemAtFast(i))->Hide();
-	}
+	/* Don't show folders, files and size column if live monitor is switched off */
+	/* This need a restart but the preferences doesn't says so */
+
+	fElementListView->ColumnAt(ROW_FIELD_FOLDERS_COUNTS)->SetVisible(liveMonitoring);
+	fElementListView->ColumnAt(ROW_FIELD_FILES_COUNTS)->SetVisible(liveMonitoring);
+	fElementListView->ColumnAt(ROW_FIELD_BYTES_COUNTS)->SetVisible(liveMonitoring);
+
+	cleanUp->SetEnabled(CountOptions() > 0);
 }
 
 /*============================================================================================================*/
@@ -1544,3 +1563,26 @@ void MainWindow::ResetLoopers (bool monitorNodes)
 }
 
 /*============================================================================================================*/
+// A better solution is to implement a new subclass from BRow and add the looper to that class
+
+FileLooper* MainWindow::FindLooper (BRow* row)
+{
+	PRINT (("MainWindow::FindLooper (BRow*)\n"));
+	FileLooper *fileLooperFound = NULL;
+
+	/* Reset loopers so they stop/start monitoring nodes */
+	for (int32 i = 0; i < fileLoopers.CountItems(); i++)
+	{
+		FileLooper *fileLooper = ((FileLooper*)fileLoopers.ItemAtFast(i));
+		if (fileLooper->Lock())
+		{
+			if (fileLooper->Row() == row) // Test the pointer to row
+				fileLooperFound = fileLooper;
+
+			fileLooper->Unlock();
+			if (fileLooperFound != NULL)
+				break;
+		}
+	}
+	return fileLooperFound;
+}

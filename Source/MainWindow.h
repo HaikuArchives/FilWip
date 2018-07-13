@@ -44,6 +44,7 @@ class BStatusBar;
 class BTextView;
 
 class EraserLooper;
+class FileLooper;
 class PluginContainerItem;
 
 extern class MainWindow *pWnd;
@@ -87,7 +88,7 @@ class MainWindow : public BWindow
 		void				ParseAndSetupUI ();
 		void				AddLinearItem (PluginContainerItem *item, char *fileName);
 		void				AddHierarchialItem (PluginContainerItem *item, char *fileName);
-		
+		FileLooper* 		FindLooper (BRow* row);
 		EraserLooper		*eraserLooper;
 		
 		/* Critical to thread variable */

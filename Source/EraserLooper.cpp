@@ -159,38 +159,39 @@ void EraserLooper::EraseList (bool guiMode)
 	bool nFilesDel = prefs.FindBoolDef ("rv_nFilesDeleted", true);
 	bool timeTaken = prefs.FindBoolDef ("rv_timeTaken", true);
 	
-	if (!(showSpace || nFilesDel || timeTaken))
-		return;
+	if (showSpace || nFilesDel || timeTaken)
+	{
 		
-	if (showSpace)
-		reportStr << spaceFreedStr << "\n";
+		if (showSpace)
+			reportStr << spaceFreedStr << "\n";
 
-	if (nFilesDel)
-		reportStr << itemsCleanedStr << "\n";
+		if (nFilesDel)
+			reportStr << itemsCleanedStr << "\n";
 	
-	if (timeTaken)
-		reportStr << timeTakenStr << "\n";
+		if (timeTaken)
+			reportStr << timeTakenStr << "\n";
 	
-	/* Show report */
-	if (guiMode)
-	{
-		BFont font (be_plain_font);
-		font.SetFace (B_BOLD_FACE);
+		/* Show report */
+		if (guiMode)
+		{
+			BFont font (be_plain_font);
+			font.SetFace (B_BOLD_FACE);
 
-		BAlert *report = new BAlert ("Report", reportStr.String(), "OK", NULL, NULL,
-								B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_INFO_ALERT);
-		BTextView *vw = report->TextView();
-		vw->SetStylable (true);
-		rgb_color alertColor = {0, 0, 198};
-		vw->SetFontAndColor (0, 6, &font, B_FONT_ALL, &alertColor);
+			BAlert *report = new BAlert ("Report", reportStr.String(), "OK", NULL, NULL,
+									B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_INFO_ALERT);
+			BTextView *vw = report->TextView();
+			vw->SetStylable (true);
+			rgb_color alertColor = {0, 0, 198};
+			vw->SetFontAndColor (0, 6, &font, B_FONT_ALL, &alertColor);
 	
-		report->SetShortcut (0L, B_ESCAPE);
-		report->Go(NULL);
-	}
-	else
-	{
-		std::cout << reportStr.String() << std::endl;
-		std::cout.flush ();
+			report->SetShortcut (0L, B_ESCAPE);
+			report->Go(NULL);
+		}
+		else
+		{
+			std::cout << reportStr.String() << std::endl;
+			std::cout.flush ();
+		}
 	}
 	isRunning = false;
 	

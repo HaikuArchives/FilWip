@@ -78,6 +78,8 @@ void Preferences::ReadSettings ()
 	/* Load "prefs" from the preferences file */
 	BFile file (prefsPath.Path(), B_READ_ONLY);
 	Unflatten (&file);
+	if (IsEmpty())
+		InitSettings();
 }
 
 /*============================================================================================================*/
@@ -217,6 +219,39 @@ bool Preferences::FindBoolDef (const char *name, bool def)
 		return def;
 	else
 		return v;
+}
+
+/*============================================================================================================*/
+
+void Preferences::InitSettings ()
+{
+	// Report Settings
+	SetBool("rv_spaceFree", true);
+	SetBool("rv_nFilesDeleted", true);
+	SetBool("rv_timeTaken", true);
+
+	// Items Settings
+	SetBool("it_autoCheckStart", false);
+	SetBool("it_autoCheckLive", false);
+	SetBool("it_unCheckAfterDel", false);
+
+	// Remember settings
+	SetBool("rm_tree", true);
+	SetBool("rm_winPos", true);
+	SetBool("rm_items", true);
+
+	// Looper
+	SetBool("lo_monitor", true);
+
+	SetBool("pv_asyncLoad", true);
+	SetBool("pv_debug", false);
+	SetBool("pv_checkInstall", true);
+	SetBool("pv_recurse", true);
+
+	SetBool("ms_confirm", true);
+	SetBool("ms_register", false); // TODO should be true?
+	SetBool("ms_quitApp", false);
+
 }
 
 /*============================================================================================================*/

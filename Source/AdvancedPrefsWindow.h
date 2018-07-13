@@ -27,8 +27,8 @@
  * :Puck Meerburg
  */
 
-#ifndef _PREFS_WINDOW_H
-#define _PREFS_WINDOW_H
+#ifndef _ADVANCED_PREFS_WINDOW_H
+#define _ADVANCED_PREFS_WINDOW_H
 
 #include <Window.h>
 
@@ -58,30 +58,51 @@ class BMenuItem;
 class PrefsListItem;
 class PrefsView;
 
-class PrefsWindow : public BWindow
+class AdvancedPrefsWindow : public BWindow
 {
 	/* Function pointers:	RenderFunc -- Pointers to function that render panels
 							SLFunc -- Save/Load pointers: to function that save/load panels */
-	typedef void		(PrefsWindow::*RenderFunc)(BView*);
-	typedef void		(PrefsWindow::*SLFunc)();
+	typedef void		(AdvancedPrefsWindow::*RenderFunc)(BView*);
+	typedef void		(AdvancedPrefsWindow::*SLFunc)();
 
 	public:
-		PrefsWindow ();
+		AdvancedPrefsWindow ();
 		
 		virtual void		MessageReceived (BMessage *message);
 		virtual void		Show ();
 		virtual void		Quit ();
 		
 	protected:
-		void				Save();
-		void				Load();
+		/* Protected hooks */
+		PrefsView			*ConstructPrefsView (const char *desc, RenderFunc func, SLFunc slfunc);
+		void				MakeViewReport (BView *vw);
+		void				MakeViewItems (BView *vw);
+		void				MakeViewLoopers (BView *vw);
+		void				MakeViewRemember (BView *vw);
+		void				MakeViewPlugins (BView *vw);
+		void				MakeViewMiscellaneous (BView *vw);
 
+		void				SaveViewReport();
+		void				SaveViewItems ();
+		void				SaveViewLoopers ();
+		void				SaveViewRemember ();
+		void				SaveViewPlugins ();
+		void				SaveViewMiscellaneous ();
+
+		void				LoadViewReport();
+		void				LoadViewItems ();
+		void				LoadViewLoopers ();
+		void				LoadViewRemember ();
+		void				LoadViewPlugins ();
+		void				LoadViewMiscellaneous ();
 
 		bool				IsChecked (BCheckBox *chkBox) const;
 		int32				CheckBoxValue (bool value) const;
 		void				AddOptionsToListView(BListView* listView, BStringItem* item);
 		
 		/* Protected members */
+		BListView			*optionsListView;
+		BScrollView			*scrollView;
 		BButton				*saveBtn,
 							*cancelBtn;
 		
@@ -90,8 +111,7 @@ class PrefsWindow : public BWindow
 							saveList,
 							loadList;
 
-		BCheckBox			*showReportChk,
-							*rv_spaceFreeChk,
+		BCheckBox			*rv_spaceFreeChk,
 							*rv_nFilesDeletedChk,
 							*rv_timeTakenChk,
 							
@@ -135,9 +155,7 @@ class PrefsWindow : public BWindow
 							*lo_cap4,
 							*lo_cap5;
 		int32				fPreviousSelection;
-		BView *				fSettingsBoxStartUp;
-		BView *				fSettingsBoxBeforeCleanUP;
-		BView *				fSettingsBoxAfterCleanUP;
+		BView *				fSettingsContainerBox;
 };
 
 #endif /* _PREFS_WINDOW_H */
