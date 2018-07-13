@@ -83,6 +83,7 @@ void ElementListView::KeyDown(const char *bytes, int32 numBytes)
 				if (checkBoxWithStringField->HasCheckBox()) {
 					checkBoxWithStringField->Toggle();
 					InvalidateRow(row);
+					Window()->PostMessage(M_CHECKBOX_CHANGED);
 				}
 			}
 			break;

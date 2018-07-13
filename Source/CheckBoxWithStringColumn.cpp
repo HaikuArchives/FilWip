@@ -7,8 +7,11 @@
  */
 
 #include <ControlLook.h>
+#include <Window.h>
 #include "CheckBoxWithStringColumn.h"
 #include <stdio.h>
+
+#include "Constants.h"
 // #pragma mark - CheckBoxWithStringField
 
 
@@ -56,8 +59,10 @@ void CheckBoxWithStringColumn::MouseDown(BColumnListView* parent, BRow* row,
 	parent->FindParent(row, &parentRow, &isVisible);
 	checkFrame.OffsetBy(parentRow != NULL ? parent->LatchWidth() : 0, 0);
 
-	if(checkFrame.Contains(point) )
+	if(checkFrame.Contains(point) ) {
 		checkBoxStringField->Toggle();
+		parent->Window()->PostMessage(M_CHECKBOX_CHANGED);
+	}
 }
 
 BRect 

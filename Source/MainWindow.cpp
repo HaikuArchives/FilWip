@@ -66,7 +66,6 @@
 #include "Preferences.h"
 #include "FileLooper.h"
 #include "PluginParser.h"
-#include "InfoStrView.h"
 #include "FilWip.h"
 #include "EraserLooper.h"
 #include "ElementListView.h"
@@ -583,6 +582,8 @@ void MainWindow::LoadPreset (BMessage *presetMessage)
 	{
 		fElementListView->LoadPreset(&message);
 	}
+	// Notify the checkboxs are changed
+	PostMessage(M_CHECKBOX_CHANGED);
 }
 
 /*============================================================================================================*/
@@ -992,6 +993,7 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 			fElementListView->FullListDoForEach(SelectItems, fElementListView);
+			PostMessage(M_CHECKBOX_CHANGED);
 			break;
 		}
 		case M_DESELECT_ALL:
@@ -999,6 +1001,7 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 			fElementListView->FullListDoForEach(DeselectItems, fElementListView);
+			PostMessage(M_CHECKBOX_CHANGED);
 			break;
 		}
 		/* Smart select -- Select 'cleanable' options | works only when overview has finished */
@@ -1007,6 +1010,12 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 			fElementListView->FullListDoForEach(SelectSmartItems, fElementListView);
+			PostMessage(M_CHECKBOX_CHANGED);
+			break;
+		}
+		case M_CHECKBOX_CHANGED:
+		{
+			cleanUp->SetEnabled(CountOptions() > 0);
 			break;
 		}
 	}
@@ -1285,21 +1294,10 @@ void MainWindow::AddLinearItem (PluginContainerItem *item, char *fileName)
 {
 	PRINT (("MainWindow::AddLinearItem (PluginContainerItem*, float, BView*, char*)\n"));
 
-	/* This function adds a linear item (a simple checkbox - bstringview combination) and adds
-		them to the corresponding BLists */
-	BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-	msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
-	// TODO pass message to CheckBoxWithStringField
-
-	InfoStrView *linearInfo = new InfoStrView ("MainWindow:InfoView",
-						liveMonitoring ? "[0 files, 0 bytes]" : "", B_WILL_DRAW);
 
 	PluginItem *sItem = (PluginItem*)item->subItems.FirstItem ();
 	BString looperName = "_";
 	looperName << sItem->itemName.String();
-	
-	/* Set path for double-click opening of folder (TODO: pass sItem->isFolder for better path recognition) */
-	linearInfo->SetPath (sItem->itemPath.String());
 
 	BRow *row = new BRow();
 	int32 index = 0;
@@ -1349,9 +1347,6 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 {
 	PRINT (("MainWindow::AddSubItems (PluginContainerItem*, BView*, char*)\n"));
 
-	InfoStrView *itemInfo (NULL);
-
-
 	/* Loop and add subitems of "item" We dont care to lock views because this is meant to be
 		called from a function called from MessageReceived */
 	int32 count = item->subItems.CountItems();
@@ -1359,17 +1354,10 @@ void MainWindow::AddSubItems (PluginContainerItem *item, BRow *parentRow, char *
 	{
 		PluginItem *pluginSubItem;
 		pluginSubItem = (PluginItem*)item->subItems.ItemAtFast (i);
-		
-		BMessage *msg = new BMessage (M_CHECKBOX_CHANGED);
-		msg->AddInt8 ("checkbox_index", (int8)checkBoxesFields.CountItems());
-		// TODO pass message to CheckBoxWithStringField
-		itemInfo = new InfoStrView (pluginSubItem->itemName.String(), liveMonitoring ? "[0 files, 0 bytes]" : "",
-							B_WILL_DRAW);
-
 		PluginItem *sItem = (PluginItem*)item->subItems.ItemAt (i);
+
 		BString looperName = "_";
 		looperName << sItem->itemName.String();
-		itemInfo->SetPath (sItem->itemPath.String());
 		
 		BRow *row = new BRow();
 		int32 index = 0;
@@ -1449,13 +1437,14 @@ void MainWindow::ParseAndSetupUI ()
 		for (int32 i = 0; i < looperCount; i++)
 			((FileLooper*)fileLoopers.ItemAtFast(i))->PostMessage (M_BEGIN_OVERVIEW);
 	}
-	else
-	{
-		/* Don't show [0 files, 0 bytes] if live monitor is switched off, instead hide infostrviews */
-		int32 infoStrCount = infoViews.CountItems();
-		for (int32 i = 0; i < infoStrCount; i++)
-			((InfoStrView*)infoViews.ItemAtFast(i))->Hide();
-	}
+	/* Don't show folders, files and size column if live monitor is switched off */
+	/* This need a restart but the preferences doesn't says so */
+
+	fElementListView->ColumnAt(ROW_FIELD_FOLDERS_COUNTS)->SetVisible(liveMonitoring);
+	fElementListView->ColumnAt(ROW_FIELD_FILES_COUNTS)->SetVisible(liveMonitoring);
+	fElementListView->ColumnAt(ROW_FIELD_BYTES_COUNTS)->SetVisible(liveMonitoring);
+
+	cleanUp->SetEnabled(CountOptions() > 0);
 }
 
 /*============================================================================================================*/

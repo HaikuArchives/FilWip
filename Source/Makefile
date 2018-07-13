@@ -33,7 +33,6 @@ SRCS = CheckBoxWithStringColumn.cpp \
 	EraserLooper.cpp \
 	FilWip.cpp \
 	FileLooper.cpp \
-	InfoStrView.cpp \
 	MainWindow.cpp \
 	NodeLimit.cpp \
 	PluginParser.cpp \
