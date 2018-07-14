@@ -34,11 +34,13 @@ public:
 
 	virtual	bool	AcceptsField(const BField* field) const;
 	virtual	void	DrawField(BField* field, BRect rect, BView* parent);
+	virtual	float	GetPreferredWidth(BField* field, BView* parent) const;
 	virtual	void MouseDown(BColumnListView* /*parent*/, BRow* /*row*/,
 					BField* /*field*/, BRect /*field_rect*/, BPoint /*point*/,
 					uint32 /*buttons*/);
 private:
 			BRect 	CheckBoxFrame(BView* parent, BRect rect);
+			float	fRowHeight;
 };
 
 #endif	// CHECKBOX_WITH_STRING_COLUMN_H

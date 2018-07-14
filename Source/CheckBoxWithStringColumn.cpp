@@ -40,6 +40,9 @@ CheckBoxWithStringColumn::CheckBoxWithStringColumn(const char* title, float widt
 	BStringColumn(title, width, minWidth, maxWidth, align)
 {
 	SetWantsEvents(true);
+	// if we will customize the Row remember to change this
+	BRow dummyRow;
+	fRowHeight = dummyRow.Height();
 }
 
 
@@ -94,4 +97,15 @@ CheckBoxWithStringColumn::DrawField(BField* _field, BRect rect, BView* parent)
 	parent->SetHighColor(color);	
 	BStringColumn::DrawField(_field, rect, parent);
 	parent->SetHighColor(color);
+}
+
+float
+CheckBoxWithStringColumn::GetPreferredWidth(BField *_field, BView* parent) const
+{
+	float preferredWidth = BStringColumn::GetPreferredWidth(_field, parent);
+	CheckBoxWithStringField* field = static_cast<CheckBoxWithStringField*>(_field);
+	if (field->HasCheckBox()) {
+		preferredWidth += fRowHeight;
+	}
+	return preferredWidth;
 }
