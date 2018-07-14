@@ -32,7 +32,7 @@
 #include <FindDirectory.h>
 #include <File.h>
 
-#define PREFS_FILENAME "FilWip_settings"
+#define PREFS_FILENAME "FilWip settings"
 
 class Preferences : public BMessage
 {

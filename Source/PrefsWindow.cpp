@@ -81,7 +81,7 @@ const char * const rv_spaceFreeStr = "Disk space freed",
 /*============================================================================================================*/
 
 PrefsWindow::PrefsWindow()
-	: BWindow (BRect (0, 0, 440, 270-60), "Preferences", B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_AUTO_UPDATE_SIZE_LIMITS,
+	: BWindow (BRect (0, 0, 240, 200), "Preferences", B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_AUTO_UPDATE_SIZE_LIMITS,
 				B_CURRENT_WORKSPACE),
 		fPreviousSelection(0)
 {
