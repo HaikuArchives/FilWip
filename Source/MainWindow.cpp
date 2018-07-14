@@ -164,11 +164,11 @@ MainWindow::MainWindow ()
 
 	/* Move window to the center of the screen & set size limits (default position, size) */
 	BRect screen_rect (BScreen().Frame());
-	float minH, maxH, minV, maxV;
+	float minH, maxH, minW, maxW;
 
 	MoveTo (screen_rect.Width() / 2 - Frame().Width() / 2, screen_rect.Height() / 2 - Frame().Height() / 2);
-	GetSizeLimits (&minH, &maxH, &minV, &maxV);
-	SetSizeLimits (Frame().Width(), maxH, Frame().Height(), maxV);
+	GetSizeLimits (&minW, &maxW, &minH, &maxH);
+	SetSizeLimits (Frame().Width(), maxW, Frame().Height(), maxH);
 
 	/* Restore window position? Do this now itself so we get our controls sized right */
 	bool windowPosition = true;
@@ -183,10 +183,10 @@ MainWindow::MainWindow ()
 	statusBar->Hide();
 
 	// Menu Bar
-	BMenuBar* menuBar = new BMenuBar("MenuBar");
+	fMenuBar = new BMenuBar("MenuBar");
 	BMenu* menu;
 	menu = new BMenu("FilWip");
-	menuBar->AddItem(menu);
+	fMenuBar->AddItem(menu);
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Preferences..."), new BMessage(M_PREFS), ','));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Help"), new BMessage(M_HELP)));
@@ -201,7 +201,7 @@ MainWindow::MainWindow ()
 	menu->AddItem(smartSelectMenuItem = new BMenuItem(B_TRANSLATE("Select as needed"), new BMessage(M_SMART_SELECT), 'M'));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Save as preset"), new BMessage(M_SAVE_PRESET), 'S'));
-	menuBar->AddItem(menu);
+	fMenuBar->AddItem(menu);
 
 	// Tool Bar
 	mainToolBar = new BToolBar(B_HORIZONTAL);
@@ -258,7 +258,7 @@ MainWindow::MainWindow ()
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 5)
 		.SetInsets(0, 0, 0, 0)
-		.Add(menuBar)
+		.Add(fMenuBar)
 		.Add(mainToolBar)
 		.AddGroup(B_VERTICAL)
 		.SetInsets(B_USE_WINDOW_INSETS, 0, B_USE_WINDOW_INSETS, B_USE_WINDOW_INSETS)
@@ -1010,8 +1010,12 @@ void MainWindow::MessageReceived (BMessage *message)
 			cleanUp->SetEnabled(CountOptions() > 0);
 			break;
 		}
+		case M_UPDATE_ZOOM_LIMITS:
+		{
+			_UpdateWindowZoomLimits();
+			break;
+		}
 	}
-	
 	BWindow::MessageReceived (message);
 }
 
@@ -1585,4 +1589,60 @@ FileLooper* MainWindow::FindLooper (BRow* row)
 		}
 	}
 	return fileLooperFound;
+}
+
+
+void MainWindow::Zoom(BPoint origin, float width, float height)
+{
+	// Override default zoom behavior and keep window at same position instead
+	// of centering on screen
+	BWindow::Zoom(Frame().LeftTop(), width, height);
+}
+
+// Modified version for DriverSetup
+
+void MainWindow::_UpdateWindowZoomLimits()
+{
+	float maxHeight = 0;
+	int32 numColumns = fElementListView->CountColumns();
+	BRow* parentRow = NULL;
+	BColumn* column = NULL;
+
+	maxHeight += _ColumnListViewHeight(fElementListView, NULL);
+
+	float maxWidth = fElementListView->LatchWidth();
+	for (int32 i = 0; i < numColumns; i++) {
+		column = fElementListView->ColumnAt(i);
+		maxWidth += column->Width();
+	}
+
+	parentRow = fElementListView->RowAt(0, NULL);
+//	maxHeight += B_H_SCROLL_BAR_HEIGHT; // No horizontal Bar
+	maxHeight += be_control_look->ComposeSpacing(B_USE_WINDOW_SPACING)
+				+ be_control_look->ComposeSpacing(B_USE_DEFAULT_SPACING)
+				+ 10;	 // Insets + ToolBar Padding
+	maxHeight += 1.5 * parentRow->Height();	// the label row
+	maxHeight += mainToolBar->Bounds().Height();
+	maxHeight += cleanUp->Bounds().Height();
+	maxHeight += fMenuBar->Bounds().Height();
+	maxWidth +=	1 +be_control_look->ComposeSpacing(B_USE_WINDOW_SPACING) * 2;	 // Insets
+	maxWidth += 1.5 * B_V_SCROLL_BAR_WIDTH;	// scroll bar & borders
+
+	// Avoid a smaller zoomed window than min allows
+	float minH, maxH, minW, maxW;
+	GetSizeLimits (&minW, &maxW, &minH, &maxH);
+	SetZoomLimits(std::max(maxWidth, minW), std::max(maxHeight, minH));
+}
+
+float MainWindow::_ColumnListViewHeight(BColumnListView* list, BRow* currentRow)
+{
+	float height = 0;
+	int32 rows = list->CountRows(currentRow);
+	for (int32 i = 0; i < rows; i++) {
+		BRow* row = list->RowAt(i, currentRow);
+		height += row->Height() + 1;
+		if (row->IsExpanded() && list->CountRows(row) > 0)
+			height += _ColumnListViewHeight(list, row);
+	}
+	return height;
 }

@@ -38,6 +38,7 @@
 
 class BBox;
 class BFilePanel;
+class BMenuBar;
 class BMenuField;
 class BPopUpMenu;
 class BStatusBar;
@@ -61,6 +62,7 @@ class MainWindow : public BWindow
 		virtual void		WindowActivated (bool state);
 		virtual void		FrameResized (float newWidth, float newHeight);
 		virtual void		Show ();
+		virtual void		Zoom(BPoint origin, float width, float height);
 		
 		/* Additional Hooks */
 		void				CreateSavePanel ();
@@ -116,6 +118,7 @@ class MainWindow : public BWindow
 							containerItems,
 							fileLoopers;
 
+		BMenuBar*			fMenuBar;
 		BToolBar			*mainToolBar;
 
 		/* Controller variable */
@@ -135,6 +138,10 @@ class MainWindow : public BWindow
 		int16				looperPortCapacity;
 
 		ElementListView		*fElementListView;
+		float				_ColumnListViewHeight(BColumnListView* list,
+								BRow* currentRow);
+		void 				_UpdateWindowZoomLimits();
+
 };
 
 #endif /* _MAIN_WINDOW_H */

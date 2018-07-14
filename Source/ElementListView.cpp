@@ -95,6 +95,13 @@ void ElementListView::KeyDown(const char *bytes, int32 numBytes)
 }
 
 
+void ElementListView::ExpandOrCollapse(BRow* row, bool expand)
+{
+	BColumnListView::ExpandOrCollapse(row, expand);
+	Window()->PostMessage(M_UPDATE_ZOOM_LIMITS);
+}
+
+
 BPopUpMenu *
 ElementListView::ActionMenu()
 {

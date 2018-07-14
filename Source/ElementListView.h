@@ -16,6 +16,7 @@ public:
 	virtual void MakeFocus(bool focused = true);
 	virtual void SelectionChanged(void);
 	virtual void KeyDown(const char *bytes, int32 numBytes);
+	virtual	void ExpandOrCollapse(BRow* row, bool expand);
 	void FullListDoForEach(bool (*func)(BRow*, void*), void* data);
 	void SaveTreeState(BMessage *prefsMessage);
 	void LoadTreeState(BMessage *prefsMessage);

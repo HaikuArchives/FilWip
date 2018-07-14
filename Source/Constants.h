@@ -60,7 +60,9 @@ const uint32
 	 M_SELECTION_CHANGED =	'selc',
 	 M_OPEN_FOLDER_CURRENT ='ofcs',
 	 M_ADVANCED_PREFS =		'apop',
-	 M_CLOSE_ADVANCED_PREFS ='apcl';
+	 M_CLOSE_ADVANCED_PREFS ='apcl',
+	 M_UPDATE_ZOOM_LIMITS	='uzom';
+
 
 const uint32
 	 ROW_FIELD_ENTRIES_STRING_WITH_CHECKBOX = 0,
