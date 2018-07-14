@@ -171,6 +171,7 @@ void PrefsWindow::Show ()
 
 void PrefsWindow::Quit ()
 {
+	prefs.SetPoint ("prefwnd_point", Frame().LeftTop());
 	be_app_messenger.SendMessage (M_CLOSE_PREFS);
 	BWindow::Quit();
 }
