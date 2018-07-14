@@ -811,13 +811,6 @@ void MainWindow::MessageReceived (BMessage *message)
 			if (CheckIfPluginsExist ("No plugins to work with" B_UTF8_ELLIPSIS) == false)
 				return;
 
-			/* Check if any plugins are checked or not */
-			if (CountOptions() == 0)
-			{
-				TellUserNoOptions();
-				break;
-			}
-			
 			/* Discover gui mode, if silent mode, don't popup confirmations or reports etc. */
 			bool mode = false;
 			if (message->FindBool ("is_guimode", &mode) == B_OK)
@@ -1125,13 +1118,6 @@ void MainWindow::FillPreset (BMessage *presetMessage) const
 
 
 	/* Loop and add the settings to "message" for all plugins */
-	/*
-	for (int32 i = 0; i < checkBoxes.CountItems(); i++)
-	{
-		settingName << i;
-		message->AddInt8 (settingName.String(), (int8)((BCheckBox*)checkBoxes.ItemAtFast(i))->Value());
-		settingName.SetTo ("");
-	} */
 	fElementListView->SavePreset(message);
 	
 	presetMessage->RemoveName ("plugin_settings");
@@ -1176,43 +1162,6 @@ int MainWindow::CountOptions () const
 
 	
 	return cnt;
-}
-
-/*============================================================================================================*/
-
-void MainWindow::TellUserNoOptions ()
-{
-	PRINT (("MainWindow::TellUserNoOptions ()\n"));
-
-	/* User hasn't selected any options, so... */
-	static int nWarns (0);
-	static BString warning[] =
-	{
-		"Select one or more options for the clean-up process",
-		"I said... Select at least one checkbox before the clean-up process",
-		"Look... For the last time!\n\nSELECT SOME OPTION!!",
-		"That's it! I've had enough!"
-	};
-
-	BAlert *cantAlert;
-	if (isModeGUI == true)
-	{
-		cantAlert = new BAlert ("Can't clean-Up", warning[nWarns].String(),
-						"OK", NULL, NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING,
-						B_STOP_ALERT);
-		cantAlert->Go();
-	}
-	else
-	{
-		cerr << endl << warning[nWarns].String() << endl;
-		cerr.flush();
-		nWarns = 3;
-	}
-
-	if (nWarns >= 3)
-		be_app_messenger.SendMessage (B_QUIT_REQUESTED);
-	else
-		nWarns ++;
 }
 
 /*============================================================================================================*/
@@ -1444,28 +1393,6 @@ void MainWindow::ParseAndSetupUI ()
 }
 
 /*============================================================================================================*/
-
-BBitmap* MainWindow::ResourceBitmap (const char *resourceName) const
-{
-	PRINT (("MainWindow::ResourceBitmap (const char*)\n"));
-
-	/* Allocate bitmaps from resource, freed using delete elsewhere */
-	char *buf (NULL);
-	size_t bmpSize;
-	BMessage msg;
-
-	buf = (char*)be_app->AppResources()->LoadResource ('BBMP', resourceName, &bmpSize);
-	if (!buf)
-	{
-		char errString[60];
-		sprintf (errString, "error loading application resource: NAME=\"%s\" TYPE='BBMP'", resourceName);
-		debugger (errString);
-	}
-
-	msg.Unflatten (buf);
-	return new BBitmap (&msg);
-}
-
 
 BBitmap *MainWindow::ResVectorToBitmap(const char *resName)
 {

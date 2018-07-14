@@ -69,7 +69,6 @@ class MainWindow : public BWindow
 		void				DeleteSavePanel ();
 		void				RestoreWindowPosition ();
 		void				SaveWindowPosition () const;
-		void				TellUserNoOptions ();
 		void				TellUserNoPlugins () const;
 		bool				ConfirmCleanUp () const;
 		bool				CheckIfPluginsExist (const char* errStr) const;
@@ -82,7 +81,6 @@ class MainWindow : public BWindow
 		void				FillPreset (BMessage *message) const;
 		void				AddSubItems (PluginContainerItem *item, BRow *parentRow, char *fileName);
 		bool				GetGUIModeFromMessage (BMessage *message) const;
-		BBitmap				*ResourceBitmap (const char *resourceName) const;
 		BBitmap				*ResVectorToBitmap(const char *resName);
 		status_t			SavePreset (entry_ref *saveRef);
 		status_t			OpenPreset (entry_ref *openRef, bool guiMode, bool addToList);
