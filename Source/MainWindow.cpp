@@ -427,7 +427,7 @@ void MainWindow::RestoreWindowPosition ()
 	if (prefs.FindRect ("mainwnd_frame", &rect) == B_OK)
 	{
 		MoveTo (rect.LeftTop());
-		ResizeTo (rect.Width(), rect.Height() - 4.0);
+		ResizeTo (rect.Width(), rect.Height());
 
 		PRINT ((" >> prefs->main_wnd_frame=%g  Action=LOAD\n", Frame().Height() - 4.0));
 	}
