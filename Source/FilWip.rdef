@@ -2,15 +2,15 @@
 resource app_flags B_SINGLE_LAUNCH;
 
 resource app_version {
-	major  = 1,
+	major  = 2,
 	middle = 0,
-	minor  = 1,
+	minor  = 0,
 
-	variety = B_APPV_BETA,
+	variety = B_APPV_FINAL,
 	internal = 0,
 
 	short_info = "Clean up temporary files",
-	long_info = "v1.0 © 2002 Ramshankar\t"
+	long_info = "Clean up temporary files"
 };
 
 resource(8, "HELP") #'VICN' array {
