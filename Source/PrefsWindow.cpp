@@ -96,7 +96,7 @@ PrefsWindow::PrefsWindow()
 	BBox *fLabelBoxStartUp = new BBox("SettingsContainerBox2");
 	fSettingsBoxStartUp = new BView("SettingsBoxStartUp",0);
 	
-	BLayoutBuilder::Group<>(fSettingsBoxStartUp, B_VERTICAL)
+	BLayoutBuilder::Group<>(fSettingsBoxStartUp, B_VERTICAL,0)
 		.SetInsets(B_USE_WINDOW_SPACING)
 				.Add(lo_monitorChk = new BCheckBox("Live monitoring"))
 				.Add(it_autoCheckStartChk = new BCheckBox("Select as needed"))
@@ -118,7 +118,7 @@ PrefsWindow::PrefsWindow()
 
 	BBox *fLabelBoxAfterCleanUP = new BBox("SettingsContainerBox2");
 	fSettingsBoxAfterCleanUP = new BView("SettingsBoxStartUp",0);
-	BLayoutBuilder::Group<>(fSettingsBoxAfterCleanUP, B_VERTICAL)
+	BLayoutBuilder::Group<>(fSettingsBoxAfterCleanUP, B_VERTICAL,0)
 		.SetInsets(B_USE_WINDOW_SPACING)
 				.Add(showReportChk = new BCheckBox("Show report"))
 				.Add(it_unCheckAfterDelChk = new BCheckBox("Deselect all"))

@@ -187,10 +187,10 @@ MainWindow::MainWindow ()
 	BMenu* menu;
 	menu = new BMenu("FilWip");
 	fMenuBar->AddItem(menu);
-	menu->AddItem(new BMenuItem(B_TRANSLATE("Preferences..."), new BMessage(M_PREFS), ','));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("Preferences" B_UTF8_ELLIPSIS), new BMessage(M_PREFS)));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Help"), new BMessage(M_HELP)));
-	menu->AddItem(new BMenuItem(B_TRANSLATE("About FilWip..."), new BMessage(B_ABOUT_REQUESTED)));
+	menu->AddItem(new BMenuItem(B_TRANSLATE("About FilWip"), new BMessage(B_ABOUT_REQUESTED)));
 	menu->AddSeparatorItem();
 	menu->AddItem(new BMenuItem(B_TRANSLATE("Quit"), new BMessage(B_QUIT_REQUESTED), 'Q'));
 
