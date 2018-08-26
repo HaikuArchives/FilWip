@@ -51,7 +51,7 @@
 
 const char * const rv_spaceFreeStr = "Disk space freed",
 	*const rv_nFilesDeletedStr = "Number of files, folders deleted",
-	*const rv_timeTakenStr = "Time taken to clean-up",
+	*const rv_timeTakenStr = "Time taken to clean up",
 	*const it_autoCheckStartStr = "Check items at startup",
 	*const it_autoCheckLiveStr = "Check items live (if monitoring)",
 	*const it_unCheckAfterDelStr = "Un-check items after clean-up",

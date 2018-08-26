@@ -208,7 +208,7 @@ void FilWip::AboutRequested ()
 	/* Implement AboutRequested to show about even when external apps like "hey" ask for it */
 
 	BAboutWindow* aboutWin = new BAboutWindow("FilWip", AppSignature);
-	aboutWin->AddDescription("A manager to clean-up temporary files");
+	aboutWin->AddDescription("A manager to clean up temporary files");
 	const char* extraCopyrights[] = {
 		"2013 Puckipedia",
 		"2015 Sergei Reznikov, Humdinger",

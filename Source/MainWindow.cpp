@@ -582,8 +582,8 @@ void MainWindow::Quit ()
 		{
 			suspend_thread (eraserLooper->Thread());
 			int32 warning;
-			warning = (new BAlert ("Warning", "Clean-up process is in progress, force it to stop?",
-						"Don't force", "Force", NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_WARNING_ALERT))->Go();
+			warning = (new BAlert ("Warning", "Clean-up in progress, force it to stop?",
+						"Don't stop", "Stop", NULL, B_WIDTH_AS_USUAL, B_EVEN_SPACING, B_WARNING_ALERT))->Go();
 			
 			if (warning == 1)
 				eraserLooper->stopErasing = true;
@@ -1431,7 +1431,7 @@ bool MainWindow::ConfirmCleanUp () const
 	/* Setup the confirm pop-up box */
 	confirm = new BAlert ("Confirmation", "Warning\n\nThis clean-up process is irreversible!"
 							" Once the data has been removed it cannot be recovered.\n\n"
-							"Do you wish to begin the clean-up process?\n", "Cancel","Clean-up",
+							"Do you wish to begin the clean-up process?\n", "Cancel","Clean up",
 							NULL, B_WIDTH_AS_USUAL, B_WARNING_ALERT);
 	confirm->SetShortcut (0, B_ESCAPE);
 	
