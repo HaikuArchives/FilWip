@@ -1,10 +1,10 @@
-;; Bash History plugin
+;; Bash history plugin
 
-[Bash History]
+[Bash history]
 TYPE=linear
 CHECK INSTALL OF=
 
-[Bash History]
+[Bash history]
 FILE=/boot/home/config/settings/bash_history
 EXCLUDE FILE=
 RECURSE=

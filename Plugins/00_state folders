@@ -1,6 +1,6 @@
 ;; Previous system state plugin
 
-[Previous system state]
+[Previous system states]
 TYPE=linear
 CHECK INSTALL OF=
 
