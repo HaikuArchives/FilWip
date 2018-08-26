@@ -4,7 +4,7 @@
 TYPE=linear
 CHECK INSTALL OF=
 
-[Trashed items]
+[Trashed items (/boot volume)]
 FOLDER=/boot/trash
 EXCLUDE FILE=
 RECURSE=yes
