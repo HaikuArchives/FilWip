@@ -133,7 +133,6 @@ ul {
 </head>
 <body>
 
-<p><br /></p>
 <p>This introduction section is for you newbies or the type who actually read documentation before trying out the app.</p>
 
 <p>FilWip is a disk maintainance utility. Its a small program that helps you keep your hard disk clean from unwanted data, such as temporary files, logs, caches etc. that accumulate usually in the background, and if you are a casual user you might not be aware of them.</p>
@@ -184,12 +183,12 @@ ul {
 
 <p>Once you have selected the items you need to remove, click on <span class="button">Clean up</span>. You will have to confirm that decision before the system is cleaned up. This confirmation can be disabled in the <a href="#preferences-Confirm">Preferences</a>.</p>
 
-<h3>The Progressbar</h3>
+<h3>The Progress bar</h3>
 
 <p>The clean-up process will begin after you clicked <span class="button">Clean up</span> in the confirmation dialog. A progress bar informs of the cleaning process. When finished, a report will detail the number of files cleaned, space recovered etc.</p>
 
 <div align="center">
-<img src="./images/progress.png" alt="The progressbar" />
+<img src="./images/progress.png" alt="The progress bar" />
 </div>
 
 <p>When finished, a Report summarized how many files/folders were deleted, how much disk space this freed, and how long it took. You can turn off the Report in the <a href="#preferences">Preferences</a>. You can make FilWip quit automatically after this operation there, too.</p>
@@ -302,7 +301,7 @@ RECURSE=
 TYPE=linear
 CHECK INSTALL OF=
 
-[Custom queries]
+[Queries]
 FOLDER=/boot/home/queries
 INCLUDE MIME=application/x-vnd.Be-query
 RECURSE=
@@ -357,13 +356,13 @@ RECURSE=
 </tr>
 
 <tr>
-<td>1st <tt>[Custom queries]</tt></td>
+<td><tt>[Custom queries]</tt></td>
 <td>(Required)</td>
 <td>Plugin name used in Presets internally, not shown otherwise</td>
 </tr>
 
 <tr>
-<td class="onelinetop">2nd <tt>[Custom queries]</tt></td>
+<td class="onelinetop"><tt>[Queries]</tt></td>
 <td class="onelinetop">(Required)</td>
 <td>A description. Shown in the checkboxes/treeview.</td>
 </tr>
