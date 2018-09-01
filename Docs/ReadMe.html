@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//Dtd XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+<!-- 
+ * Copyright 2003-2018
+ * Distributed under the terms of the MIT License.
+ *
+ * Authors:
+ *		Ramshankar (original doc, 2003)
+ *		Humdinger <humdingerb@gmail.com>
+-->
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<meta name="robots" content="all" />
+	<title>FilWip's User Documentation</title>
+
+<style type="text/css">
+
+body {
+    font-size: 0.9em;
+	font-family: "DejaVu Sans",Arial,Helvetica,sans-serif;
+	line-height: 1.5;
+	margin: 40px;
+	min-width: 45em;
+	max-width: 70em;
+}
+/* link colors and text decoration */
+
+a:link {
+	font-weight: bold;
+	text-decoration: none;
+	color: #dc3c01;
+}
+a:visited {
+	font-weight: bold;
+	text-decoration: none;
+	color: #892601;
+}
+a:hover, a:active {
+	text-decoration: underline;
+	color: #ff4500;
+}
+
+hr {
+	border: dotted thin #e0e0e0;
+}
+h1 {
+	font-size: 1.3em;
+	border-bottom: dotted thin #e0e0e0;
+	margin-bottom: 45px;
+}
+h2 {
+	font-size: 1.2em;
+	border-bottom: dotted thin #e0e0e0;
+	margin-top: 40px;
+}
+h3 {
+	font-size: 1.1em;
+	border-bottom: none;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+.key {				/* Shortcut (separate with &#160; */
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	border-color: #c7c7c7;
+	border-style: solid;
+	border-width: 1px;
+	padding: 0px 2px 0px 2px;
+	background-color: #e8e8e8;
+    font-family: sans;
+	font-variant: small-caps;
+	font-size: 1em;
+}
+.menu {				/* Menu */
+    font-size: 1.0em;
+    font-family: serif;
+    font-style: italic;
+	color: #24225e;
+}
+.button {			/* Button */
+    font-size: 1.0em;
+    font-family: serif;
+    font-style: italic;
+	color: #33583c;
+}
+.path {				/* File path */
+    background-color: #e8e8e8;
+    font-size: 0.9em;
+    font-family: monospace;
+}
+td.onelinetop {
+	vertical-align: top;
+	white-space: nowrap;
+}
+td.onelinemiddle {
+	vertical-align: middle;
+	white-space: nowrap;
+}
+ol {
+	padding-left: 20px;
+}
+ul {
+	padding-left: 14px;
+}
+
+/* Rounded corner boxes */
+/* Common declarations */
+.box-info, .box-warning {
+	-webkit-border-radius: 10px;
+	-khtml-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border-style: dotted;
+	border-width: thin;
+	border-color: #dcdcdc;
+	padding: 10px 15px 10px 80px;
+	margin-bottom: 15px;
+	margin-top: 15px;
+	min-height: 42px;
+}
+.box-info {
+	background: #e4ffde url(./images/alert_info_32.png) 15px 15px no-repeat;
+}
+.box-warning {
+	background: #ffeae6 url(./images/alert_warning_32.png) 15px 15px no-repeat;
+
+</style>
+</head>
+<body>
+
+<p><br /></p>
+<p>This introduction section is for you newbies or the type who actually read documentation before trying out the app.</p>
+
+<p>FilWip is a disk maintainance utility. Its a small program that helps you keep your hard disk clean from unwanted data, such as temporary files, logs, caches etc. that accumulate usually in the background, and if you are a casual user you might not be aware of them.</p>
+
+<p>Temporary files, system event logs, caches etc. occupy some considerable disk space. Most of these files get automatically created and get created quite often. Cleaning all these items manually, traversing from folder to folder, can be a difficult, tedious and time consuming task.</p>
+
+<p>FilWip makes this job as easy as possible implementing a graphical user interface. FilWip is a plugin-based app, meaning it's fully customizable and extensible.</p>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="user_interface" name="user_interface">User Interface</a></h2>
+<p>The graphical user interface of FilWip is designed to handle any number of plugins. It has a collapsable/expandable tree-view structures for hierarchical plugins. This makes organising plugins easier. For example, all items of the operating system can be 'grouped' into one item called 'System logs' and the like. Below is a screenshot of the main window.</p>
+
+<div align="center">
+<img src="./images/mainwindow2.png" alt="FilWip's main window" />
+</div>
+
+<p>The main window consists of the toolbar, the various options (checkboxes), the "Clean up" button and the "Presets" menu. When you fire up FilWip, you will get a similar window, though some plugins may not be shown to you. For example, if you don't have the <i>QupZilla</i> browser installed then the <i>QupZilla</i> plugin won't get loaded. This is due to the "<a href="#plugins-CheckInstall">Check Install</a>" behaviour of that plugin.</p>
+
+<p>The various components of the main window, how they work are explained below...</p>
+
+<h3> <a id="user_interface-Toolbar" name="user_interface-Toolbar">The Toolbar</a></h3>
+
+<table border="0">
+<tr><td width="50"><img src="images/selectall_toolbar.png" /></td><td>Select all - Selects all the options</td></tr>
+<tr><td><img src="images/deselectall_toolbar.png" /></td><td>Deselect all - Un-checks all the options</td></tr>
+<tr><td><img src="images/smartselect_toolbar.png" /></td><td>Select as needed - only those options that have files to clean will be selected</td></tr>
+<tr><td><img src="images/save_toolbar.png" /></td><td>Save preset - Save the current options to a <a href="#presets">Preset</a> file</td></tr>
+<tr><td><img src="images/prefs_toolbar.png" /></td><td>Preferenecs - Edit FilWip's <a href="#preferences">preferences</a></td></tr>
+<tr><td><img src="images/help_toolbar.png" /></td><td>Help - Opens this documentation in your browser</td></tr>
+</table>
+
+<p>You'll find all these items in the menu bar as well.</p>
+
+<p>The "Default" preset shown in the main window is actually FilWip's settings file displayed under that name. If you load other presets and you want to revert back to the old settings file (before you close FilWip) you can choose the Default preset. You can have other presets with the name Default, but the settings file preset will always be the first in the list so you can distinguish it from other presets named Default (if there are any).</p>
+
+<p>You can read more about Presets <a href="#presets">here</a>.</p>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="usage" name="usage">Usage</a></h2>
+
+<p>Using FilWip is straight forward and simple.</p>
+
+<p>As you might have seen in the <a href="#user_interface">User Interface</a> section, the main window loads all available plugins. If you don't want to remove particular items, un-check their checkboxes.</p>
+
+<p>Once you have selected the items you need to remove, click on <span class="button">Clean up</span>. You will have to confirm that decision before the system is cleaned up. This confirmation can be disabled in the <a href="#preferences-Confirm">Preferences</a>.</p>
+
+<h3>The Progressbar</h3>
+
+<p>The clean-up process will begin after you clicked <span class="button">Clean up</span> in the confirmation dialog. A progress bar informs of the cleaning process. When finished, a report will detail the number of files cleaned, space recovered etc.</p>
+
+<div align="center">
+<img src="./images/progress.png" alt="The progressbar" />
+</div>
+
+<p>When finished, a Report summarized how many files/folders were deleted, how much disk space this freed, and how long it took. You can turn off the Report in the <a href="#preferences">Preferences</a>. You can make FilWip quit automatically after this operation there, too.</p>
+
+<p>FilWip can be closed while the clean-up is taking place. The delete process will then be paused and you'll be asked for confirmation to force the quitting. Clicking <span class="button">Don't stop</span> will resume the delete process, <span class="button">Stop</span> will cancel the delete process and quit FilWip.</p>
+
+<div class="box-warning">Before using FilWip to clean up your system, close all interactive programs that are running. This isn't necessary 99.99% of the time, but in a rare situation it can cause problems for other running applications. For example, while compiling a project, many temporary files are created and deleted. FilWip interfering here, can cause crashes and other problems.<br />
+This is just a generic warning. So far, it hasn't caused any problems for me and I haven't received any such reports from users. But as they say, better be safe than sorry and finish all serious work before invoking FilWip...</div>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="terminal" name="terminal">From Terminal</a></h2>
+
+<p>FilWip offers a neat way to make it act like a simple script program. It can come in handy, not having to open FilWip everytime you want to do a cleaning-up. A simple "silent" mode allows you to do this. Command-line parameters are explained below.</p>
+
+<table width="100%" bgcolor="#cccc66" cellpadding="5" cellspacing="1">
+<tr>
+<td width="35%" bgcolor="#eeeed6"><b>Parameter</b></td>
+<td width="65%" bgcolor="#eeeed6"><b>Description</b></td>
+</tr>
+
+<tr>
+<td class="onelinemiddle" bgcolor="white"><tt>-preset &lt;preset_file&gt;</tt></td>
+<td bgcolor="white">Loads the items from the specified the Preset file and launches the graphical user interface (if necessary)</td>
+</tr>
+
+<tr>
+<td class="onelinemiddle" bgcolor="white"><tt>-silent</tt></td>
+<td bgcolor="white">Begins the clean-up process in silent mode. In silent mode, the graphical user interface is not launched, graphical user pop-ups/errors or report are not shown. Thery are shown in text mode instead.</td>
+</tr>
+</table>
+
+
+<p>Please note that both the above options can be combined, but only in the order specified i.e. <TT>-preset</TT> first, <TT>-silent</TT> next. This means you can load any Preset file and clean up in silent mode.</p>
+
+<p>Specifying only a Preset file (without the <TT>-silent</TT> option) at the command-line will launch the graphical user interface and the specified Preset (if it exists) will be loaded and ready. Note that you must specify the full path (or relative path) to the Preset file. FilWip will not check the list of Presets in the Presets folder for you.</p>
+
+<p>Here is a sample report from the command-line:</p>
+
+<pre>------
+Report
+------
+
+  Disk space freed:
+          16.2 MB
+  Items erased:
+          12 folders
+          312 files
+  Time taken:
+          3.007536 seconds
+
+</pre>
+
+<p>You can read more about Presets <a href="#presets">here</a>.</p>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="plugins" name="plugins">Plugins</a></h2>
+
+<p>Plugins are what makes FilWip a versatile and flexible app. Plugins (as far as FilWip is concerned) are a way of specifying what files to monitor and delete. They are simple text files, written in a particular format understandable by FilWip, that specify the locations to clean.</p>
+
+<p>You get a set of standard plugins with FilWip. You can edit these plugins to suit your system, but mostly you won't need to. You'll find the plugins at <TT>~/config/settings/FilWip/Plugins/</TT>. Some of the standard plugins include: WebPositive files, Custom Query files, Temporary files, Bash history file etc.</p>
+
+<p>Before we proceed explaining the format specs for the plugin, here are two sample plugins. Just read through them once and read the explanation below.</p>
+
+<p>Here is a hierarchical plugin - meaning you can "expand" the plugin and it will have sub-items. Here is how the <i>WebPositive</i> plugin looks: </p>
+
+<div align="center">
+<table bgcolor="#f5f5f5" border="0" width="80%" cellspacing="5"> 
+<tr><td width="45%">
+<pre>;; WebPositive plugin
+
+[WebPositive]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/home/config/settings/WebPositive
+
+[Cache]
+FOLDER=/boot/home/config/settings/WebPositive/NetCache
+EXCLUDE FILE=Cookies
+RECURSE=
+
+[Cookies]
+FILE=/boot/home/config/settings/WebPositive/Cookies
+EXCLUDE FILE=
+RECURSE=
+
+[History]
+FILE=/boot/home/config/settings/WebPositive/BrowsingHistory
+EXCLUDE FILE=
+RECURSE=
+
+[Site icons]
+FILE=/boot/home/config/settings/WebPositive/WebpageIcons.db
+EXCLUDE FILE=
+RECURSE=
+</pre></td></tr>
+</table>
+</div>
+
+<p>Here is a linear plugin - meaning it does not have any sub-items and can clean only one location. Here is how the <i>Custom queries</i> plugin looks: </p>
+
+<div align="center">
+<table bgcolor="#f5f5f5" border="0" width="80%"> 
+<tr><td width="45%">
+<pre>;; Custom queries plugin
+
+[Custom queries]
+TYPE=linear
+CHECK INSTALL OF=
+
+[Custom queries]
+FOLDER=/boot/home/queries
+INCLUDE MIME=application/x-vnd.Be-query
+RECURSE=
+</pre></td></tr>
+</table>
+</div>
+
+<h3>Syntax and Keys</h3>
+
+<div align="center">
+<table>
+<tr>
+<td width="150"><tt>TYPE</tt></td>
+<td width="90">(Required)</td>
+<td>The type of plugin, whether linear or hierarchial</td>
+</tr>
+
+<tr>
+<td><tt>CHECK INSTALL OF</tt></td>
+<td>(Optional)</td>
+<td>This path must exist, or else the plugin will not be loaded</td>
+</tr>
+
+<tr>
+<td><tt>FOLDER</tt></td>
+<td>(N/A)</td>
+<td>The location to delete. Either FILE=&lt;file&gt; or FOLDER=&lt;dir&gt;</td>
+</tr>
+
+<tr>
+<td><tt>EXCLUDE FILE</tt></td>
+<td>(Optional)</td>
+<td>A file to exclude in the folder being targetted. EXCLUDE FILE=&lt;filename&gt;</td>
+</tr>
+
+<tr>
+<td><tt>INCLUDE MIME</tt></td>
+<td>(Optional)</td>
+<td>Files of this type only are touched, INCLUDE MIME=&lt;mime-type&gt;</td>
+</tr>
+
+<tr>
+<td><tt>RECURSE</tt></td>
+<td>(Optional)</td>
+<td>Whether FilWip must touch sub-folders and files.</td>
+</tr>
+
+<tr>
+<td><tt>;;</tt></td>
+<td>(N/A)</td>
+<td>Comments - these are skipped</td>
+</tr>
+
+<tr>
+<td>1st <tt>[Custom queries]</tt></td>
+<td>(Required)</td>
+<td>Plugin name used in Presets internally, not shown otherwise</td>
+</tr>
+
+<tr>
+<td class="onelinetop">2nd <tt>[Custom queries]</tt></td>
+<td class="onelinetop">(Required)</td>
+<td>A description. Shown in the checkboxes/treeview.</td>
+</tr>
+
+</table>
+</div>
+
+<p>Let's go from top to bottom, explaining each unique line in the plugin format:</p>
+
+<p><b>;; Comment!</b><br />
+Lines beginning with a double semicolon are considered comments and are skipped. You can use them only at the beginning of a plugin i.e., until the name of the plugin is specified.</p>
+
+<p><b>[Name]</b><br />
+Lines enclosed within "<tt>[</tt>" and "<tt>]</tt>" are considered to contain names for each item. In case the TYPE of the plugin is hierarchical, this name will be used as label for the expandable treeview. This is what you will see in FilWip for hierarchical plugins. For linear items this name will be displayed. The next name section following it will not be used.</p>
+
+<p><b>TYPE=</b>linear<br />
+<b>TYPE=</b>hierarchical<br />
+A very important clause. This clause specifies if the plugin has sub-items or not. TYPE must be either "<tt>linear</tt>" or "<tt>hierarchical</tt>". Careful you don't misspell it and you cannot leave it blank.</p>
+
+<a name="plugins-CheckInstall"></a>
+<p><b>CHECK INSTALL OF=</b>[&lt;path&gt;]<br />
+This clause allows you to stop loading the plugin if a certain file or folder does not exist. For example, the <i>QupZilla</i> plugin checks for a path (in the settings folder) to confirm if QupZilla really exists. If it doesn't, the plugin will not be loaded. You can leave this blank, meaning no checks are performed.<br />
+For example, Trash has a blank field here since Haiku is assumed to have a Trash location.</p>
+
+<p><b>FOLDER=</b>&lt;path&gt;<br />
+<b>FILE=</b>&lt;path&gt;<br />
+This clause specifies either a folder or file to clean. The path must be the full absolute path. A safety check is performed so that no system critical folders/files are destroyed. For example, you can't specify <tt>/boot/home</tt> as it is critical to the system.</p>
+
+<p>Also, you cannot specify both <tt>FOLDER</tt> and <tt>FILE</tt> clauses for the same plugin item. It's either <tt>FILE</tt> or <tt>FOLDER</tt>. See the example plugins above.</p>
+
+<p><b>EXCLUDE FILE=</b>[&lt;filename&gt;]<br /><b>INCLUDE MIME=</b>[&lt;mime-type&gt;]<br />
+The <tt>EXCLUDE FILE</tt> clause allows you to exclude a file (by name) from the list of files in a folder. This will apply only if a folder is specified. A blank field is allowed meaning no files are left out.</p>
+
+<p>The <tt>INCLUDE MIME</tt> clause specifies that only files with the specified mime-type (like "<tt>application/x-vnd.Be-query</tt>") should be deleted. For example, if you want to clean only .html from a folder but no other file-types like .gif etc., you can <tt>INCLUDE MIME=text/x-html</tt>. Blank field here is allowed meaning file-types aren't checked for the given scope of files.</p>
+
+<p>You cannot specify both <tt>EXCLUDE FILE</tt> and <tt>INCLUDE MIME</tt> in the same plugin item.</p>
+
+<p><b>RECURSE=</b>[&lt;yes&gt;]<br />
+<a name="Recurse"></a>
+The <tt>RECURSE</tt> clause allows folder entries to recursively target all sub-folders. To delete all sub-folders and files, you must specify <tt>RECURSE=yes</tt>. Leaving it blank specifies that no recursion will take place, meaning sub-folders (and files within sub-folders) will not be touched. Obviously, this applies only to plugin-items that target a folder.</p>
+
+<h3>More info</h3>
+<p>
+Plugins as of now are 'delicate' structures in FilWip, error detection is minimal. So please make sure you write/modify your plugins very, very carefully. Make sure you don't leave extra line-breaks, don't leave extra spaces, don't misspell words. The best way to go about writing a plugin is to copy and paste an existing plugin to a file and edit and modify it carefully.
+</p>
+
+<p>Plugins are not case-sensitive, i.e. "<tt>FOLDER=</tt>" is same as "<tt>folder=</tt>". I wrote them in capitals as it looks much neater and error detection is easier. But remember, the paths in Haiku ARE case-sensitive, e.g.: <tt>/boot/home/Programs</tt> is not the same as <tt>/boot/home/programs</tt>.</p>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="preferences" name="preferences">Preferences</a></h2>
+
+<p>FilWip splits the set of options into three categories:</p>
+
+<div align="center">
+<img src="./images/prefs1.png" alt="The preferences window" />
+</div>
+
+<h3>At start-up</h3>
+<p><span class="menu">Live monitoring</span><br />
+This means all files/folders targetted by the plugins will be monitored for any change.<br />
+For example, when you have FilWip open and some background app creates/deletes some temporary files they will show up in FilWip live - as and when they change.</p>
+
+<p><span class="menu">Select as needed</span><br />
+If a plugin has anything to clean, it is selected, otherwise it is deselected. This will happen only once at startup.</p>
+
+<h3>Before clean up</h3>
+<a id="preferences-Confirm" name="preferences-Confirm"></a>
+<p><span class="menu">Ask confirmation</span><br />
+You'll be asked for confirmation after choosing to clean up.</p>
+
+<h3>After clean up</h3>
+<p><span class="menu">Show report</span><br />
+Will show a report detailing the number of files deleted, the gained disk space etc.</p>
+<p><span class="menu">Deselect all</span><br />
+All plugin-items will be deselected (and if you close FilWip it will save all items as deselected).</p>
+<p><span class="menu">Quit</span><br />
+FilWip will automatically quit after the clean up action has finished.</p>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="presets" name="presets">Presets</a></h2>
+
+<p>A preset is simply all your clean-up options saved in a file. Thus a preset is a file that contains key/value pairs regarding what options are selected. When you double-click such a file from <i>Tracker</i>, FilWip will load all the settings from that file to the main window, ready for you to click <span class="button">Clean up</span>.</p>
+
+<div align="center">
+<img src="./images/presets_menu.png" alt="The presets" />
+</div>
+
+<p>This is the primary and probably the only use of presets in FilWip. To load a particular set of options for quick loading and cleaning, saving you the time of re-selecting the options each time.</p>
+<p>You can create several presets for different needs, like a preset called "Net options" that will have all internet based cache options selected.</p>
+
+<p>To save a preset, open FilWip and choose the options you want to save. Then click the <span class="button">Save</span> icon from the <a href="#user_interface-Toolbar">toolbar</a>. By default you will be prompted to save the preset into the <tt>Presets</tt> folder in <tt>~/config/settings/FilWip/</tt>, but you can save it anywhere. The advantage of saving the preset in the <tt>Presets</tt> folder is that when FilWip loads, all presets in the folder will be added to the <span class="menu">Presets</span> menu (like shown in the image above), so you can quickly open it without having to navigate to the folder where you saved it in.</p>
+
+<p>The <i>Default</i> preset shown is actually FilWip's settings file displayed under that name. If you load other presets and you want to revert back to the old settings file (before you close FilWip) you can choose the Default preset. You can have other presets with the name Default, but the settings file preset will always be the first in the list so you can distinguish it from other presets named Default (if there are any).</p>
+
+<p>Presets can also be loaded from the command-line, see topic on using FilWip <a href="#terminal">From Terminal</a>.</p>
+
+
+<h2>
+<a href="#"><img src="images/up.png" style="border:none;float:right" alt="index" /></a>
+<a id="credits_feedback" name="credits_feedback">Credits &amp; Feedback</a></h2>
+<p>FilWip was originally written by Ramshankar in 2003. Since then it's been improved mainly by Janus.</p>
+<p>Ramshankar thanks:</p>
+<p>Marco Nelissen — for his BubbleHelp class<br />
+Jeremy Friesner — for BeShare and its source code<br />
+Authors of OpenTracker — for minor code bits hacked from OT</p>
+
+<p>Please use GitHub's <a href="https://github.com/HaikuArchives/FilWip/issues">issue tracker</a> if you experience unusual difficulties or have a feature request.</p>
+
+</body>
+</html>
