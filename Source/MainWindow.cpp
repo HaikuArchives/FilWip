@@ -42,6 +42,7 @@
 #include <FilePanel.h>
 #include <NodeInfo.h>
 #include <MenuField.h>
+#include <PathFinder.h>
 #include <PopUpMenu.h>
 #include <MenuItem.h>
 #include <Volume.h>
@@ -775,21 +776,7 @@ void MainWindow::MessageReceived (BMessage *message)
 		/* Call Help */
 		case M_HELP:
 		{
-			BPath helpPath (&docsFolder, "Index.html");
-			BEntry helpFile (helpPath.Path(), true);
-
-			if (helpFile.Exists() == false)
-			{
-				BAlert *errAlert = new BAlert ("Error", "Couldn't locate the help files!",
-									"OK", NULL, NULL, B_WIDTH_AS_USUAL, B_STOP_ALERT);
-				errAlert->Go();
-			}
-			else
-			{
-				char *help_url = const_cast<char*>(helpPath.Path());
-				be_roster->Launch ("application/x-vnd.Be.URL.http", 1, &help_url);
-			}
-
+			_ShowDocumentation();
 			break;
 		}
 		
@@ -1572,4 +1559,25 @@ float MainWindow::_ColumnListViewHeight(BColumnListView* list, BRow* currentRow)
 			height += _ColumnListViewHeight(list, row);
 	}
 	return height;
+}
+
+void MainWindow::_ShowDocumentation()
+{
+	BPathFinder pathFinder;
+	BStringList paths;
+	BPath path;
+	BEntry entry;
+
+	status_t error = pathFinder.FindPaths(B_FIND_PATH_DOCUMENTATION_DIRECTORY,
+		"packages/filwip", paths);
+
+	for (int i = 0; i < paths.CountStrings(); ++i) {
+		if (error == B_OK && path.SetTo(paths.StringAt(i)) == B_OK
+				&& path.Append("Index.html") == B_OK) {
+			entry = path.Path();
+			entry_ref ref;
+			entry.GetRef(&ref);
+			be_roster->Launch(&ref);
+		}
+	}
 }

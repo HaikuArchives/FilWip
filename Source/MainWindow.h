@@ -90,7 +90,8 @@ class MainWindow : public BWindow
 		void				AddHierarchialItem (PluginContainerItem *item, char *fileName);
 		FileLooper* 		FindLooper (BRow* row);
 		EraserLooper		*eraserLooper;
-		
+		void				_ShowDocumentation();
+
 		/* Critical to thread variable */
 		BMessage			wndMessage;
 
