@@ -1,0 +1,10 @@
+;; updatedb's locatedb plugin
+
+[locatedb]
+TYPE=linear
+CHECK INSTALL OF=
+
+[locatedb]
+FILE=/boot/system/var/locatedb
+EXCLUDE FILE=
+RECURSE=

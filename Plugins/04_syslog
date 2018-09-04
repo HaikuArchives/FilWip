@@ -1,0 +1,20 @@
+;; System log plugin
+
+[System logs]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/system/var/log
+
+[Current system log]
+FILE=/boot/system/var/log/syslog
+INCLUDE MIME=
+RECURSE=
+
+[Old system log]
+FILE=/boot/system/var/log/syslog.old
+INCLUDE MIME=
+RECURSE=
+
+[Previous boot's system log]
+FILE=/boot/system/var/log/previous_syslog
+INCLUDE MIME=
+RECURSE=

@@ -1,0 +1,10 @@
+;; Bash history plugin
+
+[Bash history]
+TYPE=linear
+CHECK INSTALL OF=
+
+[Bash history]
+FILE=/boot/home/config/settings/bash_history
+EXCLUDE FILE=
+RECURSE=
