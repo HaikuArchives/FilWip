@@ -1,0 +1,15 @@
+;; NetSurf plugin
+
+[NetSurf]
+TYPE=hierarchical
+CHECK INSTALL OF=/boot/home/config/settings/NetSurf
+
+[Cookies]
+FILE=/boot/home/config/settings/NetSurf/Cookies
+EXCLUDE FILE=
+RECURSE=
+
+[History]
+FILE=/boot/home/config/settings/NetSurf/URLs
+EXCLUDE FILE=
+RECURSE=
