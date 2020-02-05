@@ -1,10 +1,10 @@
-;; Previous system state plugin
+;; Previous system states plugin
 
 [Previous system states]
 TYPE=linear
 CHECK INSTALL OF=
 
-[Previous system state]
+[Previous system states]
 FOLDER=/boot/system/packages/administrative
 EXCLUDE FILE=
 RECURSE=yes
