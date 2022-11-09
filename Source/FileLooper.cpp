@@ -334,7 +334,7 @@ void FileLooper::SetUpSelf (bool performSafeCheck, BPath processLocation, int32 
 			inside the corePath entry) the below check makes sure any trailing '/'s are removed */
 		BString passedPath = processLocation.Path();
 		passedPath.Append ('/', 1);
-		if (passedPath.ByteAt (passedPath.CountChars() - 1) == '/');
+		if (passedPath.ByteAt (passedPath.CountChars() - 1) == '/')
 			passedPath.RemoveLast ("/");
 		
 		for (int32 i = 0; i < 6; i++)

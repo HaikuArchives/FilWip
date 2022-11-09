@@ -110,7 +110,7 @@ void EraserLooper::EraseList (bool guiMode)
 		delete[] path;
 		
 		char updateStr[35];
-		sprintf (updateStr, "%ld of %ld", ++counter,  max);
+		sprintf (updateStr, "%" B_PRId32 " of %" B_PRId32, ++counter,  max);
 
 		updateMsg.RemoveName ("trailing_text");
 		updateMsg.AddString ("trailing_text", updateStr);
@@ -151,7 +151,7 @@ void EraserLooper::EraseList (bool guiMode)
 	sprintf (spaceFreedStr, "• Disk space freed:\n%s%s", indentStr, GetByteSizeString(totalBytes).String());
 	
 	char itemsCleanedStr [100];
-	sprintf (itemsCleanedStr, "• Items erased:\n%s%li folders\n%s%li files", indentStr, totalFolders, indentStr,
+	sprintf (itemsCleanedStr, "• Items erased:\n%s%" B_PRIi32 " folders\n%s%" B_PRIi32 " files", indentStr, totalFolders, indentStr,
 			totalFiles);
 
 	/* Use our own FindBoolDef (so that it passes the default value when pref is not found) */
@@ -242,7 +242,7 @@ BString EraserLooper::GetByteSizeString (int64 v) const
 	else if (v > (1024LL))
 		sprintf(buf, "%.2f KiB", ((double)v) / 1024LL);
 	else
-		sprintf(buf, "%Li bytes", v);
+		sprintf(buf, "%" B_PRIi64 " bytes", v);
 	
 	BString str;
 	str << buf;
